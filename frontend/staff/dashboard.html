@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Worker Dashboard - Labour Portal</title>
+    
+    <link rel="stylesheet" href="./staffShell.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary: #5d141f; 
+            --bg: #f8f3ea;
+            --card-bg: #ffffff;
+            --text-dark: #2d080d;
+            --text-gray: #7b6767;
+            --border: rgba(93, 20, 31, 0.10);
+            --success: #c5a029;
+            --warning: #d28d1c;
+            --danger: #8f1f31;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent;}
+        
+        body { 
+            background-color: var(--bg);
+            color: var(--text-dark);
+            padding-bottom: 100px;
+            max-width: 480px;
+            margin: 0 auto;
+            position: relative;
+            min-height: 100vh;
+            box-shadow: 0 0 20px rgba(0,0,0,0.05);
+        }
+
+        /* --- Header Profile Area --- */
+        .profile-header {
+            background: linear-gradient(135deg, var(--primary), #7a1b29);
+            color: white;
+            padding: 35px 20px 60px 20px;
+            border-bottom-left-radius: 30px;
+            border-bottom-right-radius: 30px;
+            box-shadow: 0 4px 20px rgba(43, 115, 246, 0.3);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            position: relative;
+        }
+
+        .profile-img {
+            width: 65px; height: 65px; border-radius: 50%;
+            border: 3px solid rgba(255,255,255,0.4);
+            object-fit: cover; background-color: #e0e7ff;
+        }
+
+        .profile-info h2 { font-size: 1.3rem; font-weight: 800; margin: 0; }
+        .profile-info p { font-size: 0.8rem; opacity: 0.9; margin-top: 2px; font-weight: 500;}
+
+        .logout-btn {
+            position: absolute; top: 20px; right: 20px;
+            background: rgba(255,255,255,0.2); color: white; border: none;
+            padding: 6px 12px; border-radius: 10px; font-size: 0.7rem; font-weight: 700;
+        }
+
+        /* --- Floating Summary Cards --- */
+        .summary-card {
+            background: white; margin: -35px 20px 25px 20px; padding: 20px;
+            border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+            display: flex; justify-content: space-between; align-items: center;
+            position: relative; z-index: 10; border: 1px solid var(--border);
+        }
+        .sum-item { display: flex; flex-direction: column; gap: 2px;}
+        .sum-label { font-size: 0.65rem; color: var(--text-gray); font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px;}
+        .sum-val { font-size: 1.5rem; font-weight: 800; color: var(--text-dark);}
+        .sum-val.green { color: var(--success);}
+        .sum-subtext { font-size: 0.65rem; color: var(--text-gray); font-weight: 600; margin-top: 2px;}
+
+        /* --- Main Menu Grid --- */
+        .section-title { padding: 0 20px; font-size: 1.1rem; font-weight: 800; margin: 10px 0 15px; color: var(--text-dark);}
+        
+        .dash-grid {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 15px;
+            padding: 0 20px 25px 20px;
+        }
+
+        .dash-card {
+            background: white; border-radius: 18px; padding: 20px 15px;
+            text-decoration: none; color: var(--text-dark);
+            border: 1px solid var(--border); box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+            display: flex; flex-direction: column; gap: 10px; transition: 0.2s;
+        }
+        .dash-card:active { transform: scale(0.96); background: #f8fafc; border-color: var(--primary);}
+        
+        .icon-box {
+            width: 45px; height: 45px; border-radius: 12px; display: flex;
+            justify-content: center; align-items: center; font-size: 1.5rem;
+        }
+        .dash-card.salary .icon-box { background: #e0e7ff; color: var(--primary); }
+        .dash-card.schedule .icon-box { background: #dcfce7; color: var(--success); }
+        .dash-card.work .icon-box { background: #fef3c7; color: var(--warning); }
+        .dash-card.support .icon-box { background: #f1f5f9; color: var(--text-gray); }
+
+        .dash-card h3 { font-size: 0.95rem; font-weight: 700; margin: 0; }
+        .dash-card p { font-size: 0.7rem; color: var(--text-gray); font-weight: 500; margin: 0;}
+
+        /* --- Recent History --- */
+        .history-container { padding: 0 20px 20px 20px; display: flex; flex-direction: column; gap: 12px; }
+        
+        .history-item {
+            background: white; padding: 15px; border-radius: 16px;
+            border: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+        }
+
+        .h-date { font-weight: 800; font-size: 0.9rem; color: var(--text-dark); }
+        .h-times { font-size: 0.75rem; color: var(--text-gray); margin-top: 2px; font-weight: 500;}
+        
+        .status-badge {
+            padding: 5px 12px; border-radius: 20px; font-size: 0.65rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px;
+        }
+        .status-present { background-color: #dcfce7; color: #166534; border: 1px solid #bbf7d0;}
+        .status-absent { background-color: #fee2e2; color: #991b1b; border: 1px solid #fecaca;}
+        .status-working { background-color: #fef3c7; color: #92400e; border: 1px solid #fde68a;}
+
+        /* --- Bottom Quick Buttons --- */
+        .bottom-nav {
+            position: fixed; bottom: 0; left: 0; width: 100%; max-width: 480px;
+            background: rgba(255, 255, 255, 0.98); border-top: 1px solid var(--border);
+            display: flex; justify-content: space-around; padding: 12px 10px 25px 10px; 
+            z-index: 1000; left: 50%; transform: translateX(-50%);
+            box-shadow: 0 -5px 20px rgba(0,0,0,0.03);
+        }
+
+        .nav-item {
+            display: flex; flex-direction: column; align-items: center; gap: 4px;
+            color: var(--text-gray); text-decoration: none; font-size: 0.7rem; font-weight: 700;
+        }
+        .nav-item .icon { font-size: 1.4rem; opacity: 0.6; transition: 0.2s;}
+        
+        .nav-item.active { color: var(--primary); }
+        .nav-item.active .icon { opacity: 1; transform: translateY(-2px); }
+
+    </style>
+</head>
+<body>
+
+    <div class="profile-header">
+        <button class="logout-btn" id="logoutBtn" type="button">Logout</button>
+        <img id="profileImg" src="" alt="Profile" class="profile-img">
+        <div class="profile-info">
+            <h2 id="staffName">Loading...</h2>
+            <p id="staffMeta">Worker ID: --</p>
+        </div>
+    </div>
+
+    <div class="summary-card">
+        <div class="sum-item">
+            <span class="sum-label">Days Present</span>
+            <div class="sum-val"><span id="statPresent">-</span> <span style="font-size: 0.9rem; color: var(--text-gray);">/ <span id="statTotalDays">-</span></span></div>
+            <div class="sum-subtext" id="statMonthLabel">Current Month</div>
+        </div>
+        <div class="sum-item" style="text-align: right;">
+            <span class="sum-label">Est. Earnings</span>
+            <div class="sum-val green">₹<span id="statEarnings">-</span></div>
+            <div class="sum-subtext">Total monthly pay</div>
+        </div>
+    </div>
+
+    <div class="section-title">Dashboard Menu</div>
+    <div class="dash-grid">
+        <a href="salary.html" class="dash-card salary">
+            <div class="icon-box">💰</div>
+            <div>
+                <h3>Salary Slips</h3>
+                <p>Track earnings</p>
+            </div>
+        </a>
+        <a href="schedules.html" class="dash-card schedule">
+            <div class="icon-box">🗓️</div>
+            <div>
+                <h3>Schedules</h3>
+                <p>Work calendar</p>
+            </div>
+        </a>
+        <a href="work-detail.html" class="dash-card work">
+            <div class="icon-box">📋</div>
+            <div>
+                <h3>Work Detail</h3>
+                <p>End day report</p>
+            </div>
+        </a>
+        <a href="#" class="dash-card support">
+            <div class="icon-box">💬</div>
+            <div>
+                <h3>Support</h3>
+                <p>Contact Admin</p>
+            </div>
+        </a>
+    </div>
+
+    <div class="section-title">Recent Activity</div>
+    <div class="history-container" id="historyCard">
+        <div style="text-align:center; padding: 20px; color:#94a3b8; font-size:0.85rem; font-weight:500;">
+            ⏳ Syncing records...
+        </div>
+    </div>
+
+    <div class="bottom-nav">
+        <a href="dashboard.html" class="nav-item active">
+            <span class="icon">📊</span>
+            <span>Home</span>
+        </a>
+        <a href="attendance.html" class="nav-item">
+            <span class="icon">📸</span>
+            <span>Attnd</span>
+        </a>
+        <a href="apply-leave.html" class="nav-item">
+            <span class="icon">🗓️</span>
+            <span>Leaves</span>
+        </a>
+        <a href="myprofile.html" class="nav-item">
+            <span class="icon">👤</span>
+            <span>Profile</span>
+        </a>
+    </div>
+
+    <script src="../app.js"></script>
+    <script src="./staffCommon.js"></script>
+    <script src="./bottomNav.js"></script>
+    <script>
+        // --- 1. Utility Functions ---
+        function monthStr(d) {
+            return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+        }
+
+        function daysInMonth(d) {
+            return new Date(d.getFullYear(), d.getMonth() + 1, 0).getDate();
+        }
+
+        function initialsFromName(name) {
+            const parts = String(name || 'S').trim().split(/\s+/).filter(Boolean);
+            return ((parts[0]?.[0] || 'S') + (parts.length > 1 ? (parts[parts.length - 1]?.[0] || '') : '')).toUpperCase();
+        }
+
+        function avatarSvgDataUri(text) {
+            const safe = String(text || 'S').slice(0, 3).toUpperCase();
+            const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 60 60"><rect width="60" height="60" rx="30" fill="#f3e5c3"/><text x="30" y="38" text-anchor="middle" font-family="Inter, sans-serif" font-size="22" font-weight="800" fill="#5d141f">${safe}</text></svg>`;
+            return `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`;
+        }
+
+        function fmtTime(value) {
+            if (!value) return '--:--';
+            const d = new Date(value);
+            return d.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
+        }
+
+        function fmtDateLabel(value) {
+            const d = new Date(value);
+            return d.toLocaleDateString('en-IN', { weekday: 'short', day: '2-digit', month: 'short' });
+        }
+
+        // --- 2. Render History List ---
+        function renderHistory(rows) {
+            const card = document.getElementById('historyCard');
+            if (!card) return;
+            
+            if (!rows || rows.length === 0) {
+                card.innerHTML = `<div class="history-item"><div style="text-align:center; width:100%; color:#94a3b8; font-size:0.8rem;">Mark attendance to see history</div></div>`;
+                return;
+            }
+            
+            const todayStr = new Date().toISOString().slice(0, 10);
+            const topRows = rows.slice(0, 3); // Last 3 activities
+
+            card.innerHTML = topRows.map((r) => {
+                const isWorking = Boolean(r.check_in_time) && !r.check_out_time && String(r.date).slice(0, 10) === todayStr;
+                
+                let statusCls = 'status-absent', statusTxt = 'Absent';
+                if(isWorking) { statusCls = 'status-working'; statusTxt = 'Working'; }
+                else if(r.check_in_time) { statusCls = 'status-present'; statusTxt = 'Present'; }
+
+                return `
+                <div class="history-item">
+                    <div>
+                        <div class="h-date">${fmtDateLabel(r.date)}</div>
+                        <div class="h-times">In: ${fmtTime(r.check_in_time)} | Out: ${fmtTime(r.check_out_time)}</div>
+                    </div>
+                    <div class="status-badge ${statusCls}">${statusTxt}</div>
+                </div>`;
+            }).join('');
+        }
+
+        // --- 3. Main Init ---
+        (async function init() {
+            try {
+                if (typeof VEStaff === 'undefined') throw new Error('System files missing');
+                const user = await VEStaff.ensureStaff(); // Verify login
+
+                // Update Profile Info
+                document.getElementById('staffName').textContent = user?.name || 'Worker';
+                const rs = String.fromCodePoint(0x20B9);
+                document.getElementById('staffMeta').textContent = `ID: ${user?.staff_id || '--'} | ${rs}${user?.salary_per_day || 0}/day`;
+
+                const initials = initialsFromName(user?.name);
+                const fallback = avatarSvgDataUri(initials);
+                const profileImg = document.getElementById('profileImg');
+                
+                // Set Profile Image or Fallback
+                if (user?.profile_image_path && typeof VEStaff !== 'undefined') {
+                    profileImg.src = VEStaff.assetUrl(user.profile_image_path);
+                } else { profileImg.src = fallback; }
+                profileImg.onerror = () => { profileImg.src = fallback; };
+
+                // Fetch Monthly Stats
+                const now = new Date();
+                const mQuery = monthStr(now);
+                document.getElementById('statMonthLabel').textContent = now.toLocaleString('en-IN', { month: 'long', year: 'numeric' });
+                document.getElementById('statTotalDays').textContent = String(daysInMonth(now));
+
+                const out = await VE.api(`/api/staff/attendance?month=${encodeURIComponent(mQuery)}`, { timeoutMs: 15000 });
+                const rows = out?.attendance || [];
+                
+                const presentDays = rows.filter((r) => Boolean(r.check_in_time)).length;
+                document.getElementById('statPresent').textContent = String(presentDays);
+                document.getElementById('statEarnings').textContent = (presentDays * Number(user?.salary_per_day || 0)).toLocaleString('en-IN');
+
+                // Render History Feed
+                renderHistory(rows);
+
+                // Setup Logout
+                VEStaff.hookLogoutButton({ selector: '#logoutBtn' });
+
+            } catch (e) {
+                console.error("Dashboard Init Error:", e);
+                document.getElementById('historyCard').innerHTML = `<div style="text-align:center; color:red; font-size:0.8rem;">Failed to load data.</div>`;
+            }
+        })();
+    </script>
+</body>
+</html>

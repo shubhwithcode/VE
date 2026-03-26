@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Admin Login - Vishwakarma Enterprises</title>
+
+    <link rel="stylesheet" href="../styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary: var(--gold-accent);
+            --bg: var(--maroon-deep);
+            --text: #FFF;
+            --muted: rgba(255, 255, 255, 0.6);
+        }
+
+        body { 
+            font-family: 'Outfit', sans-serif;
+            background-color: var(--bg);
+            background-image: radial-gradient(circle at top right, rgba(197, 160, 41, 0.1) 0%, transparent 40%);
+            color: var(--text);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .login-card {
+            background: rgba(45, 8, 13, 0.95);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            width: 100%;
+            max-width: 480px;
+            border-radius: 40px;
+            border: 1px solid rgba(197, 160, 41, 0.2);
+            padding: 60px;
+            box-shadow: 0 40px 100px rgba(0, 0, 0, 0.6);
+            animation: slideIn 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 48px;
+        }
+
+        .logo-ring {
+            width: 72px;
+            height: 72px;
+            background: var(--gold-accent);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            color: var(--maroon-deep);
+            margin: 0 auto 24px;
+            box-shadow: 0 10px 30px rgba(197, 160, 41, 0.3);
+            font-weight: 900;
+            transform: rotate(-5deg);
+        }
+
+        h1 { 
+            font-family: 'Playfair Display', serif;
+            font-size: 2.25rem; 
+            font-weight: 800; 
+            margin-bottom: 12px; 
+            color: var(--gold-accent);
+        }
+        
+        p { color: var(--muted); font-size: 1rem; font-weight: 500;}
+
+        .form-group { margin-bottom: 28px; }
+        label { display: block; font-size: 0.8rem; font-weight: 700; color: var(--gold-accent); margin-bottom: 10px; text-transform: uppercase; letter-spacing: 2.5px; }
+        
+        input {
+            width: 100%;
+            padding: 18px 24px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            color: white;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            outline: none;
+        }
+
+        input:focus {
+            border-color: var(--gold-accent);
+            background: rgba(255, 255, 255, 0.08);
+            box-shadow: 0 0 0 4px rgba(197, 160, 41, 0.2);
+        }
+
+        button {
+            width: 100%;
+            padding: 20px;
+            background: var(--gold-accent);
+            color: var(--maroon-deep);
+            border: none;
+            border-radius: 999px;
+            font-size: 1rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            box-shadow: 0 15px 40px rgba(197, 160, 41, 0.3);
+            margin-top: 16px;
+        }
+
+        button:hover {
+            background: #FFF;
+            transform: translateY(-5px);
+            box-shadow: 0 20px 50px rgba(197, 160, 41, 0.4);
+        }
+
+        button:active { transform: scale(0.96); }
+
+        #status {
+            text-align: center;
+            margin-top: 24px;
+            font-weight: 700;
+            color: #ef4444;
+            min-height: 24px;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            letter-spacing: 1px;
+        }
+
+        .footer-link {
+            text-align: center;
+            margin-top: 40px;
+        }
+
+        .footer-link a {
+            color: var(--muted);
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 0.9rem;
+            letter-spacing: 1.5px;
+            transition: color 0.3s;
+        }
+
+        .footer-link a:hover { color: var(--gold-accent); }
+
+        @media (max-width: 768px) {
+            body {
+                align-items: flex-start;
+                padding: 18px 14px;
+                min-height: 100dvh;
+                background-image:
+                    radial-gradient(circle at top center, rgba(197, 160, 41, 0.14) 0%, transparent 34%),
+                    radial-gradient(circle at bottom right, rgba(197, 160, 41, 0.08) 0%, transparent 28%);
+            }
+
+            .login-card {
+                max-width: 100%;
+                min-height: calc(100dvh - 36px);
+                border-radius: 32px;
+                padding: 34px 24px 28px;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                box-shadow: 0 24px 60px rgba(0, 0, 0, 0.42);
+            }
+
+            .header {
+                margin-bottom: 32px;
+            }
+
+            .logo-ring {
+                width: 64px;
+                height: 64px;
+                font-size: 1.55rem;
+                margin-bottom: 20px;
+            }
+
+            h1 {
+                font-size: 2rem;
+                margin-bottom: 10px;
+            }
+
+            p {
+                font-size: 0.94rem;
+                line-height: 1.55;
+            }
+
+            .form-group {
+                margin-bottom: 20px;
+            }
+
+            label {
+                font-size: 0.74rem;
+                letter-spacing: 2px;
+                margin-bottom: 8px;
+            }
+
+            input {
+                padding: 16px 18px;
+                border-radius: 18px;
+                font-size: 1rem;
+            }
+
+            button {
+                padding: 18px;
+                font-size: 0.95rem;
+                letter-spacing: 2.4px;
+                margin-top: 12px;
+            }
+
+            #status {
+                margin-top: 18px;
+                min-height: 22px;
+                font-size: 0.76rem;
+                line-height: 1.5;
+            }
+
+            .footer-link {
+                margin-top: 28px;
+            }
+
+            .footer-link a {
+                font-size: 0.82rem;
+                letter-spacing: 1.1px;
+            }
+        }
+
+        @media (max-width: 420px) {
+            body {
+                padding: 12px;
+            }
+
+            .login-card {
+                min-height: calc(100dvh - 24px);
+                padding: 30px 18px 24px;
+                border-radius: 28px;
+            }
+
+            h1 {
+                font-size: 1.82rem;
+            }
+
+            p {
+                font-size: 0.9rem;
+            }
+
+            input {
+                padding: 15px 16px;
+                font-size: 0.96rem;
+            }
+
+            button {
+                padding: 17px;
+                font-size: 0.9rem;
+                letter-spacing: 2px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="login-card">
+        <div class="header">
+            <div class="logo-ring">V</div>
+            <h1>Admin Portal</h1>
+            <p>Authorized access to the Vishwakarma engine</p>
+        </div>
+
+        <form onsubmit="handleAdminLogin(event)">
+            <div class="form-group">
+                <label for="admin-user">Admin ID</label>
+                <input type="text" id="admin-user" placeholder="Enter username" required />
+            </div>
+            <div class="form-group">
+                <label for="admin-pass">Password</label>
+                <input type="password" id="admin-pass" placeholder="••••••••" required />
+            </div>
+
+            <button type="submit" id="loginBtn">Sign In</button>
+        </form>
+
+        <div id="status"></div>
+
+        <div class="footer-link">
+            <a href="../staff/login.html">← Use Staff Portal</a>
+        </div>
+    </div>
+
+    <script src="../app.js"></script>
+    <script>
+        async function handleAdminLogin(event) {
+            event.preventDefault();
+            const statusEl = document.getElementById('status');
+            const btn = document.getElementById('loginBtn');
+            const username = document.getElementById('admin-user').value.trim();
+            const password = document.getElementById('admin-pass').value;
+
+            statusEl.textContent = '';
+            btn.disabled = true;
+            btn.textContent = 'Authenticating...';
+
+            try {
+                const out = await VE.api('/api/auth/login', {
+                    method: 'POST',
+                    headers: { 'content-type': 'application/json' },
+                    body: JSON.stringify({ username, password })
+                });
+
+                if (out && out.token) {
+                    localStorage.setItem('ve_auth_token', out.token);
+                }
+
+                btn.style.background = '#10b981';
+                btn.textContent = 'Success!';
+                
+                setTimeout(() => {
+                    window.location.href = 'dashboard.html';
+                }, 600);
+            } catch (e) {
+                statusEl.textContent = e.message || 'Login failed';
+                btn.disabled = false;
+                btn.textContent = 'Sign In';
+            }
+        }
+    </script>
+</body>
+</html>

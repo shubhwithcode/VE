@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Work Detail - Staff Portal</title>
+    
+    <link rel="stylesheet" href="./staffShell.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary: #5d141f;
+            --bg: #f8f3ea;
+            --card-bg: #ffffff;
+            --text-dark: #2d080d;
+            --text-gray: #7b6767;
+            --border: rgba(93, 20, 31, 0.10);
+            --success: #c5a029;
+            --danger: #8f1f31;
+            --warning: #d28d1c;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent;}
+        
+        body { 
+            background-color: var(--bg);
+            color: var(--text-dark);
+            padding-bottom: 90px;
+            max-width: 480px;
+            margin: 0 auto;
+            position: relative;
+            min-height: 100vh;
+            box-shadow: 0 0 20px rgba(0,0,0,0.05);
+        }
+
+        /* --- Top App Bar --- */
+        .app-bar {
+            background: linear-gradient(135deg, var(--primary), #7a1b29);
+            color: white;
+            padding: 20px;
+            border-bottom-left-radius: 25px;
+            border-bottom-right-radius: 25px;
+            box-shadow: 0 4px 15px rgba(43, 115, 246, 0.25);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .back-btn { background: none; border: none; color: white; font-size: 1.5rem; cursor: pointer; display: flex; align-items: center;}
+        .app-bar-title h1 { font-size: 1.2rem; font-weight: 800; margin: 0; line-height: 1.2; }
+        .app-bar-title p { font-size: 0.75rem; opacity: 0.9; margin: 0; font-weight: 500;}
+
+        /* --- Section Container --- */
+        .section-container { padding: 20px; display: flex; flex-direction: column; gap: 20px; }
+
+        .card {
+            background: var(--card-bg); padding: 20px; border-radius: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.03); border: 1px solid var(--border);
+        }
+
+        .sec-title { font-size: 1.05rem; font-weight: 800; color: var(--text-dark); margin: 0 0 15px 0; display: flex; justify-content: space-between; align-items: center;}
+        
+        /* Status Display */
+        .status-grid { display: flex; flex-direction: column; gap: 10px;}
+        .status-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px dashed var(--border);}
+        .status-row:last-child { border-bottom: none; padding-bottom: 0;}
+        .s-label { font-size: 0.8rem; color: var(--text-gray); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;}
+        .s-val { font-size: 0.9rem; font-weight: 700; color: var(--text-dark);}
+        .s-badge { padding: 4px 10px; border-radius: 12px; font-size: 0.7rem; font-weight: 800; background: #e0e7ff; color: var(--primary);}
+
+        /* --- Form Elements --- */
+        .input-group { margin-bottom: 15px;}
+        .input-group label { display: block; font-size: 0.8rem; font-weight: 700; color: var(--text-gray); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;}
+        
+        .work-textarea {
+            width: 100%; padding: 14px; border: 1px solid var(--border); border-radius: 12px;
+            font-size: 0.95rem; background: #f8fafc; color: var(--text-dark); font-weight: 500;
+            transition: 0.3s; outline: none; height: 100px; resize: none; line-height: 1.5;
+        }
+        .work-textarea:focus { border-color: var(--primary); background: white; box-shadow: 0 0 0 3px rgba(43, 115, 246, 0.1); }
+
+        .file-upload-box {
+            position: relative; width: 100%; padding: 15px; border: 2px dashed var(--border); border-radius: 12px;
+            background: #f8fafc; display: flex; flex-direction: column; align-items: center; justify-content: center;
+            gap: 5px; cursor: pointer; transition: 0.2s; text-align: center;
+        }
+        .file-upload-box:active { background: #e2e8f0; }
+        .file-upload-box input[type="file"] { position: absolute; width: 100%; height: 100%; opacity: 0; cursor: pointer; }
+        .fu-icon { font-size: 1.5rem; color: var(--text-gray);}
+        .fu-text { font-size: 0.8rem; font-weight: 600; color: var(--text-dark);}
+        
+        /* Voice Recorder UI */
+        .voice-box {
+            background: #f8fafc; border: 1px solid var(--border); border-radius: 12px; padding: 15px;
+            display: flex; flex-direction: column; gap: 10px; align-items: center;
+        }
+        .btn-record {
+            background: #fee2e2; color: var(--danger); border: none; padding: 12px 20px; border-radius: 20px;
+            font-size: 0.9rem; font-weight: 800; display: flex; align-items: center; gap: 8px; cursor: pointer; transition: 0.2s;
+            box-shadow: 0 4px 10px rgba(239, 68, 68, 0.15); width: 100%; justify-content: center;
+        }
+        .btn-record.recording { background: var(--danger); color: white; animation: pulse 1.5s infinite;}
+        @keyframes pulse { 0% {box-shadow: 0 0 0 0 rgba(239,68,68,0.4);} 70% {box-shadow: 0 0 0 10px rgba(239,68,68,0);} 100% {box-shadow: 0 0 0 0 rgba(239,68,68,0);}}
+        
+        #audioPrev { width: 100%; height: 40px; border-radius: 8px; }
+
+        .btn-submit {
+            width: 100%; padding: 16px; background: var(--primary); color: white;
+            border: none; border-radius: 14px; font-size: 1rem; font-weight: 800;
+            cursor: pointer; transition: 0.2s; box-shadow: 0 8px 20px rgba(43, 115, 246, 0.25);
+            display: flex; justify-content: center; align-items: center; margin-top: 10px;
+        }
+        .btn-submit:active { transform: scale(0.97); box-shadow: 0 4px 10px rgba(43, 115, 246, 0.15); }
+        .btn-submit:disabled { background: #cbd5e1; box-shadow: none; cursor: not-allowed; transform: none;}
+
+        #submitStatus { text-align: center; margin-top: 10px; font-size: 0.85rem; font-weight: 700; min-height: 20px; color: var(--success); }
+
+        /* --- Bottom Nav --- */
+        .bottom-nav {
+            position: fixed; bottom: 0; left: 0; width: 100%; max-width: 480px;
+            background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+            border-top: 1px solid var(--border); padding: 10px 15px 25px 15px; 
+            display: flex; justify-content: space-around; z-index: 1000; box-shadow: 0 -4px 20px rgba(0,0,0,0.04);
+            left: 50%; transform: translateX(-50%);
+        }
+        .nav-item { display: flex; flex-direction: column; align-items: center; gap: 4px; color: var(--text-gray); text-decoration: none; font-size: 0.7rem; font-weight: 700; }
+        .nav-item .icon { font-size: 1.4rem; opacity: 0.5; transition: 0.3s;}
+        .nav-item.active { color: var(--primary); }
+        .nav-item.active .icon { opacity: 1; transform: translateY(-2px);}
+
+    </style>
+</head>
+<body>
+
+    <div class="app-bar">
+        <button class="back-btn" onclick="window.history.back()">←</button>
+        <div class="app-bar-title">
+            <h1>Work Report</h1>
+            <p>Submit daily task details</p>
+        </div>
+    </div>
+
+    <div class="section-container">
+        
+        <div class="card">
+            <div class="sec-title">
+                Today's Status 
+                <span class="s-badge" id="todayPill">Loading...</span>
+            </div>
+            
+            <div class="status-grid">
+                <div class="status-row">
+                    <span class="s-label">Check-In</span>
+                    <span class="s-val" id="valIn">--:--</span>
+                </div>
+                <div class="status-row">
+                    <span class="s-label">Check-Out</span>
+                    <span class="s-val" id="valOut">--:--</span>
+                </div>
+                <div class="status-row">
+                    <span class="s-label">Work Detail</span>
+                    <span class="s-val" id="valStatus" style="color: var(--warning);">Pending</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h3 class="sec-title">Submit Details</h3>
+            
+            <div class="input-group">
+                <label>Work Description *</label>
+                <textarea id="desc" class="work-textarea" placeholder="Describe the tasks completed today..."></textarea>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                <div class="input-group" style="margin: 0;">
+                    <label>Photo Proof</label>
+                    <div class="file-upload-box">
+                        <input type="file" id="workImg" accept="image/*">
+                        <div class="fu-icon">📸</div>
+                        <div class="fu-text">Tap to attach</div>
+                    </div>
+                </div>
+
+                <div class="input-group" style="margin: 0;">
+                    <label>Voice Note</label>
+                    <div class="voice-box">
+                        <button class="btn-record" id="recBtn">
+                            <span id="recIcon">🎙️</span> <span id="recText">Record</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <audio id="audioPrev" controls hidden style="width:100%; margin-top: 10px;"></audio>
+
+            <button class="btn-submit" id="submitBtn">Submit Report</button>
+            <div id="submitStatus"></div>
+        </div>
+
+    </div>
+
+    <div class="bottom-nav">
+        <a href="dashboard.html" class="nav-item">
+            <span class="icon">📊</span>
+            <span>Home</span>
+        </a>
+        <a href="attendance.html" class="nav-item active">
+            <span class="icon">📸</span>
+            <span>Attnd</span>
+        </a>
+        <a href="apply-leave.html" class="nav-item">
+            <span class="icon">🗓️</span>
+            <span>Leaves</span>
+        </a>
+        <a href="myprofile.html" class="nav-item">
+            <span class="icon">👤</span>
+            <span>Profile</span>
+        </a>
+    </div>
+
+    <script src="../app.js"></script>
+    <script src="./staffCommon.js"></script>
+    <script src="./bottomNav.js"></script>
+    
+    <script>
+        const todayPill = document.getElementById('todayPill');
+        const submitStatus = document.getElementById('submitStatus');
+        const descEl = document.getElementById('desc');
+        const workImgEl = document.getElementById('workImg');
+        const recBtn = document.getElementById('recBtn');
+        const recText = document.getElementById('recText');
+        const audioPrev = document.getElementById('audioPrev');
+        const submitBtn = document.getElementById('submitBtn');
+
+        let recorder = null;
+        let recChunks = [];
+        let recTimer = null;
+        let recStartedAt = 0;
+        let voiceBlob = null;
+
+        function formatTimeLocal(isoString) {
+            if (!isoString) return '--:--';
+            const d = new Date(isoString);
+            return d.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
+        }
+
+        function renderToday(out) {
+            const att = out.attendance || null;
+            const wd = out.workDetail || null;
+            
+            todayPill.textContent = out.date || new Date().toISOString().slice(0,10);
+            
+            document.getElementById('valIn').textContent = formatTimeLocal(att?.check_in_time);
+            document.getElementById('valOut').textContent = formatTimeLocal(att?.check_out_time);
+            
+            const statusEl = document.getElementById('valStatus');
+            if(wd) {
+                statusEl.textContent = "Submitted ✓";
+                statusEl.style.color = "var(--success)";
+                descEl.value = wd.work_description || '';
+            } else {
+                statusEl.textContent = "Pending";
+                statusEl.style.color = "var(--warning)";
+            }
+        }
+
+        async function loadToday() {
+            try {
+                const out = await VE.api('/api/staff/today');
+                renderToday(out);
+            } catch (e) {
+                todayPill.textContent = "Error loading";
+            }
+        }
+
+        async function submitWork() {
+            try {
+                const desc = String(descEl.value || '').trim();
+                const img = workImgEl.files?.[0] || null;
+                const hasMedia = Boolean(img || voiceBlob);
+                const descToSend = desc || (hasMedia ? 'Attached media.' : '');
+                if (!descToSend) throw new Error('Please add a description, photo or voice note.');
+
+                submitBtn.disabled = true;
+                submitBtn.textContent = "Submitting...";
+                submitStatus.textContent = "";
+
+                const fd = new FormData();
+                fd.set('work_description', descToSend);
+                if (img) fd.set('work_image', img);
+                
+                if (voiceBlob) {
+                    fd.set('voice_record', new File([voiceBlob], 'voice.webm', { type: voiceBlob.type || 'audio/webm' }));
+                }
+
+                await VE.api('/api/staff/work-detail', { method: 'POST', body: fd });
+                
+                submitBtn.style.background = "var(--success)";
+                submitBtn.textContent = "Submitted ✓";
+                setTimeout(() => {
+                    submitBtn.disabled = false;
+                    submitBtn.style.background = "var(--primary)";
+                    submitBtn.textContent = "Submit Report";
+                }, 2000);
+
+                await loadToday();
+            } catch (e) {
+                submitBtn.disabled = false;
+                submitBtn.textContent = "Submit Report";
+                submitStatus.style.color = "var(--danger)";
+                submitStatus.textContent = e.message || 'Error occurred';
+            }
+        }
+
+        async function toggleRecording() {
+            if (recorder && recorder.state === 'recording') {
+                recorder.stop();
+                return;
+            }
+
+            if (!('MediaRecorder' in window)) {
+                alert('Voice recording not supported in your browser');
+                return;
+            }
+
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                recChunks = [];
+                recorder = new MediaRecorder(stream);
+                
+                recorder.addEventListener('dataavailable', (e) => {
+                    if (e.data && e.data.size > 0) recChunks.push(e.data);
+                });
+                
+                recorder.addEventListener('stop', () => {
+                    try { for (const track of stream.getTracks()) track.stop(); } catch {}
+                    
+                    voiceBlob = new Blob(recChunks, { type: recChunks[0]?.type || 'audio/webm' });
+                    const url = URL.createObjectURL(voiceBlob);
+                    
+                    audioPrev.hidden = false;
+                    audioPrev.src = url;
+                    
+                    recBtn.classList.remove('recording');
+                    recText.textContent = 'Re-record';
+                    if (recTimer) window.clearInterval(recTimer);
+                });
+
+                recorder.start();
+                recStartedAt = Date.now();
+                recBtn.classList.add('recording');
+                
+                if (recTimer) window.clearInterval(recTimer);
+                recTimer = window.setInterval(() => {
+                    const sec = Math.floor((Date.now() - recStartedAt) / 1000);
+                    recText.textContent = `Recording... ${sec}s`;
+                }, 500);
+
+            } catch (err) {
+                alert("Microphone access denied.");
+            }
+        }
+
+        (async function init() {
+            if (typeof VEStaff !== 'undefined') await VEStaff.ensureStaff();
+            
+            submitBtn.addEventListener('click', submitWork);
+            recBtn.addEventListener('click', toggleRecording);
+            
+            await loadToday();
+        })();
+    </script>
+</body>
+</html>

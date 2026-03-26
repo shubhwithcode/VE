@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Salary & Log - Staff Portal</title>
+    
+    <link rel="stylesheet" href="./staffShell.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary: #5d141f;
+            --bg: #f8f3ea;
+            --card-bg: #ffffff;
+            --text-dark: #2d080d;
+            --text-gray: #7b6767;
+            --border: rgba(93, 20, 31, 0.10);
+            --success: #c5a029;
+            --danger: #8f1f31;
+            --warning: #d28d1c;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent;}
+        
+        body { 
+            background-color: var(--bg);
+            color: var(--text-dark);
+            padding-bottom: 90px;
+            max-width: 480px;
+            margin: 0 auto;
+            position: relative;
+            min-height: 100vh;
+            box-shadow: 0 0 20px rgba(0,0,0,0.05);
+        }
+
+        /* --- Top App Bar --- */
+        .app-bar {
+            background: linear-gradient(135deg, var(--primary), #7a1b29);
+            color: white;
+            padding: 20px 20px 35px 20px;
+            border-bottom-left-radius: 25px;
+            border-bottom-right-radius: 25px;
+            box-shadow: 0 4px 15px rgba(43, 115, 246, 0.25);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .back-btn { background: none; border: none; color: white; font-size: 1.5rem; cursor: pointer; display: flex; align-items: center;}
+        .app-bar-title h1 { font-size: 1.2rem; font-weight: 800; margin: 0; line-height: 1.2; }
+        .app-bar-title p { font-size: 0.75rem; opacity: 0.9; margin: 0; font-weight: 500;}
+
+        /* --- Floating Filter & Summary --- */
+        .summary-card {
+            background: var(--card-bg); margin: -20px 20px 20px 20px; padding: 20px;
+            border-radius: 20px; box-shadow: 0 8px 25px rgba(0,0,0,0.06);
+            position: relative; z-index: 101; border: 1px solid var(--border);
+            display: flex; flex-direction: column; gap: 15px;
+        }
+
+        .month-picker {
+            width: 100%; padding: 12px 15px; border-radius: 12px; border: 1px solid var(--border);
+            background: #f8fafc; color: var(--primary); font-size: 1rem; font-weight: 700;
+            outline: none; transition: 0.3s; text-align: center;
+        }
+        .month-picker:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(43, 115, 246, 0.1); background: white;}
+
+        .stats-row { display: flex; justify-content: space-between; align-items: center; border-top: 1px dashed var(--border); padding-top: 15px;}
+        
+        .stat-block { display: flex; flex-direction: column; gap: 2px;}
+        .stat-block.right { text-align: right; }
+        
+        .stat-label { font-size: 0.7rem; color: var(--text-gray); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;}
+        .stat-val { font-size: 1.4rem; font-weight: 800; color: var(--text-dark);}
+        .stat-val.money { color: var(--success); font-size: 1.6rem;}
+        
+        /* --- Daily Log Ledger --- */
+        .section-container { padding: 0 20px; }
+        .sec-title { font-size: 1.05rem; font-weight: 800; color: var(--text-dark); margin: 0 0 15px 0;}
+
+        .ledger-list { display: flex; flex-direction: column; gap: 10px; }
+        
+        .ledger-item {
+            background: var(--card-bg); border-radius: 14px; padding: 15px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.02); border: 1px solid var(--border);
+            display: flex; justify-content: space-between; align-items: center;
+        }
+
+        .li-date { display: flex; flex-direction: column; align-items: center; justify-content: center; background: #f1f5f9; border-radius: 10px; min-width: 55px; height: 55px; }
+        .li-date .day { font-size: 1.1rem; font-weight: 800; color: var(--primary); line-height: 1;}
+        .li-date .month { font-size: 0.65rem; font-weight: 700; color: var(--text-gray); text-transform: uppercase; margin-top: 2px;}
+
+        .li-details { flex: 1; margin-left: 15px; display: flex; flex-direction: column; gap: 4px;}
+        .li-times { font-size: 0.8rem; font-weight: 600; color: var(--text-dark); display: flex; gap: 10px;}
+        .li-times span { display: flex; align-items: center; gap: 4px;}
+        .li-times .icon { color: var(--text-gray); font-size: 0.9rem;}
+
+        .status-badge {
+            padding: 4px 10px; border-radius: 20px; font-size: 0.65rem; font-weight: 800;
+            text-transform: uppercase; letter-spacing: 0.5px; text-align: center;
+        }
+        .status-present { background-color: #dcfce7; color: #166534; }
+        .status-absent { background-color: #f1f5f9; color: var(--text-gray); }
+
+        .li-amount { font-size: 0.9rem; font-weight: 800; color: var(--success); }
+
+        /* --- Bottom Nav --- */
+        .bottom-nav {
+            position: fixed; bottom: 0; left: 0; width: 100%; max-width: 480px;
+            background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+            border-top: 1px solid var(--border); padding: 10px 15px 25px 15px; 
+            display: flex; justify-content: space-around; z-index: 1000; box-shadow: 0 -4px 20px rgba(0,0,0,0.04);
+            left: 50%; transform: translateX(-50%);
+        }
+        .nav-item { display: flex; flex-direction: column; align-items: center; gap: 4px; color: var(--text-gray); text-decoration: none; font-size: 0.7rem; font-weight: 700; }
+        .nav-item .icon { font-size: 1.4rem; opacity: 0.5; transition: 0.3s;}
+        .nav-item.active { color: var(--primary); }
+        .nav-item.active .icon { opacity: 1; transform: translateY(-2px);}
+
+    </style>
+</head>
+<body>
+
+    <div class="app-bar">
+        <button class="back-btn" onclick="window.location.href='dashboard.html'">←</button>
+        <div class="app-bar-title">
+            <h1>Salary Details</h1>
+            <p>Monthly earnings & logs</p>
+        </div>
+    </div>
+
+    <div class="summary-card">
+        <input type="month" id="monthPicker" class="month-picker">
+        
+        <div class="stats-row">
+            <div class="stat-block">
+                <span class="stat-label">Days Present</span>
+                <span class="stat-val"><span id="totalDays">0</span> <span style="font-size: 0.8rem; color: var(--text-gray);">days</span></span>
+            </div>
+            <div class="stat-block right">
+                <span class="stat-label">Est. Earnings</span>
+                <span class="stat-val money">₹<span id="totalEarnings">0</span></span>
+            </div>
+        </div>
+        <div style="text-align: center; font-size: 0.7rem; color: var(--text-gray); font-weight: 500;">
+            Calculated at ₹<span id="salaryRate">0</span>/day
+        </div>
+    </div>
+
+    <div class="section-container">
+        <h3 class="sec-title">Daily Log</h3>
+        
+        <div class="ledger-list" id="ledgerList">
+            <div style="text-align: center; padding: 40px; color: var(--text-gray); font-size: 0.85rem; font-weight: 500;">
+                Loading records...
+            </div>
+        </div>
+    </div>
+
+    <div class="bottom-nav">
+        <a href="dashboard.html" class="nav-item">
+            <span class="icon">📊</span>
+            <span>Home</span>
+        </a>
+        <a href="attendance.html" class="nav-item">
+            <span class="icon">📸</span>
+            <span>Attnd</span>
+        </a>
+        <a href="apply-leave.html" class="nav-item">
+            <span class="icon">🗓️</span>
+            <span>Leaves</span>
+        </a>
+        <a href="myprofile.html" class="nav-item">
+            <span class="icon">👤</span>
+            <span>Profile</span>
+        </a>
+    </div>
+
+    <script src="../app.js"></script>
+    <script src="./staffCommon.js"></script>
+    <script src="./bottomNav.js"></script>
+    
+    <script>
+        let currentUser = null;
+
+        function formatTime(isoString) {
+            if (!isoString) return '--:--';
+            const d = new Date(isoString);
+            return d.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true });
+        }
+
+        function renderRow(r) {
+            const dateObj = new Date(r.date);
+            const dayNum = dateObj.toLocaleDateString('en-IN', { day: '2-digit' });
+            const monthStr = dateObj.toLocaleDateString('en-IN', { month: 'short' });
+            
+            const isPresent = !!r.check_in_time;
+            const statusClass = isPresent ? 'status-present' : 'status-absent';
+            const statusText = isPresent ? 'Present' : 'Absent';
+            
+            // Show money earned if present
+            const earnedText = isPresent ? `+ ₹${currentUser?.salary_per_day || 0}` : '-';
+
+            return `
+            <div class="ledger-item">
+                <div class="li-date">
+                    <span class="day">${dayNum}</span>
+                    <span class="month">${monthStr}</span>
+                </div>
+                
+                <div class="li-details">
+                    <div class="status-badge ${statusClass}">${statusText}</div>
+                    <div class="li-times">
+                        <span><span class="icon">🟢</span> ${formatTime(r.check_in_time)}</span>
+                        <span><span class="icon">🔴</span> ${formatTime(r.check_out_time)}</span>
+                    </div>
+                </div>
+
+                <div class="li-amount" style="${!isPresent ? 'color: var(--text-gray); font-weight: 500;' : ''}">
+                    ${earnedText}
+                </div>
+            </div>`;
+        }
+
+        async function loadDataForMonth() {
+            const monthVal = document.getElementById('monthPicker').value;
+            const ledgerEl = document.getElementById('ledgerList');
+            
+            if (!monthVal) return;
+            
+            ledgerEl.innerHTML = `<div style="text-align: center; padding: 30px; color: var(--text-gray); font-size: 0.85rem; font-weight: 500;">Loading...</div>`;
+            
+            try {
+                const out = await VE.api(`/api/staff/attendance?month=${encodeURIComponent(monthVal)}`);
+                const rows = out.attendance || [];
+                
+                // Calculations
+                const presentDays = rows.filter((r) => r.check_in_time).length;
+                const salaryPerDay = Number(currentUser?.salary_per_day || 0);
+                const totalSalary = presentDays * salaryPerDay;
+                
+                // Update UI Summary
+                document.getElementById('totalDays').innerText = presentDays;
+                document.getElementById('totalEarnings').innerText = totalSalary.toLocaleString('en-IN');
+                document.getElementById('salaryRate').innerText = salaryPerDay;
+
+                // Render List
+                if(rows.length > 0) {
+                    // Reverse to show latest dates first
+                    ledgerEl.innerHTML = rows.reverse().map(renderRow).join('');
+                } else {
+                    ledgerEl.innerHTML = `
+                    <div style="text-align: center; padding: 40px 20px; background: white; border-radius: 16px; border: 1px dashed var(--border);">
+                        <h4 style="color: var(--text-gray); margin-bottom: 5px;">No Records Found</h4>
+                        <p style="font-size: 0.8rem; color: #94a3b8;">No attendance data for this month.</p>
+                    </div>`;
+                }
+
+            } catch (e) {
+                ledgerEl.innerHTML = `<div style="text-align: center; padding: 20px; color: var(--danger); font-size: 0.85rem; font-weight: 600;">Error fetching data. Check your connection.</div>`;
+            }
+        }
+
+        (async function init() {
+            if (typeof VEStaff !== 'undefined') currentUser = await VEStaff.ensureStaff();
+            
+            // Set Default Month to Current
+            const now = new Date();
+            const monthPicker = document.getElementById('monthPicker');
+            monthPicker.value = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+            
+            // Listen for changes
+            monthPicker.addEventListener('change', loadDataForMonth);
+            
+            // Initial Load
+            await loadDataForMonth();
+        })();
+    </script>
+</body>
+</html>

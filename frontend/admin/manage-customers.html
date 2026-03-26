@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Customer Base - Vishwakarma Enterprises</title>
+
+    <link rel="stylesheet" href="../styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet" />
+    <link rel="stylesheet" href="./uiShell.css">
+
+    <style>
+        :root {
+            --brand-primary: var(--maroon-main);
+            --brand-secondary: var(--maroon-deep);
+            --bg-color: var(--bg-cream);
+            --card-bg: #ffffff;
+            --text-dark: #1f2937;
+            --text-muted: #6b7280;
+            --border-color: rgba(45, 8, 13, 0.1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent;}
+        
+        body { 
+            background-color: var(--bg-cream);
+            color: var(--text-dark);
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+        }
+
+        .admin-main {
+            padding-top: 120px;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding-bottom: 100px;
+        }
+
+        /* --- Action Bar --- */
+        .action-bar {
+            background: rgba(255, 255, 255, 0.96);
+            backdrop-filter: blur(20px);
+            margin: 0 20px 32px 20px;
+            padding: 16px 24px;
+            border-radius: 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+            border: 1px solid rgba(45, 8, 13, 0.1);
+        }
+
+        .search {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex: 1;
+            padding: 10px 20px;
+            border-radius: 16px;
+            border: 1px solid var(--border-color);
+            background: #fff;
+        }
+
+        .search-box {
+            border: none; outline: none; font-size: 0.95rem; font-weight: 700; color: var(--text-dark); background: transparent; width: 100%;
+        }
+
+        /* --- Customer Grid --- */
+        .customer-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 25px;
+            padding: 0 20px;
+        }
+
+        .customer-card {
+            background: #FFF;
+            border-radius: 28px;
+            padding: 30px;
+            border: 1px solid var(--border-color);
+            transition: 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            position: relative;
+        }
+
+        .customer-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.04);
+            border-color: var(--gold-accent);
+        }
+
+        .customer-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .customer-avatar {
+            width: 60px;
+            height: 60px;
+            background: var(--maroon-main);
+            color: white;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-family: 'Playfair Display', serif;
+            font-weight: 900;
+        }
+
+        .customer-info h3 {
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: var(--maroon-deep);
+            margin-bottom: 2px;
+        }
+
+        .customer-info p {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            font-weight: 700;
+        }
+
+        .data-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .data-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+
+        .data-item .material-symbols-rounded {
+            font-size: 1.2rem;
+            color: var(--maroon-main);
+            opacity: 0.7;
+        }
+
+        .data-text {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: #374151;
+            line-height: 1.4;
+        }
+
+        .data-label {
+            display: block;
+            font-size: 0.65rem;
+            color: var(--text-muted);
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 2px;
+        }
+
+        .card-actions {
+            display: flex;
+            gap: 10px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(45, 8, 13, 0.05);
+        }
+
+        .btn-card {
+            flex: 1;
+            padding: 12px;
+            border-radius: 14px;
+            border: none;
+            cursor: pointer;
+            font-weight: 800;
+            font-size: 0.8rem;
+            transition: 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-msg { background: var(--maroon-main); color: white; }
+        .btn-del { background: #fee2e2; color: #b91c1c; }
+
+        @media (max-width: 768px) {
+            .admin-main {
+                padding-bottom: 112px;
+            }
+
+            .action-bar {
+                margin: 0 0 20px;
+                padding: 14px;
+                gap: 12px;
+                border-radius: 22px;
+            }
+
+            .search {
+                padding: 8px 14px;
+                gap: 10px;
+                min-height: 52px;
+                border-radius: 14px;
+            }
+
+            .search-box {
+                font-size: 0.88rem;
+            }
+
+            .customer-grid {
+                grid-template-columns: 1fr;
+                gap: 14px;
+                padding: 0;
+            }
+
+            .customer-card {
+                padding: 18px 16px;
+                border-radius: 22px;
+            }
+
+            .customer-header {
+                gap: 12px;
+                margin-bottom: 18px;
+            }
+
+            .customer-avatar {
+                width: 48px;
+                height: 48px;
+                border-radius: 16px;
+                font-size: 1.15rem;
+            }
+
+            .customer-info h3 {
+                font-size: 1.05rem;
+            }
+
+            .customer-info p {
+                font-size: 0.72rem;
+            }
+
+            .data-list {
+                gap: 12px;
+                margin-bottom: 18px;
+            }
+
+            .data-text {
+                font-size: 0.88rem;
+            }
+
+            .card-actions {
+                padding-top: 14px;
+                gap: 8px;
+            }
+
+            .btn-card {
+                padding: 10px;
+                border-radius: 12px;
+                font-size: 0.74rem;
+            }
+        }
+
+    </style>
+</head>
+<body>
+
+    <div id="veHeaderMount"></div>
+
+    <main class="admin-main container">
+        <header class="showroom-title reveal active" style="margin-bottom: 50px;">
+            <p class="hero-subtitle">Client Relations</p>
+            <h1>Customer Base</h1>
+            <div class="divider"></div>
+        </header>
+
+        <div class="action-bar">
+            <div class="search">
+                <span class="material-symbols-rounded" style="color: var(--maroon-main);">search</span>
+                <input type="text" class="search-box" id="customerSearch" placeholder="Search by name or contact number...">
+            </div>
+            <div style="font-weight: 800; color: var(--maroon-main);">
+                Registered Clients: <span id="customerCount">0</span>
+            </div>
+        </div>
+
+        <div class="customer-grid" id="customerGrid">
+            <!-- Dynamic Customers -->
+        </div>
+
+    </main>
+
+    <div id="veFooterMount"></div>
+    <script src="../layout.js"></script>
+    <script src="../app.js"></script>
+    <script src="./adminCommon.js"></script>
+
+    <script>
+        const customerGrid = document.getElementById('customerGrid');
+        const customerCount = document.getElementById('customerCount');
+
+        function initials(name) {
+            const parts = String(name || '').trim().split(/\s+/).filter(Boolean);
+            return (parts[0]?.[0] || 'V') + (parts.length > 1 ? parts[parts.length-1][0] : '');
+        }
+
+        function createCustomerCard(c) {
+            return `
+                <div class="customer-card" data-search="${c.name.toLowerCase()} ${c.phone || ''}">
+                    <div class="customer-header">
+                        <div class="customer-avatar">${initials(c.name)}</div>
+                        <div class="customer-info">
+                            <h3>${c.name}</h3>
+                            <p>Customer ID: #CID-${c.id}</p>
+                        </div>
+                    </div>
+                    <div class="data-list">
+                        <div class="data-item">
+                            <span class="material-symbols-rounded">call</span>
+                            <div>
+                                <span class="data-label">Primary Contact</span>
+                                <span class="data-text">${c.phone || 'N/A'}</span>
+                            </div>
+                        </div>
+                        <div class="data-item">
+                            <span class="material-symbols-rounded">mail</span>
+                            <div>
+                                <span class="data-label">Email Address</span>
+                                <span class="data-text">${c.email || 'N/A'}</span>
+                            </div>
+                        </div>
+                        <div class="data-item">
+                            <span class="material-symbols-rounded">home_pin</span>
+                            <div>
+                                <span class="data-label">Shipping / Site Address</span>
+                                <span class="data-text">${c.address || 'Address not registered'}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-actions">
+                        <a href="tel:${c.phone}" class="btn-card btn-msg" style="text-decoration: none;">
+                            <span class="material-symbols-rounded" style="font-size: 1.1rem;">call</span>
+                            Call Client
+                        </a>
+                        <button class="btn-card btn-del" onclick="deleteCustomer(${c.id})">
+                            <span class="material-symbols-rounded" style="font-size: 1.1rem;">person_remove</span>
+                            Remove
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        async function loadCustomers() {
+            customerGrid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 40px 20px; color: #9ca3af; font-weight: 700;">Accessing the client records...</div>';
+            try {
+                const out = await VE.api('/api/admin/customers');
+                if (out.customers && out.customers.length > 0) {
+                    customerGrid.innerHTML = out.customers.map(createCustomerCard).join('');
+                    customerCount.textContent = out.customers.length;
+                } else {
+                    customerGrid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 40px 20px; color: #9ca3af; font-weight: 700; line-height: 1.6;">No customers registered in the database yet.</div>';
+                    customerCount.textContent = '0';
+                }
+            } catch (e) {
+                customerGrid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 40px 20px; color: #ef4444; font-weight: 700;">Records transmission failed.</div>';
+            }
+        }
+
+        async function deleteCustomer(id) {
+            if (!confirm('Are you sure you want to remove this client from the database? This is permanent.')) return;
+            try {
+                await VE.api(`/api/admin/customers/${id}`, { method: 'DELETE' });
+                await loadCustomers();
+            } catch (e) {
+                alert('Action failed: ' + e.message);
+            }
+        }
+
+        document.getElementById('customerSearch').addEventListener('input', (e) => {
+            const query = e.target.value.toLowerCase();
+            document.querySelectorAll('.customer-card').forEach(card => {
+                const search = card.getAttribute('data-search');
+                card.style.display = search.includes(query) ? '' : 'none';
+            });
+        });
+
+        (async function init() {
+            if (typeof VEAdmin !== 'undefined') await VEAdmin.ensureAdmin();
+            loadCustomers();
+        })();
+    </script>
+</body>
+</html>

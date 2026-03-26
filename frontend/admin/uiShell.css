@@ -1,0 +1,280 @@
+/* 
+   Vishwakarma Dashboard UI Styles 
+   Maroon & Gold Theme synchronised with global showroom
+*/
+
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap');
+
+:root {
+  --primary: var(--maroon-main);
+  --primary-glow: rgba(93, 20, 31, 0.15);
+  --bg: var(--bg-cream);
+  --panel: #ffffff;
+  --text: var(--text-dark);
+  --muted: var(--text-muted);
+  --border: rgba(45, 8, 13, 0.1);
+  --success: #10b981;
+  --danger: #ef4444;
+  --warning: #f59e0b;
+  --radius: 20px;
+  --shadow: 0 10px 40px rgba(45, 8, 13, 0.05);
+  --glass: rgba(255, 255, 255, 0.9);
+}
+
+html.ve-dark {
+  --bg: #140406;
+  --panel: #1D0609;
+  --text: #F9F7F2;
+  --muted: #9D8A8B;
+  --border: rgba(197, 160, 41, 0.1);
+  --glass: rgba(29, 6, 9, 0.85);
+}
+
+* {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  font-family: 'Outfit', sans-serif;
+  background-color: var(--bg);
+  color: var(--text);
+  margin: 0;
+  transition: background-color 0.4s ease;
+  line-height: 1.6;
+}
+
+/* Mobile-first constraints */
+body.staffPortal, body.adminPortal {
+  max-width: 480px;
+  margin: 0 auto;
+  min-height: 100vh;
+  box-shadow: 0 0 60px rgba(45, 8, 13, 0.15);
+  background: var(--bg);
+}
+
+@media (min-width: 1024px) {
+  body.adminPortal:not(.mobile-only) {
+    max-width: 1400px;
+    box-shadow: none;
+  }
+}
+
+/* Grids & Panels */
+.overviewGrid, .stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+  padding: 0 20px 40px 20px;
+}
+
+.dashStatCard, .stat-card {
+  background: var(--panel);
+  padding: 30px;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  cursor: pointer;
+}
+
+.dashStatCard:hover, .stat-card:hover {
+  transform: translateY(-8px);
+  border-color: var(--gold-accent);
+  box-shadow: 0 30px 60px rgba(45, 8, 13, 0.1);
+}
+
+.stat-card .title {
+  font-size: 0.75rem;
+  color: var(--muted);
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+}
+
+.stat-card .val, .statNum {
+  font-size: 2rem;
+  font-weight: 800;
+  font-family: 'Playfair Display', serif;
+  color: var(--maroon-main);
+}
+
+/* Cards & Feed */
+.attn-card, .qaItem, .card {
+  background: var(--panel);
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  padding: 24px;
+  margin-bottom: 24px;
+  box-shadow: var(--shadow);
+  transition: all 0.3s ease;
+}
+
+.attn-card.is-late {
+  border-left: 6px solid #ef4444;
+}
+
+/* Badges */
+.badge, .pill {
+  display: inline-flex;
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.badge.working { background: rgba(197, 160, 41, 0.1); color: #856a1b; border: 1px solid rgba(197, 160, 41, 0.2); }
+.badge.completed { background: rgba(16, 185, 129, 0.1); color: #047857; border: 1px solid rgba(16, 185, 129, 0.2); }
+.badge.late { background: rgba(239, 68, 68, 0.1); color: #b91c1c; border: 1px solid rgba(239, 68, 68, 0.2); }
+
+/* Forms & Buttons */
+input, select, textarea {
+  font-family: 'Outfit', sans-serif;
+  border-radius: 12px;
+  padding: 14px 18px;
+  font-size: 0.95rem;
+  transition: all 0.3s ease;
+  border: 1px solid var(--border);
+  background: #f9fafb;
+  outline: none;
+}
+
+input:focus, select:focus {
+  border-color: var(--maroon-main);
+  background: #fff;
+  box-shadow: 0 0 0 4px rgba(45, 8, 13, 0.05);
+}
+
+button {
+  background: var(--maroon-main);
+  color: white;
+  border: none;
+  font-weight: 800;
+  cursor: pointer;
+  padding: 16px 32px;
+  border-radius: 999px;
+  box-shadow: 0 10px 30px rgba(45, 8, 13, 0.15);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 20px 40px rgba(45, 8, 13, 0.25);
+}
+
+button.secondary {
+  background: #fff;
+  color: var(--maroon-main);
+  border: 1px solid var(--border);
+}
+
+button:active {
+  transform: scale(0.97);
+}
+
+/* Skeleton Loading */
+.skeleton {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite linear;
+}
+
+@keyframes shimmer {
+  to { background-position: -200% 0; }
+}
+
+@media (max-width: 900px) {
+  body.admin-shell-page .showroom-title {
+    margin-bottom: 22px !important;
+    text-align: left;
+  }
+
+  body.admin-shell-page .showroom-title .hero-subtitle {
+    font-size: 0.68rem;
+    letter-spacing: 4px;
+    margin-bottom: 10px;
+  }
+
+  body.admin-shell-page .showroom-title h1 {
+    font-size: clamp(2.2rem, 11vw, 3.4rem);
+    line-height: 0.95;
+  }
+
+  body.admin-shell-page .showroom-title .divider {
+    margin: 18px 0 0 !important;
+  }
+
+  body.admin-shell-page .tool-grid,
+  body.admin-shell-page .gallery-grid {
+    grid-template-columns: 1fr !important;
+    gap: 14px !important;
+    padding: 0 !important;
+  }
+
+  body.admin-shell-page .hub-container,
+  body.admin-shell-page .content-grid {
+    grid-template-columns: 1fr !important;
+    gap: 14px !important;
+    padding: 0 !important;
+  }
+
+  body.admin-shell-page .hub-card,
+  body.admin-shell-page .content-panel,
+  body.admin-shell-page .settings-card,
+  body.admin-shell-page .gallery-item,
+  body.admin-shell-page .qaItem,
+  body.admin-shell-page .card,
+  body.admin-shell-page .attn-card {
+    border-radius: 22px !important;
+    box-shadow: 0 14px 34px rgba(45, 8, 13, 0.08) !important;
+  }
+
+  body.admin-shell-page .action-bar,
+  body.admin-shell-page .filter-box {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 12px !important;
+    padding: 14px !important;
+    border-radius: 22px !important;
+  }
+
+  body.admin-shell-page .footer-actions {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  body.admin-shell-page .btn-save,
+  body.admin-shell-page .add-btn,
+  body.admin-shell-page .btn-submit {
+    width: 100%;
+    justify-content: center;
+  }
+
+  body.admin-shell-page .content-panel,
+  body.admin-shell-page .settings-container,
+  body.admin-shell-page .list-section,
+  body.admin-shell-page .feed-container,
+  body.admin-shell-page .gallery-grid {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+
+  body.admin-shell-page .modal-card {
+    width: calc(100% - 24px);
+    padding: 24px 18px;
+    border-radius: 24px;
+    top: auto;
+    bottom: 94px;
+    transform: translateX(-50%);
+  }
+
+  body.admin-shell-page .modal-card.show {
+    transform: translateX(-50%);
+  }
+}

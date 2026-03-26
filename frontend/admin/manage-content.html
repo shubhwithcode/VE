@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Content Manager - Vishwakarma Enterprises</title>
+
+    <link rel="stylesheet" href="../styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet" />
+    <link rel="stylesheet" href="./uiShell.css">
+
+    <style>
+        :root {
+            --brand-primary: var(--maroon-main);
+            --brand-secondary: var(--maroon-deep);
+            --bg-color: var(--bg-cream);
+            --card-bg: #ffffff;
+            --text-dark: #1f2937;
+            --text-muted: #6b7280;
+            --border-color: rgba(45, 8, 13, 0.1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent;}
+        
+        body { 
+            background-color: var(--bg-cream);
+            color: var(--text-dark);
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+        }
+
+        .admin-main {
+            padding-top: 120px;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding-bottom: 100px;
+        }
+
+        /* --- Content Management --- */
+        .content-panel {
+            background: #FFF;
+            border-radius: 32px;
+            padding: 50px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 10px 40px rgba(0,0,0,0.03);
+            margin: 0 20px;
+        }
+
+        .content-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            margin-bottom: 50px;
+        }
+
+        .content-group {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .content-group label {
+            font-size: 0.75rem;
+            font-weight: 800;
+            color: var(--maroon-main);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+        }
+
+        .content-group input, .content-group textarea {
+            width: 100%;
+            padding: 18px 24px;
+            border-radius: 16px;
+            border: 1px solid var(--border-color);
+            background: #fdfdfd;
+            font-size: 1rem;
+            font-weight: 600;
+            font-family: 'Outfit', sans-serif;
+            color: var(--text-dark);
+            transition: 0.3s;
+        }
+
+        .content-group input:focus, .content-group textarea:focus {
+            border-color: var(--maroon-main);
+            background: #fff;
+            box-shadow: 0 10px 20px rgba(45, 8, 13, 0.04);
+            outline: none;
+        }
+
+        .content-group textarea {
+            min-height: 120px;
+            resize: vertical;
+            line-height: 1.6;
+        }
+
+        .footer-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 20px;
+            padding-top: 40px;
+            border-top: 1px solid rgba(0,0,0,0.05);
+        }
+
+        .btn-save {
+            background: var(--maroon-main);
+            color: white;
+            border: none;
+            padding: 20px 50px;
+            border-radius: 999px;
+            font-size: 1.1rem;
+            font-weight: 800;
+            cursor: pointer;
+            box-shadow: 0 10px 30px rgba(45, 8, 13, 0.2);
+            transition: 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .btn-save:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 50px rgba(45, 8, 13, 0.3);
+        }
+
+        #saveStatus { font-weight: 800; color: #10b981; font-size: 0.95rem; }
+
+        @media (max-width: 768px) {
+            .admin-main {
+                padding-bottom: 112px;
+            }
+
+            .content-panel {
+                margin: 0;
+                padding: 22px 16px;
+                border-radius: 24px;
+            }
+
+            .content-grid {
+                gap: 18px;
+                margin-bottom: 24px;
+            }
+
+            .content-group {
+                gap: 8px;
+            }
+
+            .content-group label {
+                font-size: 0.68rem;
+                letter-spacing: 1.1px;
+            }
+
+            .content-group input,
+            .content-group textarea {
+                padding: 14px 16px;
+                border-radius: 14px;
+                font-size: 0.9rem;
+            }
+
+            .content-group textarea {
+                min-height: 96px;
+                line-height: 1.5;
+            }
+
+            .footer-actions {
+                padding-top: 20px;
+                gap: 10px;
+            }
+
+            .btn-save {
+                padding: 14px 18px;
+                font-size: 0.92rem;
+                gap: 8px;
+                min-height: 50px;
+            }
+
+            #saveStatus {
+                font-size: 0.82rem;
+                text-align: center;
+            }
+        }
+
+    </style>
+</head>
+<body>
+
+    <div id="veHeaderMount"></div>
+
+    <main class="admin-main container">
+        <header class="showroom-title reveal active" style="margin-bottom: 50px;">
+            <p class="hero-subtitle">Brand Identity</p>
+            <h1>Content Manager</h1>
+            <div class="divider"></div>
+        </header>
+
+        <div class="content-panel">
+            <form id="contentForm">
+                <div class="content-grid">
+                    <div class="content-group">
+                        <label>Hero Title Primary</label>
+                        <input type="text" data-key="hero_title_1" placeholder="Crafting Timeless Elegance">
+                    </div>
+                    <div class="content-group">
+                        <label>Hero Subtitle Primary</label>
+                        <input type="text" data-key="hero_sub_1" placeholder="Premium Handcrafted Furniture for Modern Royalties">
+                    </div>
+                    <div class="content-group" style="grid-column: 1 / -1;">
+                        <label>About Us - Executive Summary</label>
+                        <textarea data-key="about_exec" placeholder="Since 1995, Vishwakarma Enterprises has been synonymous with elite craftsmanship..."></textarea>
+                    </div>
+                    <div class="content-group">
+                        <label>Contact Phone (Public)</label>
+                        <input type="text" data-key="public_phone" placeholder="+91 999 000 0000">
+                    </div>
+                    <div class="content-group">
+                        <label>Business Address</label>
+                        <input type="text" data-key="business_address" placeholder="123 Elite Lane, Furniture Hub">
+                    </div>
+                    <div class="content-group">
+                        <label>Website Announcement Bar</label>
+                        <input type="text" data-key="ann_bar" placeholder="New Royal Bed Collection is Live! Explore Now.">
+                    </div>
+                    <div class="content-group">
+                        <label>Showroom Timing</label>
+                        <input type="text" data-key="showroom_time" placeholder="10:00 AM - 08:30 PM">
+                    </div>
+                </div>
+
+                <div class="footer-actions">
+                    <span id="saveStatus"></span>
+                    <button type="submit" class="btn-save">
+                        <span class="material-symbols-rounded">cloud_upload</span>
+                        Save Brand Content
+                    </button>
+                </div>
+            </form>
+        </div>
+
+    </main>
+
+    <div id="veFooterMount"></div>
+    <script src="../layout.js"></script>
+    <script src="../app.js"></script>
+    <script src="./adminCommon.js"></script>
+
+    <script>
+        const contentForm = document.getElementById('contentForm');
+        const saveStatus = document.getElementById('saveStatus');
+
+        async function loadContent() {
+            try {
+                const out = await VE.api('/api/admin/content');
+                if (out.content && out.content.length > 0) {
+                    out.content.forEach(item => {
+                        const input = document.querySelector(`[data-key="${item.content_key}"]`);
+                        if (input) input.value = item.content_value || '';
+                    });
+                }
+            } catch (e) {
+                console.error('Content transmission failed:', e);
+            }
+        }
+
+        contentForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            saveStatus.textContent = 'Saving...';
+            saveStatus.style.color = 'var(--maroon-main)';
+
+            const payload = [];
+            document.querySelectorAll('[data-key]').forEach(input => {
+                payload.push({
+                    key: input.getAttribute('data-key'),
+                    value: input.value
+                });
+            });
+
+            try {
+                await VE.api('/api/admin/content', {
+                    method: 'PUT',
+                    headers: { 'content-type': 'application/json' },
+                    body: JSON.stringify({ content: payload })
+                });
+                saveStatus.textContent = 'Changes synchronized successfully!';
+                saveStatus.style.color = '#10b981';
+                setTimeout(() => { saveStatus.textContent = ''; }, 3000);
+            } catch (e) {
+                saveStatus.textContent = 'Sync failed: ' + e.message;
+                saveStatus.style.color = '#ef4444';
+            }
+        });
+
+        (async function init() {
+            if (typeof VEAdmin !== 'undefined') await VEAdmin.ensureAdmin();
+            loadContent();
+        })();
+    </script>
+</body>
+</html>

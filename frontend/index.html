@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vishwakarma Premium Furniture | Modern Luxury</title>
+  <meta name="description" content="Premium craftsmanship and modern luxury furniture. Discover our exclusive collection of timeless wooden masterpieces.">
+  
+  <link rel="stylesheet" href="styles.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet" />
+</head>
+
+<body>
+  <div class="launchScreen" id="launchScreen" aria-hidden="true">
+    <div class="launchGlow launchGlowLeft"></div>
+    <div class="launchGlow launchGlowRight"></div>
+    <div class="launchPanel">
+      <div class="launchBadge">VE</div>
+      <p class="launchEyebrow">Luxury Interior Experience</p>
+      <h1 class="launchTitle">Vishwakarma Premium Furniture</h1>
+      <p class="launchCopy">Crafting a cinematic showroom before opening your collection.</p>
+      <div class="launchProgress">
+        <span class="launchProgressBar"></span>
+      </div>
+      <div class="launchMeta">
+        <span>Handcrafted wood stories</span>
+        <span id="launchStatus">Launching experience...</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="custom-cursor" id="cursor"></div>
+
+  <div class="pageShell" id="pageShell">
+    <div id="veHeaderMount"></div>
+
+    <main>
+    <!-- Hero Section -->
+    <section class="hero content-section">
+      <div class="hero-bg" id="heroBg"></div>
+      
+      <div class="container heroContent">
+        <span class="hero-subtitle reveal">Handcrafted Excellence</span>
+        <h1 class="reveal" style="transition-delay: 0.1s;">Timeless Elegance <br> <span style="font-style: italic; color: var(--gold-accent);">For Your Home.</span></h1>
+        <p class="reveal" style="transition-delay: 0.2s; margin: 0 auto 48px; font-size: 1.25rem; color: #EEE; max-width: 700px;">
+          Experience the warmth and luxury of masterfully crafted wooden masterpieces, specifically designed to turn your house into a royal sanctuary.
+        </p>
+        <div class="reveal" style="transition-delay: 0.3s;">
+          <a href="gallery.html" class="hero-btn">
+            Shop Collection 
+            <span class="material-symbols-rounded" style="font-size: 1.2rem;">arrow_forward</span>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Categories Section -->
+    <section class="container" style="padding: 100px 0;">
+      <div class="section-header reveal">
+        <h2>Curated Collections</h2>
+        <p style="color: var(--text-muted); margin-top: 12px; font-size: 1.1rem;">Explore artisan-designed furniture for every corner of your life.</p>
+        <div class="divider" style="margin-top: 24px;"></div>
+      </div>
+
+      <div class="categories-grid">
+        <a href="gallery.html?cat=living" class="cat-card reveal">
+          <img src="https://images.unsplash.com/photo-1555041469-a586c61ea9bc?auto=format&fit=crop&w=1200&q=80" alt="Living Room">
+          <div class="cat-content">
+            <h3>Living Spaces</h3>
+            <span class="cat-link">View Collection <span class="material-symbols-rounded" style="font-size: 1rem;">east</span></span>
+          </div>
+        </a>
+        <a href="gallery.html?cat=bedroom" class="cat-card reveal" style="transition-delay: 0.1s;">
+          <img src="https://images.unsplash.com/photo-1540518614846-7eded433c457?auto=format&fit=crop&w=1200&q=80" alt="Bedroom">
+          <div class="cat-content">
+            <h3>Resting Quarters</h3>
+            <span class="cat-link">View Collection <span class="material-symbols-rounded" style="font-size: 1rem;">east</span></span>
+          </div>
+        </a>
+      </div>
+    </section>
+
+    <!-- Luxury Benefits -->
+    <section style="background: var(--bg-white); padding: 120px 0; margin-bottom: 20px;">
+      <div class="container">
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 64px;">
+          <div class="benefit-item reveal">
+             <div style="width: 64px; height: 64px; background: rgba(93, 20, 31, 0.05); color: var(--maroon-main); border-radius: 16px; display: flex; align-items: center; justify-content: center; margin-bottom: 32px;">
+                <span class="material-symbols-rounded" style="font-size: 2rem;">auto_awesome</span>
+             </div>
+             <h3 style="font-family: 'Playfair Display', serif; font-size: 1.8rem; margin-bottom: 16px; color: var(--maroon-deep);">Unmatched Quality</h3>
+             <p style="color: var(--text-muted); font-size: 1.05rem;">We source the finest teak and mahogany to ensure every piece lasts for generations without losing its natural luster.</p>
+          </div>
+          <div class="benefit-item reveal" style="transition-delay: 0.1s;">
+             <div style="width: 64px; height: 64px; background: rgba(93, 20, 31, 0.05); color: var(--maroon-main); border-radius: 16px; display: flex; align-items: center; justify-content: center; margin-bottom: 32px;">
+                <span class="material-symbols-rounded" style="font-size: 2rem;">brush</span>
+             </div>
+             <h3 style="font-family: 'Playfair Display', serif; font-size: 1.8rem; margin-bottom: 16px; color: var(--maroon-deep);">Artisanal Mastery</h3>
+             <p style="color: var(--text-muted); font-size: 1.05rem;">Our craftsmen combine traditional joinery techniques with modern precision to create furniture that is literally a work of art.</p>
+          </div>
+          <div class="benefit-item reveal" style="transition-delay: 0.2s;">
+             <div style="width: 64px; height: 64px; background: rgba(93, 20, 31, 0.05); color: var(--maroon-main); border-radius: 16px; display: flex; align-items: center; justify-content: center; margin-bottom: 32px;">
+                <span class="material-symbols-rounded" style="font-size: 2rem;">eco</span>
+             </div>
+             <h3 style="font-family: 'Playfair Display', serif; font-size: 1.8rem; margin-bottom: 16px; color: var(--maroon-deep);">Sustainable Luxury</h3>
+             <p style="color: var(--text-muted); font-size: 1.05rem;">We practice responsible wood sourcing, ensuring that our legacy of luxury doesn't come at the cost of the environment.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Best Sellers Header -->
+    <section class="container" style="padding-top: 80px;">
+       <div class="section-header reveal">
+          <h2>Bespoke Masterpieces</h2>
+          <p style="color: var(--text-muted); margin-top: 12px; font-size: 1.1rem;">Our most celebrated designs, sought after by connoisseurs across the globe.</p>
+          <div class="divider" style="margin-top: 24px;"></div>
+       </div>
+
+       <div class="products-grid">
+         <div class="product-card reveal">
+           <div class="product-img-wrapper">
+             <img src="https://images.unsplash.com/photo-1595515106969-1ce29566ff1c?auto=format&fit=crop&w=800&q=80" alt="Royal Bed">
+           </div>
+           <div class="product-info">
+             <span class="product-category">Master Bedroom</span>
+             <h3 class="product-title">Heritage Teakwood Bed</h3>
+             <div class="product-price">₹1,15,000</div>
+           </div>
+         </div>
+         <div class="product-card reveal" style="transition-delay: 0.1s;">
+           <div class="product-img-wrapper">
+             <img src="https://images.unsplash.com/photo-1540321156993-9b6ef90add99?auto=format&fit=crop&w=800&q=80" alt="Cabinet">
+           </div>
+           <div class="product-info">
+             <span class="product-category">Dining Hall</span>
+             <h3 class="product-title">Regal Mahogany Credenza</h3>
+             <div class="product-price">₹82,000</div>
+           </div>
+         </div>
+         <div class="product-card reveal" style="transition-delay: 0.2s;">
+           <div class="product-img-wrapper">
+             <img src="https://images.unsplash.com/photo-1567016376408-0226e4d0c1ea?auto=format&fit=crop&w=800&q=80" alt="Wingback">
+           </div>
+           <div class="product-info">
+             <span class="product-category">Accent Piece</span>
+             <h3 class="product-title">Elite Wingback Chair</h3>
+             <div class="product-price">₹45,500</div>
+           </div>
+         </div>
+       </div>
+    </section>
+    </main>
+
+    <div id="veFooterMount"></div>
+  </div>
+
+  <!-- Animation Script -->
+  <script src="app.js"></script>
+  <script src="layout.js"></script>
+  <script src="customer.js"></script>
+  <script>
+    document.body.classList.add('launch-active');
+
+    const finishLaunch = () => {
+      const launchScreen = document.getElementById('launchScreen');
+      const pageShell = document.getElementById('pageShell');
+      const status = document.getElementById('launchStatus');
+
+      if (status) status.textContent = 'Showroom ready';
+      if (pageShell) pageShell.classList.add('is-visible');
+
+      window.setTimeout(() => {
+        document.body.classList.remove('launch-active');
+        if (launchScreen) launchScreen.classList.add('is-hidden');
+      }, 250);
+    };
+
+    window.addEventListener('load', () => {
+      window.setTimeout(finishLaunch, 2200);
+    });
+
+    // --- Scroll Reveal Logic ---
+    const reveal = () => {
+      const reveals = document.querySelectorAll(".reveal");
+      reveals.forEach(el => {
+        const windowHeight = window.innerHeight;
+        const elementTop = el.getBoundingClientRect().top;
+        const elementVisible = 100;
+        if (elementTop < windowHeight - elementVisible) {
+          el.classList.add("active");
+        }
+      });
+    };
+    window.addEventListener("scroll", reveal);
+    window.addEventListener("load", reveal); // Trigger on initial load
+
+    // --- Header Scrolled Effect ---
+    window.addEventListener("scroll", () => {
+      const header = document.querySelector(".siteHeader");
+      if (window.scrollY > 50) header.classList.add("scrolled");
+      else header.classList.remove("scrolled");
+      
+      // Parallax Effect
+      const bg = document.getElementById('heroBg');
+      if(bg) {
+        const speed = 0.5;
+        const yPos = -(window.scrollY * speed);
+        bg.style.transform = `translateY(${yPos}px)`;
+      }
+    });
+
+    // --- Subtle Custom Cursor ---
+    const cursor = document.getElementById('cursor');
+    if (cursor) {
+      document.addEventListener('mousemove', e => {
+        cursor.style.left = e.clientX + 'px';
+        cursor.style.top = e.clientY + 'px';
+      });
+      document.querySelectorAll('a, button, .product-card').forEach(el => {
+        el.addEventListener('mouseenter', () => cursor.classList.add('hover'));
+        el.addEventListener('mouseleave', () => cursor.classList.remove('hover'));
+      });
+    }
+  </script>
+
+  <style>
+    body.launch-active {
+      overflow: hidden;
+    }
+
+    .pageShell {
+      opacity: 0;
+      transform: translateY(24px) scale(0.985);
+      transition: opacity 0.9s ease, transform 0.9s ease;
+    }
+
+    .pageShell.is-visible {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+
+    .launchScreen {
+      position: fixed;
+      inset: 0;
+      z-index: 3000;
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+      background:
+        radial-gradient(circle at top left, rgba(197, 160, 41, 0.22), transparent 36%),
+        radial-gradient(circle at bottom right, rgba(122, 27, 41, 0.4), transparent 32%),
+        linear-gradient(135deg, #180507 0%, #2d080d 45%, #4a121c 100%);
+      transition: opacity 0.8s ease, visibility 0.8s ease;
+    }
+
+    .launchScreen.is-hidden {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    .launchGlow {
+      position: absolute;
+      width: 420px;
+      height: 420px;
+      border-radius: 50%;
+      filter: blur(16px);
+      opacity: 0.55;
+      animation: launchFloat 5s ease-in-out infinite;
+    }
+
+    .launchGlowLeft {
+      top: -120px;
+      left: -100px;
+      background: rgba(197, 160, 41, 0.22);
+    }
+
+    .launchGlowRight {
+      right: -80px;
+      bottom: -160px;
+      background: rgba(255, 255, 255, 0.08);
+      animation-delay: -2.2s;
+    }
+
+    .launchPanel {
+      position: relative;
+      z-index: 1;
+      width: min(92vw, 700px);
+      padding: 56px 44px;
+      text-align: center;
+      color: #fff;
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      border-radius: 32px;
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.04));
+      box-shadow: 0 24px 90px rgba(0, 0, 0, 0.35);
+      backdrop-filter: blur(18px);
+    }
+
+    .launchBadge {
+      width: 84px;
+      height: 84px;
+      margin: 0 auto 24px;
+      border-radius: 24px;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(135deg, #f2d172 0%, #c5a029 45%, #8f6a12 100%);
+      color: var(--maroon-deep);
+      font: 900 2rem/1 'Playfair Display', serif;
+      letter-spacing: 2px;
+      box-shadow: 0 18px 42px rgba(197, 160, 41, 0.26);
+      animation: launchPulse 2.4s ease-in-out infinite;
+    }
+
+    .launchEyebrow {
+      margin-bottom: 14px;
+      color: rgba(255, 255, 255, 0.72);
+      text-transform: uppercase;
+      letter-spacing: 5px;
+      font-size: 0.78rem;
+      font-weight: 700;
+    }
+
+    .launchTitle {
+      margin: 0 0 14px;
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2.2rem, 5vw, 4rem);
+      line-height: 1.06;
+    }
+
+    .launchCopy {
+      max-width: 520px;
+      margin: 0 auto 28px;
+      color: rgba(255, 255, 255, 0.76);
+      font-size: 1.05rem;
+    }
+
+    .launchProgress {
+      width: 100%;
+      height: 10px;
+      overflow: hidden;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.12);
+      box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.24);
+    }
+
+    .launchProgressBar {
+      display: block;
+      width: 100%;
+      height: 100%;
+      transform: translateX(-100%);
+      background: linear-gradient(90deg, #f7e0a1 0%, #c5a029 55%, #fff2c7 100%);
+      animation: launchLoad 2.2s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    }
+
+    .launchMeta {
+      margin-top: 16px;
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+      color: rgba(255, 255, 255, 0.7);
+      font-size: 0.88rem;
+    }
+
+    /* Inline specific helper styles for custom items */
+    .custom-cursor {
+       width: 8px; height: 8px; background: var(--maroon-main); border-radius: 50%;
+       position: fixed; pointer-events: none; z-index: 9999;
+       transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s;
+    }
+    .custom-cursor.hover { transform: scale(5); opacity: 0.2; }
+
+    @keyframes launchLoad {
+      0% { transform: translateX(-100%); }
+      100% { transform: translateX(0); }
+    }
+
+    @keyframes launchFloat {
+      0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+      50% { transform: translate3d(0, 24px, 0) scale(1.08); }
+    }
+
+    @keyframes launchPulse {
+      0%, 100% { transform: translateY(0) scale(1); }
+      50% { transform: translateY(-6px) scale(1.04); }
+    }
+
+    @media (max-width: 768px) {
+      .launchPanel {
+        padding: 40px 24px;
+        border-radius: 24px;
+      }
+
+      .launchMeta {
+        justify-content: center;
+      }
+
+      .launchEyebrow {
+        letter-spacing: 3px;
+      }
+    }
+    
+    @media (hover: none) { .custom-cursor { display: none; } }
+  </style>
+
+</body>
+</html>

@@ -1,0 +1,125 @@
+/* 
+   Vishwakarma Executive Shell Styles (Maroon & Gold)
+   Coordinated with global Masterpiece Luxury ecosystem 
+*/
+
+:root {
+  --brand-primary: var(--maroon-main);
+  --brand-secondary: var(--maroon-deep);
+  --shell-bg: var(--bg-cream);
+  --shell-accent: var(--gold-accent);
+  --shell-border: rgba(45, 8, 13, 0.1);
+}
+
+.sidebar-toggle {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  border: 1px solid var(--shell-border);
+  background: #ffffff;
+  color: var(--brand-primary);
+  font-size: 20px;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(45, 8, 13, 0.05);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.sidebar-toggle:hover {
+  background: var(--brand-primary);
+  color: #fff;
+  border-color: var(--brand-primary);
+}
+
+.mobile-appbar {
+  display: none;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 24px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--shell-border);
+}
+
+.mobile-appbar-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: var(--brand-primary);
+}
+
+.sidebar-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(45, 8, 13, 0.4);
+  backdrop-filter: blur(8px);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+  z-index: 999;
+}
+
+.sidebar-overlay.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* Mobile Adjustments */
+@media (max-width: 900px) {
+  body {
+    display: block !important;
+    height: auto !important;
+    min-height: 100vh;
+    background-color: var(--shell-bg);
+  }
+
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100dvh;
+    width: min(86vw, 320px);
+    transform: translateX(-100%);
+    background: #fff;
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    z-index: 1000;
+    overflow-y: auto;
+    box-shadow: 20px 0 60px rgba(45, 8, 13, 0.15);
+  }
+
+  .sidebar.open {
+    transform: translateX(0);
+  }
+
+  .main-content {
+    padding: 20px !important;
+  }
+
+  .mobile-appbar {
+    display: flex;
+  }
+
+  .sidebar-toggle {
+    display: inline-flex;
+  }
+
+  .filter-bar {
+    flex-direction: column;
+    align-items: stretch !important;
+    gap: 12px !important;
+  }
+
+  .table-container {
+    overflow-x: auto;
+    background: #fff;
+    border-radius: 20px;
+    padding: 10px;
+    border: 1px solid var(--shell-border);
+  }
+
+  table {
+    min-width: 650px;
+  }
+}

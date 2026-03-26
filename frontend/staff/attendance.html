@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Mark Attendance - Labour Portal</title>
+    
+    <link rel="stylesheet" href="./staffShell.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary: #5d141f;
+            --bg: #f8f3ea;
+            --card-bg: #ffffff;
+            --text-dark: #2d080d;
+            --text-gray: #7b6767;
+            --border: rgba(93, 20, 31, 0.10);
+            --success: #c5a029;
+            --danger: #8f1f31;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent;}
+        
+        body { 
+            background-color: var(--bg);
+            color: var(--text-dark);
+            padding-bottom: 90px;
+            max-width: 480px;
+            margin: 0 auto;
+            position: relative;
+            min-height: 100vh;
+            box-shadow: 0 0 20px rgba(0,0,0,0.05);
+        }
+
+        /* --- Top App Bar --- */
+        .app-bar {
+            background: linear-gradient(135deg, var(--primary), #7a1b29);
+            color: white;
+            padding: 20px;
+            border-bottom-left-radius: 25px;
+            border-bottom-right-radius: 25px;
+            box-shadow: 0 4px 15px rgba(43, 115, 246, 0.25);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .back-btn { background: none; border: none; color: white; font-size: 1.5rem; cursor: pointer; display: flex; align-items: center;}
+        .app-bar-title h1 { font-size: 1.2rem; font-weight: 800; margin: 0; line-height: 1.2; }
+        .app-bar-title p { font-size: 0.75rem; opacity: 0.9; margin: 0; font-weight: 500;}
+
+        /* --- Live Status Card --- */
+        .status-container { padding: 20px; }
+        
+        .status-card {
+            background: var(--card-bg); padding: 25px 20px; border-radius: 20px;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.04); text-align: center;
+            border: 1px solid var(--border); display: flex; flex-direction: column; align-items: center;
+            position: relative; overflow: hidden;
+        }
+        
+        .status-card::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 5px; background: var(--text-gray); transition: 0.3s;}
+        .status-card.active::before { background: var(--success); }
+        .status-card.ended::before { background: var(--danger); }
+
+        .status-badge {
+            background: #f1f5f9; color: var(--text-gray); padding: 5px 12px; border-radius: 20px;
+            font-size: 0.7rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 10px;
+            transition: 0.3s;
+        }
+        .status-card.active .status-badge { background: #dcfce7; color: #166534; }
+        .status-card.ended .status-badge { background: #fee2e2; color: #991b1b; }
+
+        .time-display { font-size: 2.8rem; font-weight: 800; color: var(--text-dark); line-height: 1; letter-spacing: -1px; margin-bottom: 5px;}
+        .date-display { font-size: 0.85rem; color: var(--text-gray); font-weight: 600;}
+
+        /* --- Action Sections (Check In / Out) --- */
+        .action-section {
+            background: var(--card-bg); padding: 20px; border-radius: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.03); border: 1px solid var(--border);
+            margin: 0 20px 20px 20px; display: flex; flex-direction: column; gap: 15px;
+        }
+        
+        #checkout-section { display: none; } /* Hidden initially */
+
+        .sec-title { font-size: 1.05rem; font-weight: 800; color: var(--text-dark); margin: 0; display: flex; align-items: center; gap: 8px;}
+        .sec-desc { font-size: 0.8rem; color: var(--text-gray); margin: 0; font-weight: 500; line-height: 1.4;}
+
+        /* Buttons */
+        .btn-main {
+            width: 100%; padding: 16px; border: none; border-radius: 14px;
+            font-size: 1rem; font-weight: 800; cursor: pointer; transition: 0.2s;
+            color: white; display: flex; align-items: center; justify-content: center; gap: 8px;
+        }
+        .btn-main:active { transform: scale(0.97); }
+        .btn-checkin { background: var(--success); box-shadow: 0 8px 20px rgba(16, 185, 129, 0.3); }
+        .btn-checkout { background: var(--danger); box-shadow: 0 8px 20px rgba(239, 68, 68, 0.3); }
+        .btn-checkout:disabled { background: #cbd5e1; box-shadow: none; cursor: not-allowed; transform: none;}
+
+        .btn-tool {
+            flex: 1; padding: 12px; background: #f8fafc; color: var(--primary);
+            border: 1px solid #e2e8f0; border-radius: 12px; font-size: 0.85rem; font-weight: 700;
+            display: flex; align-items: center; justify-content: center; gap: 5px; transition: 0.2s; cursor: pointer;
+        }
+        .btn-tool:active { background: #e0e7ff; border-color: #bfdbfe; transform: scale(0.95);}
+
+        /* Work Report Area */
+        .report-area { display: flex; flex-direction: column; gap: 10px; }
+        .work-textarea {
+            width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 12px;
+            font-size: 0.9rem; background: #f8fafc; color: var(--text-dark); resize: none;
+            height: 80px; outline: none; font-weight: 500; transition: 0.3s;
+        }
+        .work-textarea:focus { border-color: var(--primary); background: white; box-shadow: 0 0 0 3px rgba(43, 115, 246, 0.1); }
+        
+        .validation-text { font-size: 0.75rem; color: var(--danger); font-weight: 700; text-align: center; }
+        .validation-text.success { color: var(--success); }
+
+        .location-text { font-size: 0.75rem; color: var(--text-gray); text-align: center; font-weight: 600;}
+
+        /* --- Fullscreen Camera Overlay --- */
+        #camera-container {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #000; z-index: 9999; flex-direction: column; justify-content: center; align-items: center;
+        }
+        .cam-header { position: absolute; top: 40px; text-align: center; width: 100%; color: white;}
+        .cam-header h3 { font-size: 1.2rem; margin: 0; font-weight: 700;}
+        .cam-header p { font-size: 0.8rem; opacity: 0.8; margin-top: 5px;}
+
+        video { width: 100%; height: 100%; object-fit: cover; }
+        
+        /* Camera UI Controls */
+        .cam-controls {
+            position: absolute; bottom: 40px; width: 100%; display: flex; justify-content: space-around; align-items: center; padding: 0 30px;
+        }
+        .btn-cancel-cam { background: none; border: none; color: white; font-size: 1rem; font-weight: 700; cursor: pointer;}
+        .btn-capture {
+            width: 70px; height: 70px; border-radius: 50%; background: transparent; border: 4px solid white;
+            display: flex; justify-content: center; align-items: center; cursor: pointer; padding: 0;
+        }
+        .btn-capture::inner { content: ''; width: 54px; height: 54px; background: white; border-radius: 50%; transition: 0.2s;}
+        .btn-capture:active::inner { transform: scale(0.9); }
+
+        /* --- Bottom Nav --- */
+        .bottom-nav {
+            position: fixed; bottom: 0; left: 0; width: 100%; max-width: 480px;
+            background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+            border-top: 1px solid var(--border); padding: 10px 15px 25px 15px; 
+            display: flex; justify-content: space-around; z-index: 1000; box-shadow: 0 -4px 20px rgba(0,0,0,0.04);
+            left: 50%; transform: translateX(-50%);
+        }
+        .nav-item { display: flex; flex-direction: column; align-items: center; gap: 4px; color: var(--text-gray); text-decoration: none; font-size: 0.7rem; font-weight: 700; }
+        .nav-item .icon { font-size: 1.4rem; opacity: 0.5; transition: 0.3s;}
+        .nav-item.active { color: var(--primary); }
+        .nav-item.active .icon { opacity: 1; transform: translateY(-2px);}
+
+    </style>
+</head>
+<body>
+
+    <div class="app-bar">
+        <button class="back-btn" onclick="window.history.back()">←</button>
+        <div class="app-bar-title">
+            <h1>Attendance</h1>
+            <p>Location & Selfie verification</p>
+        </div>
+    </div>
+
+    <div class="status-container">
+        <div class="status-card" id="status-card">
+            <div class="status-badge" id="status-msg">Not Checked In</div>
+            <div class="time-display" id="clock">00:00:00</div>
+            <div class="date-display" id="date">--</div>
+        </div>
+    </div>
+
+    <div class="action-section" id="checkin-section">
+        <div>
+            <h3 class="sec-title">🌅 Start Shift</h3>
+            <p class="sec-desc">Mark your attendance for today. Please ensure you are at the work location.</p>
+        </div>
+        
+        <button class="btn-main btn-checkin" onclick="startCheckInProcess()">
+            📸 Mark Present
+        </button>
+        <div class="location-text" id="loc-text-in">GPS Location Required</div>
+    </div>
+
+    <div class="action-section" id="checkout-section">
+        <div>
+            <h3 class="sec-title">🌇 End Shift</h3>
+            <p class="sec-desc">Submit your daily work report before ending the shift.</p>
+        </div>
+        
+        <div class="report-area">
+            <textarea id="work-text" class="work-textarea" placeholder="Type your work summary here..." oninput="validateReport()"></textarea>
+            
+            <div style="display: flex; gap: 10px;">
+                <button class="btn-tool" id="photoBtn" onclick="addWorkPhoto()">📸 Add Photo</button>
+                <button class="btn-tool" id="voiceBtn" onclick="addVoiceNote()">🎤 Voice Note</button>
+            </div>
+            
+            <div class="validation-text" id="report-validation">
+                *Please add Text, Photo, or Voice note to checkout.
+            </div>
+        </div>
+
+        <button class="btn-main btn-checkout" id="final-checkout-btn" onclick="startCheckOutProcess()" disabled>
+            🛑 End Shift
+        </button>
+        <div class="location-text" id="loc-text-out">GPS Location Required</div>
+    </div>
+
+    <div id="camera-container">
+        <div class="cam-header">
+            <h3 id="cam-title">Align your face</h3>
+            <p>Ensure good lighting</p>
+        </div>
+        
+        <video id="camera-stream" autoplay playsinline></video>
+        <canvas id="snapshot" style="display: none;"></canvas>
+        
+        <div class="cam-controls">
+            <button class="btn-cancel-cam" onclick="closeCamera()">Cancel</button>
+            <button class="btn-capture" onclick="takeSnapshot()"><div style="width: 56px; height: 56px; background: white; border-radius: 50%;"></div></button>
+            <div style="width: 50px;"></div> </div>
+    </div>
+
+    <div class="bottom-nav">
+        <a href="dashboard.html" class="nav-item">
+            <span class="icon">📊</span>
+            <span>Home</span>
+        </a>
+        <a href="attendance.html" class="nav-item active">
+            <span class="icon">📸</span>
+            <span>Attnd</span>
+        </a>
+        <a href="apply-leave.html" class="nav-item">
+            <span class="icon">🗓️</span>
+            <span>Leaves</span>
+        </a>
+        <a href="myprofile.html" class="nav-item">
+            <span class="icon">👤</span>
+            <span>Profile</span>
+        </a>
+    </div>
+
+    <script src="../app.js"></script>
+    <script src="./staffCommon.js"></script>
+    <script src="./bottomNav.js"></script>
+    
+    <script>
+        // --- 1. Live Clock & Date ---
+        function updateClock() {
+            const now = new Date();
+            document.getElementById('clock').innerText = now.toLocaleTimeString('en-US', { hour12: false });
+            document.getElementById('date').innerText = now.toLocaleDateString('en-IN', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+        }
+        setInterval(updateClock, 1000);
+        updateClock();
+
+        // --- State ---
+        let activeAction = '';
+        let currentStream = null;
+        let lastGeoPos = null;
+        let workPhotoBlob = null;
+        let voiceBlob = null;
+        let voiceRecorder = null;
+        let voiceChunks = [];
+        let hasWorkSaved = false;
+        let todayState = null;
+
+        function cp(hex) { return String.fromCodePoint(hex); }
+
+        function dataUrlToBlob(dataUrl) {
+            const parts = String(dataUrl || '').split(',');
+            const header = parts[0] || '';
+            const b64 = parts[1] || '';
+            const mime = (header.match(/data:([^;]+)/) || [])[1] || 'image/jpeg';
+            const bin = atob(b64);
+            const bytes = new Uint8Array(bin.length);
+            for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+            return new Blob([bytes], { type: mime });
+        }
+
+        function fileFromBlob(blob, name) {
+            try { return new File([blob], name, { type: blob.type || undefined }); }
+            catch { return blob; }
+        }
+
+        function setReportStatus(msg, ok = false) {
+            const el = document.getElementById('report-validation');
+            if (!el) return;
+            el.innerText = msg;
+            if (ok) el.classList.add('success');
+            else el.classList.remove('success');
+        }
+
+        function applyTodayState() {
+            const att = todayState?.attendance || null;
+            const wd = todayState?.workDetail || null;
+
+            hasWorkSaved = Boolean(wd);
+
+            const statusCard = document.getElementById('status-card');
+            const statusMsg = document.getElementById('status-msg');
+            const checkinSec = document.getElementById('checkin-section');
+            const checkoutSec = document.getElementById('checkout-section');
+
+            const checkedIn = Boolean(att?.check_in_time);
+            const checkedOut = Boolean(att?.check_out_time);
+
+            if (statusCard) {
+                statusCard.classList.toggle('active', checkedIn && !checkedOut);
+                statusCard.classList.toggle('ended', checkedOut);
+            }
+
+            if (statusMsg) {
+                if (checkedOut) statusMsg.innerText = 'Shift Ended • Checked Out';
+                else if (checkedIn) statusMsg.innerText = 'Shift Started • Working';
+                else statusMsg.innerText = 'Not Checked In';
+            }
+
+            if (checkinSec) checkinSec.style.display = checkedIn ? 'none' : 'flex';
+            if (checkoutSec) checkoutSec.style.display = checkedIn && !checkedOut ? 'flex' : 'none';
+
+            const txt = document.getElementById('work-text');
+            if (txt && wd?.work_description && !txt.value) txt.value = wd.work_description;
+
+            validateReport();
+        }
+
+        async function loadToday() {
+            try {
+                todayState = await VE.api('/api/staff/today', { timeoutMs: 15000 });
+            } catch (e) {
+                todayState = null;
+            }
+            applyTodayState();
+        }
+
+        // --- 2. Camera Functions ---
+        async function openCamera(actionType) {
+            activeAction = actionType;
+            const container = document.getElementById('camera-container');
+            const video = document.getElementById('camera-stream');
+            const title = document.getElementById('cam-title');
+            
+            title.innerText = (actionType === 'workphoto') ? "Capture Work Proof" : "Take a Selfie";
+            container.style.display = 'flex';
+            
+            try {
+                const facingMode = (actionType === 'workphoto') ? "environment" : "user";
+                const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: facingMode } });
+                currentStream = stream;
+                video.srcObject = stream;
+            } catch (err) {
+                alert("Camera access denied! Please allow permissions in your browser settings.");
+                closeCamera();
+            }
+        }
+
+        function closeCamera() {
+            document.getElementById('camera-container').style.display = 'none';
+            if (currentStream) {
+                currentStream.getTracks().forEach(track => track.stop());
+            }
+        }
+
+        async function takeSnapshot() {
+            const video = document.getElementById('camera-stream');
+            const canvas = document.getElementById('snapshot');
+            const context = canvas.getContext('2d');
+            
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            context.drawImage(video, 0, 0, canvas.width, canvas.height);
+            
+            const imageDataUrl = canvas.toDataURL('image/jpeg');
+            const blob = dataUrlToBlob(imageDataUrl);
+            
+            closeCamera();
+
+            if(activeAction === 'checkin') await submitCheckIn(blob);
+            else if(activeAction === 'checkout') await submitCheckOut(blob);
+            else if(activeAction === 'workphoto') finalizeWorkPhoto(blob);
+        }
+
+        // --- 3. Geolocation Function ---
+        function fetchLocation(targetTextId) {
+            return new Promise((resolve, reject) => {
+                const textEl = document.getElementById(targetTextId);
+                textEl.innerText = "Fetching GPS coordinates...";
+                
+                if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(
+                        (position) => {
+                            textEl.innerText = `Location verified: ${position.coords.latitude.toFixed(4)}, ${position.coords.longitude.toFixed(4)}`;
+                            resolve(position);
+                        },
+                        (error) => {
+                            textEl.innerText = "Location access denied.";
+                            alert("Please enable GPS/Location to proceed.");
+                            reject(error);
+                        },
+                        { enableHighAccuracy: true }
+                    );
+                } else {
+                    alert("Geolocation is not supported.");
+                    reject("Not supported");
+                }
+            });
+        }
+
+        // --- 4. Main Flow Logic ---
+
+        async function startCheckInProcess() {
+            try {
+                lastGeoPos = await fetchLocation('loc-text-in');
+                await openCamera('checkin');
+            } catch (e) { console.log("Check-in location error"); }
+        }
+
+        async function submitCheckIn(selfieBlob) {
+            try {
+                const coords = lastGeoPos?.coords;
+                if (!coords) throw new Error('GPS required');
+                const fd = new FormData();
+                fd.set('lat', String(coords.latitude));
+                fd.set('lng', String(coords.longitude));
+                fd.set('selfie', fileFromBlob(selfieBlob, 'selfie.jpg'));
+                await VE.api('/api/staff/checkin', { method: 'POST', body: fd, timeoutMs: 20000 });
+                await loadToday();
+                alert('Attendance marked!');
+            } catch (e) {
+                alert(e?.message || 'Check-in failed');
+            }
+        }
+
+        // Work Report Logic
+        function validateReport() {
+            const textLength = document.getElementById('work-text').value.trim().length;
+            const validationMsg = document.getElementById('report-validation');
+            const checkoutBtn = document.getElementById('final-checkout-btn');
+
+            const hasMedia = Boolean(workPhotoBlob || voiceBlob);
+
+            if (hasWorkSaved) {
+                validationMsg.innerText = `Report saved ${cp(0x2713)} Ready for check-out.`;
+                validationMsg.classList.add("success");
+                if (checkoutBtn) checkoutBtn.disabled = false;
+                return;
+            }
+
+            if (textLength > 5 || hasMedia) {
+                validationMsg.innerText = "Report ready. Tap End Shift to submit.";
+                validationMsg.classList.add("success");
+                if (checkoutBtn) checkoutBtn.disabled = false;
+                return;
+            }
+
+            validationMsg.innerText = "*Please add Text, Photo, or Voice note to checkout.";
+            validationMsg.classList.remove("success");
+            if (checkoutBtn) checkoutBtn.disabled = true;
+        }
+
+        function addWorkPhoto() { openCamera('workphoto'); }
+
+        function finalizeWorkPhoto(blob) {
+            workPhotoBlob = blob;
+            alert("Work photo attached!");
+            validateReport();
+        }
+
+        async function addVoiceNote() {
+            const voiceBtn = document.getElementById('voiceBtn');
+
+            if (voiceRecorder && voiceRecorder.state === 'recording') {
+                voiceRecorder.stop();
+                if (voiceBtn) voiceBtn.textContent = `${cp(0x1f3a4)} Voice Note`;
+                return;
+            }
+
+            if (!('MediaRecorder' in window)) {
+                alert('Voice recording not supported in your browser');
+                return;
+            }
+
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                voiceChunks = [];
+                voiceRecorder = new MediaRecorder(stream);
+
+                voiceRecorder.addEventListener('dataavailable', (e) => {
+                    if (e.data && e.data.size > 0) voiceChunks.push(e.data);
+                });
+
+                voiceRecorder.addEventListener('stop', () => {
+                    try { for (const t of stream.getTracks()) t.stop(); } catch {}
+                    voiceBlob = new Blob(voiceChunks, { type: voiceChunks[0]?.type || 'audio/webm' });
+                    validateReport();
+                });
+
+                voiceRecorder.start();
+                if (voiceBtn) voiceBtn.textContent = 'Recording... tap to stop';
+            } catch (e) {
+                alert('Microphone access denied.');
+            }
+        }
+
+        // Check Out Logic
+        async function ensureWorkDetail() {
+            if (hasWorkSaved) return true;
+            const txt = document.getElementById('work-text');
+            const desc = String(txt?.value || '').trim();
+            const hasMedia = Boolean(workPhotoBlob || voiceBlob);
+            const descToSend = desc || (hasMedia ? 'Attached media.' : '');
+            if (!descToSend) return false;
+
+            try {
+                const fd = new FormData();
+                fd.set('work_description', descToSend);
+                if (workPhotoBlob) fd.set('work_image', fileFromBlob(workPhotoBlob, 'work.jpg'));
+                if (voiceBlob) fd.set('voice_record', fileFromBlob(voiceBlob, 'voice.webm'));
+                await VE.api('/api/staff/work-detail', { method: 'POST', body: fd, timeoutMs: 20000 });
+                hasWorkSaved = true;
+                await loadToday();
+                return true;
+            } catch (e) {
+                alert(e?.message || 'Failed to submit work report');
+                return false;
+            }
+        }
+
+        async function startCheckOutProcess() {
+            try {
+                const ok = await ensureWorkDetail();
+                if (!ok) { validateReport(); return; }
+                lastGeoPos = await fetchLocation('loc-text-out');
+                await openCamera('checkout');
+            } catch (e) { console.log("Check-out error"); }
+        }
+
+        async function submitCheckOut(selfieBlob) {
+            try {
+                const coords = lastGeoPos?.coords;
+                if (!coords) throw new Error('GPS required');
+                const fd = new FormData();
+                fd.set('lat', String(coords.latitude));
+                fd.set('lng', String(coords.longitude));
+                fd.set('selfie', fileFromBlob(selfieBlob, 'selfie.jpg'));
+                await VE.api('/api/staff/checkout', { method: 'POST', body: fd, timeoutMs: 20000 });
+                await loadToday();
+                alert('Shift ended!');
+            } catch (e) {
+                alert(e?.message || 'Check-out failed');
+            }
+        }
+
+        // Auto-check state on load
+        (async function init() {
+            if (typeof VEStaff !== 'undefined') await VEStaff.ensureStaff();
+            await loadToday();
+        })();
+
+    </script>
+</body>
+</html>

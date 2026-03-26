@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>My Schedule - Staff Portal</title>
+    
+    <link rel="stylesheet" href="./staffShell.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary: #5d141f;
+            --bg: #f8f3ea;
+            --card-bg: #ffffff;
+            --text-dark: #2d080d;
+            --text-gray: #7b6767;
+            --border: rgba(93, 20, 31, 0.10);
+            --success: #c5a029;
+            --danger: #8f1f31;
+            --warning: #d28d1c;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent;}
+        
+        body { 
+            background-color: var(--bg);
+            color: var(--text-dark);
+            padding-bottom: 90px;
+            max-width: 480px;
+            margin: 0 auto;
+            position: relative;
+            min-height: 100vh;
+            box-shadow: 0 0 20px rgba(0,0,0,0.05);
+        }
+
+        /* --- Top App Bar --- */
+        .app-bar {
+            background: linear-gradient(135deg, var(--primary), #7a1b29);
+            color: white;
+            padding: 20px 20px 35px 20px;
+            border-bottom-left-radius: 25px;
+            border-bottom-right-radius: 25px;
+            box-shadow: 0 4px 15px rgba(43, 115, 246, 0.25);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .back-btn { background: none; border: none; color: white; font-size: 1.5rem; cursor: pointer; display: flex; align-items: center;}
+        .app-bar-title h1 { font-size: 1.2rem; font-weight: 800; margin: 0; line-height: 1.2; }
+        .app-bar-title p { font-size: 0.75rem; opacity: 0.9; margin: 0; font-weight: 500;}
+
+        /* --- Floating Filter & Summary --- */
+        .summary-card {
+            background: var(--card-bg); margin: -20px 20px 20px 20px; padding: 20px;
+            border-radius: 20px; box-shadow: 0 8px 25px rgba(0,0,0,0.06);
+            position: relative; z-index: 101; border: 1px solid var(--border);
+            display: flex; flex-direction: column; gap: 15px;
+        }
+
+        .month-picker {
+            width: 100%; padding: 12px 15px; border-radius: 12px; border: 1px solid var(--border);
+            background: #f8fafc; color: var(--primary); font-size: 1rem; font-weight: 800;
+            outline: none; transition: 0.3s; text-align: center; letter-spacing: 0.5px;
+        }
+        .month-picker:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(43, 115, 246, 0.1); background: white;}
+
+        .stats-row { display: flex; justify-content: space-between; align-items: center; border-top: 1px dashed var(--border); padding-top: 15px;}
+        
+        .stat-block { display: flex; flex-direction: column; gap: 2px;}
+        .stat-block.right { text-align: right; }
+        
+        .stat-label { font-size: 0.7rem; color: var(--text-gray); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;}
+        .stat-val { font-size: 1.5rem; font-weight: 800; color: var(--text-dark);}
+        .stat-val.money { color: var(--success); font-size: 1.6rem;}
+        
+        /* --- Monthly Calendar Grid --- */
+        .section-container { padding: 0 20px; }
+        .sec-title { font-size: 1.05rem; font-weight: 800; color: var(--text-dark); margin: 0 0 10px 0;}
+
+        /* Legend */
+        .legend-row { display: flex; gap: 15px; margin-bottom: 15px; justify-content: center;}
+        .legend-item { display: flex; align-items: center; gap: 5px; font-size: 0.75rem; font-weight: 600; color: var(--text-gray);}
+        .legend-dot { width: 12px; height: 12px; border-radius: 4px; }
+        .dot-green { background: #dcfce7; border: 1px solid #bbf7d0;}
+        .dot-grey { background: #f1f5f9; border: 1px solid #e2e8f0;}
+        .dot-today { border: 2px solid var(--primary); background: white;}
+
+        /* The Grid */
+        .calendar-grid {
+            display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px;
+            background: white; padding: 15px; border-radius: 16px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.03); border: 1px solid var(--border);
+        }
+
+        .day-header {
+            font-size: 0.65rem; font-weight: 800; color: var(--text-gray);
+            text-align: center; text-transform: uppercase; margin-bottom: 5px;
+        }
+
+        .cal-day {
+            aspect-ratio: 1; border-radius: 8px; display: flex; justify-content: center; align-items: center;
+            font-size: 0.9rem; font-weight: 700; color: var(--text-dark); position: relative;
+            background: #f8fafc; border: 1px solid transparent; transition: 0.2s;
+        }
+        
+        /* Empty/Padding days */
+        .cal-day.empty { background: transparent; color: transparent; border: none; }
+        
+        /* Absent / No Record */
+        .cal-day.absent { background: #f1f5f9; border-color: #e2e8f0; color: var(--text-gray); }
+        
+        /* Present */
+        .cal-day.present { background: #dcfce7; border-color: #bbf7d0; color: #166534; box-shadow: 0 2px 5px rgba(16, 185, 129, 0.1);}
+        
+        /* Current Day Outline */
+        .cal-day.today { border: 2px solid var(--primary); font-weight: 800; }
+
+        /* --- Bottom Nav --- */
+        .bottom-nav {
+            position: fixed; bottom: 0; left: 0; width: 100%; max-width: 480px;
+            background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+            border-top: 1px solid var(--border); padding: 10px 15px 25px 15px; 
+            display: flex; justify-content: space-around; z-index: 1000; box-shadow: 0 -4px 20px rgba(0,0,0,0.04);
+            left: 50%; transform: translateX(-50%);
+        }
+        .nav-item { display: flex; flex-direction: column; align-items: center; gap: 4px; color: var(--text-gray); text-decoration: none; font-size: 0.7rem; font-weight: 700; }
+        .nav-item .icon { font-size: 1.4rem; opacity: 0.5; transition: 0.3s;}
+        .nav-item.active { color: var(--primary); }
+        .nav-item.active .icon { opacity: 1; transform: translateY(-2px);}
+
+    </style>
+</head>
+<body>
+
+    <div class="app-bar">
+        <button class="back-btn" onclick="window.location.href='dashboard.html'">←</button>
+        <div class="app-bar-title">
+            <h1>My Schedule</h1>
+            <p>Attendance Calendar View</p>
+        </div>
+    </div>
+
+    <div class="summary-card">
+        <input type="month" id="monthPicker" class="month-picker">
+        
+        <div class="stats-row">
+            <div class="stat-block">
+                <span class="stat-label">Total Days</span>
+                <span class="stat-val" id="totalMonthDays">-</span>
+            </div>
+            <div class="stat-block right">
+                <span class="stat-label">Days Present</span>
+                <span class="stat-val" style="color: var(--success);" id="presentDaysCount">-</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="section-container">
+        <h3 class="sec-title">Calendar Log</h3>
+        
+        <div class="legend-row">
+            <div class="legend-item"><div class="legend-dot dot-green"></div> Present</div>
+            <div class="legend-item"><div class="legend-dot dot-grey"></div> Absent/No Info</div>
+            <div class="legend-item"><div class="legend-dot dot-today"></div> Today</div>
+        </div>
+
+        <div class="calendar-grid" id="calendarGrid">
+            <div class="day-header">Sun</div>
+            <div class="day-header">Mon</div>
+            <div class="day-header">Tue</div>
+            <div class="day-header">Wed</div>
+            <div class="day-header">Thu</div>
+            <div class="day-header">Fri</div>
+            <div class="day-header">Sat</div>
+            
+            <div style="grid-column: span 7; text-align: center; padding: 20px; color: var(--text-gray); font-size: 0.8rem; font-weight: 500;">
+                Loading Calendar...
+            </div>
+        </div>
+    </div>
+
+    <div class="bottom-nav">
+        <a href="dashboard.html" class="nav-item">
+            <span class="icon">📊</span>
+            <span>Home</span>
+        </a>
+        <a href="attendance.html" class="nav-item">
+            <span class="icon">📸</span>
+            <span>Attnd</span>
+        </a>
+        <a href="apply-leave.html" class="nav-item">
+            <span class="icon">🗓️</span>
+            <span>Leaves</span>
+        </a>
+        <a href="myprofile.html" class="nav-item">
+            <span class="icon">👤</span>
+            <span>Profile</span>
+        </a>
+    </div>
+
+    <script src="../app.js"></script>
+    <script src="./staffCommon.js"></script>
+    <script src="./bottomNav.js"></script>
+    
+    <script>
+        let currentUser = null;
+
+        function daysInMonth(year, month1to12) {
+            return new Date(year, month1to12, 0).getDate();
+        }
+
+        // Render standard calendar grid
+        function renderCalendarGrid(year, month1to12, attRows) {
+            const gridEl = document.getElementById('calendarGrid');
+            const totalDays = daysInMonth(year, month1to12);
+            
+            // Map attendance by date string 'YYYY-MM-DD'
+            const map = new Map((attRows || []).map((r) => [String(r.date).slice(0, 10), r]));
+            
+            // Figure out which day of week the 1st of month falls on
+            const firstDayObj = new Date(year, month1to12 - 1, 1);
+            const startingDayOfWeek = firstDayObj.getDay(); // 0 = Sun, 1 = Mon...
+            
+            // Get Current Today Date for outlining
+            const todayObj = new Date();
+            const isCurrentMonth = (todayObj.getFullYear() === year && (todayObj.getMonth() + 1) === month1to12);
+            const todayDateNum = todayObj.getDate();
+
+            // Rebuild static headers
+            let html = `
+                <div class="day-header">Sun</div>
+                <div class="day-header">Mon</div>
+                <div class="day-header">Tue</div>
+                <div class="day-header">Wed</div>
+                <div class="day-header">Thu</div>
+                <div class="day-header">Fri</div>
+                <div class="day-header">Sat</div>
+            `;
+
+            // 1. Add empty padding cells for days before the 1st
+            for(let i = 0; i < startingDayOfWeek; i++) {
+                html += `<div class="cal-day empty"></div>`;
+            }
+
+            // 2. Add actual days
+            let presentCount = 0;
+
+            for (let d = 1; d <= totalDays; d++) {
+                // Formatting 'YYYY-MM-DD' properly for map lookup
+                const dateString = `${year}-${String(month1to12).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+                
+                const row = map.get(dateString);
+                const isPresent = !!row?.check_in_time;
+                const isToday = (isCurrentMonth && d === todayDateNum);
+                
+                if (isPresent) presentCount++;
+
+                // Build Class list
+                let classList = "cal-day";
+                if(isPresent) classList += " present";
+                else classList += " absent";
+                if(isToday) classList += " today";
+
+                html += `<div class="${classList}">${d}</div>`;
+            }
+
+            // Update UI
+            gridEl.innerHTML = html;
+            document.getElementById('totalMonthDays').innerText = totalDays;
+            document.getElementById('presentDaysCount').innerText = presentCount;
+        }
+
+        async function loadMonthData() {
+            const monthVal = document.getElementById('monthPicker').value;
+            const gridEl = document.getElementById('calendarGrid');
+            
+            if (!monthVal) return;
+            
+            // Loading state
+            gridEl.innerHTML = `<div style="grid-column: span 7; text-align: center; padding: 30px; color: var(--text-gray); font-size: 0.85rem; font-weight: 500;">Fetching dates...</div>`;
+            
+            try {
+                const out = await VE.api(`/api/staff/attendance?month=${encodeURIComponent(monthVal)}`);
+                const [y, m] = monthVal.split('-').map(Number);
+                
+                renderCalendarGrid(y, m, out.attendance || []);
+            } catch (e) {
+                gridEl.innerHTML = `<div style="grid-column: span 7; text-align: center; padding: 20px; color: var(--danger); font-size: 0.85rem; font-weight: 600;">Error fetching data. Check your connection.</div>`;
+            }
+        }
+
+        (async function init() {
+            if (typeof VEStaff !== 'undefined') currentUser = await VEStaff.ensureStaff();
+            
+            // Set Default Month to Current
+            const now = new Date();
+            const monthPicker = document.getElementById('monthPicker');
+            monthPicker.value = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+            
+            // Listen for changes
+            monthPicker.addEventListener('change', loadMonthData);
+            
+            // Initial Load
+            await loadMonthData();
+        })();
+    </script>
+</body>
+</html>

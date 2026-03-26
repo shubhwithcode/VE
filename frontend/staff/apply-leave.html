@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Apply Leave - Staff Portal</title>
+    
+    <link rel="stylesheet" href="./staffShell.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary: #5d141f;
+            --bg: #f8f3ea;
+            --card-bg: #ffffff;
+            --text-dark: #2d080d;
+            --text-gray: #7b6767;
+            --border: rgba(93, 20, 31, 0.10);
+            --success: #c5a029;
+            --warning: #d28d1c;
+            --danger: #8f1f31;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent;}
+        
+        body { 
+            background-color: var(--bg);
+            color: var(--text-dark);
+            padding-bottom: 90px;
+            max-width: 480px;
+            margin: 0 auto;
+            position: relative;
+            min-height: 100vh;
+            box-shadow: 0 0 20px rgba(0,0,0,0.05);
+        }
+
+        /* --- Top App Bar --- */
+        .app-bar {
+            background: linear-gradient(135deg, var(--primary), #7a1b29);
+            color: white;
+            padding: 20px;
+            border-bottom-left-radius: 25px;
+            border-bottom-right-radius: 25px;
+            box-shadow: 0 4px 15px rgba(43, 115, 246, 0.25);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .back-btn { background: none; border: none; color: white; font-size: 1.5rem; cursor: pointer; display: flex; align-items: center;}
+        .app-bar-title h1 { font-size: 1.2rem; font-weight: 800; margin: 0; line-height: 1.2; }
+        .app-bar-title p { font-size: 0.75rem; opacity: 0.9; margin: 0; font-weight: 500;}
+
+        /* --- Main Content Containers --- */
+        .section-container { padding: 20px; display: flex; flex-direction: column; gap: 20px; }
+
+        .card {
+            background: var(--card-bg); padding: 20px; border-radius: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.03); border: 1px solid var(--border);
+        }
+
+        .sec-title { font-size: 1.05rem; font-weight: 800; color: var(--text-dark); margin: 0 0 15px 0; display: flex; align-items: center; gap: 8px;}
+
+        /* Form Styling */
+        .row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;}
+        .input-group { display: flex; flex-direction: column; gap: 6px; margin-bottom: 15px;}
+        
+        .input-group label { font-size: 0.8rem; font-weight: 700; color: var(--text-gray); text-transform: uppercase; letter-spacing: 0.5px; }
+        .input-group input, .input-group textarea {
+            width: 100%; padding: 12px 14px; border: 1px solid var(--border); border-radius: 12px;
+            font-size: 0.95rem; background: #f8fafc; color: var(--text-dark); font-weight: 500;
+            transition: 0.3s; outline: none;
+        }
+        .input-group input:focus, .input-group textarea:focus { border-color: var(--primary); background: white; box-shadow: 0 0 0 3px rgba(43, 115, 246, 0.1); }
+        .input-group textarea { height: 90px; resize: none; line-height: 1.4;}
+
+        .btn-submit {
+            width: 100%; padding: 16px; background: var(--primary); color: white;
+            border: none; border-radius: 14px; font-size: 1rem; font-weight: 800;
+            cursor: pointer; transition: 0.2s; box-shadow: 0 8px 20px rgba(43, 115, 246, 0.25);
+            display: flex; justify-content: center; align-items: center; gap: 8px; margin-top: 5px;
+        }
+        .btn-submit:active { transform: scale(0.97); box-shadow: 0 4px 10px rgba(43, 115, 246, 0.15); }
+        .btn-submit:disabled { opacity: 0.7; cursor: not-allowed; transform: none;}
+
+        #status { text-align: center; margin-top: 15px; font-size: 0.85rem; font-weight: 600; min-height: 20px; }
+
+        /* History List */
+        .history-list { display: flex; flex-direction: column; gap: 12px; }
+        .history-item {
+            background: #f8fafc; padding: 15px; border-radius: 14px;
+            border: 1px solid #f1f5f9; display: flex; justify-content: space-between; align-items: flex-start;
+        }
+        
+        .leave-details .dates { font-weight: 800; font-size: 0.95rem; color: var(--text-dark); margin-bottom: 5px; }
+        .leave-details .reason { font-size: 0.8rem; color: var(--text-gray); font-weight: 500; display: block; max-width: 220px; line-height: 1.3;}
+
+        .status-badge {
+            padding: 5px 12px; border-radius: 20px; font-size: 0.65rem; font-weight: 800;
+            text-transform: uppercase; letter-spacing: 0.5px; text-align: center; border: 1px solid transparent;
+        }
+        .status-pending { background-color: #fef3c7; color: #b45309; border-color: #fde68a;}
+        .status-approved { background-color: #dcfce7; color: #166534; border-color: #bbf7d0;}
+        .status-rejected { background-color: #fee2e2; color: #991b1b; border-color: #fecaca;}
+
+        /* --- Bottom Nav --- */
+        .bottom-nav {
+            position: fixed; bottom: 0; left: 0; width: 100%; max-width: 480px;
+            background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+            border-top: 1px solid var(--border); padding: 10px 15px 25px 15px; 
+            display: flex; justify-content: space-around; z-index: 1000; box-shadow: 0 -4px 20px rgba(0,0,0,0.04);
+            left: 50%; transform: translateX(-50%);
+        }
+        .nav-item { display: flex; flex-direction: column; align-items: center; gap: 4px; color: var(--text-gray); text-decoration: none; font-size: 0.7rem; font-weight: 700; }
+        .nav-item .icon { font-size: 1.4rem; opacity: 0.5; transition: 0.3s;}
+        .nav-item.active { color: var(--primary); }
+        .nav-item.active .icon { opacity: 1; transform: translateY(-2px);}
+
+        /* Spinner for loading state */
+        .spinner {
+            display: none; width: 20px; height: 20px; border: 3px solid rgba(255,255,255,0.3);
+            border-radius: 50%; border-top-color: white; animation: spin 1s ease-in-out infinite; margin: 0 auto;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .btn-submit.loading .btn-text { display: none; }
+        .btn-submit.loading .spinner { display: block; }
+
+    </style>
+</head>
+<body>
+
+    <div class="app-bar">
+        <button class="back-btn" onclick="window.history.back()">←</button>
+        <div class="app-bar-title">
+            <h1>Leave Requests</h1>
+            <p>Apply for holidays & time-off</p>
+        </div>
+    </div>
+
+    <div class="section-container">
+        
+        <div class="card">
+            <h3 class="sec-title">📝 New Request</h3>
+            
+            <form id="leave-form">
+                <div class="row">
+                    <div class="input-group" style="margin-bottom: 0;">
+                        <label>From Date</label>
+                        <input type="date" id="startDate" required>
+                    </div>
+                    <div class="input-group" style="margin-bottom: 0;">
+                        <label>To Date</label>
+                        <input type="date" id="endDate" required>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label>Reason for Leave</label>
+                    <textarea id="leaveReason" placeholder="Example: Going to hometown for a family function..." required></textarea>
+                </div>
+
+                <button type="submit" class="btn-submit" id="submitBtn">
+                    <span class="btn-text">Submit Request</span>
+                    <div class="spinner"></div>
+                </button>
+            </form>
+            <div id="status"></div>
+        </div>
+
+        <div class="card">
+            <h3 class="sec-title">🗂️ My Leave History</h3>
+            
+            <div class="history-list" id="historyList">
+                <div style="text-align: center; padding: 20px; color: #94a3b8; font-size: 0.85rem; font-weight: 500;">
+                    Loading history...
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="bottom-nav">
+        <a href="dashboard.html" class="nav-item">
+            <span class="icon">📊</span>
+            <span>Home</span>
+        </a>
+        <a href="attendance.html" class="nav-item">
+            <span class="icon">📸</span>
+            <span>Attnd</span>
+        </a>
+        <a href="apply-leave.html" class="nav-item active">
+            <span class="icon">🗓️</span>
+            <span>Leaves</span>
+        </a>
+        <a href="myprofile.html" class="nav-item">
+            <span class="icon">👤</span>
+            <span>Profile</span>
+        </a>
+    </div>
+
+    <script src="../app.js"></script>
+    <script src="./staffCommon.js"></script>
+    <script src="./bottomNav.js"></script>
+    
+    <script>
+        const statusEl = document.getElementById('status');
+        const historyList = document.getElementById('historyList');
+        const form = document.getElementById('leave-form');
+        const submitBtn = document.getElementById('submitBtn');
+
+        function setStatus(msg, ok = true) {
+            if (!statusEl) return;
+            statusEl.textContent = msg;
+            statusEl.style.color = ok ? 'var(--success)' : 'var(--danger)';
+        }
+
+        // Date Utils
+        function ymd(d) { return d.toISOString().slice(0, 10); }
+        function parseYmd(s) {
+            if (!/^\d{4}-\d{2}-\d{2}$/.test(String(s || ''))) return null;
+            return new Date(`${s}T00:00:00Z`);
+        }
+        function diffDaysInclusive(a, b) {
+            const ms = b.getTime() - a.getTime();
+            return Math.floor(ms / (24 * 60 * 60 * 1000)) + 1;
+        }
+        function fmtRange(from, to) {
+            const f = new Date(from);
+            const t = new Date(to);
+            const fLbl = f.toLocaleDateString('en-IN', { day: '2-digit', month: 'short' });
+            const tLbl = t.toLocaleDateString('en-IN', { day: '2-digit', month: 'short' });
+            return fLbl === tLbl ? fLbl : `${fLbl} - ${tLbl}`;
+        }
+
+        function statusClass(status) {
+            if (status === 'approved') return 'status-approved';
+            if (status === 'rejected') return 'status-rejected';
+            return 'status-pending';
+        }
+
+        async function loadLeaves() {
+            historyList.innerHTML = `<div style="text-align: center; padding: 20px; color: #94a3b8; font-size: 0.85rem; font-weight: 500;">Loading...</div>`;
+            try {
+                const out = await VE.api('/api/staff/leaves', { timeoutMs: 15000 });
+                const leaves = out?.leaves || [];
+                
+                if (leaves.length === 0) {
+                    historyList.innerHTML = `
+                    <div style="text-align: center; padding: 30px 20px; border: 1px dashed var(--border); border-radius: 12px; background: #f8fafc;">
+                        <h4 style="color: var(--text-gray); margin-bottom: 5px;">No History</h4>
+                        <p style="font-size: 0.8rem; color: #94a3b8;">You haven't applied for any leaves yet.</p>
+                    </div>`;
+                    return;
+                }
+
+                historyList.innerHTML = leaves.map((l) => {
+                    const from = String(l.from_date).slice(0, 10);
+                    const to = String(l.to_date).slice(0, 10);
+                    const d1 = parseYmd(from);
+                    const d2 = parseYmd(to);
+                    const days = d1 && d2 ? diffDaysInclusive(d1, d2) : '';
+                    const dates = `${fmtRange(from, to)}${days ? ` &nbsp;<span style="color:var(--primary); font-size:0.8rem;">(${days} Days)</span>` : ''}`;
+                    
+                    const st = String(l.status || 'pending');
+                    const lbl = st.toUpperCase();
+                    
+                    return `
+                    <div class="history-item">
+                        <div class="leave-details">
+                            <div class="dates">${dates}</div>
+                            <span class="reason">"${String(l.reason || 'No reason provided')}"</span>
+                        </div>
+                        <div class="status-badge ${statusClass(st)}">${lbl}</div>
+                    </div>`;
+                }).join('');
+
+            } catch(e) {
+                historyList.innerHTML = `<div style="text-align: center; padding: 20px; color: var(--danger); font-size: 0.85rem; font-weight: 500;">Error loading history.</div>`;
+            }
+        }
+
+        async function submitLeave(event) {
+            event.preventDefault();
+            const start = document.getElementById('startDate').value;
+            const end = document.getElementById('endDate').value;
+            const reason = document.getElementById('leaveReason').value.trim();
+            
+            if (!start || !end || !reason) {
+                setStatus('Please fill all fields', false);
+                return;
+            }
+
+            // Start Loading State
+            setStatus('');
+            submitBtn.disabled = true;
+            submitBtn.classList.add('loading');
+
+            try {
+                await VE.api('/api/staff/leaves', {
+                    method: 'POST',
+                    headers: { 'content-type': 'application/json' },
+                    body: JSON.stringify({ from_date: start, to_date: end, reason }),
+                    timeoutMs: 15000
+                });
+                
+                form.reset();
+                submitBtn.classList.remove('loading');
+                submitBtn.innerHTML = `<span class="btn-text">Request Sent ✓</span>`;
+                submitBtn.style.background = "var(--success)";
+                
+                setTimeout(() => {
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = `<span class="btn-text">Submit Request</span>`;
+                    submitBtn.style.background = "var(--primary)";
+                }, 2500);
+
+                await loadLeaves();
+                
+            } catch(e) {
+                submitBtn.disabled = false;
+                submitBtn.classList.remove('loading');
+                setStatus(e?.message || 'Failed to submit request', false);
+            }
+        }
+
+        (async function init() {
+            if (typeof VEStaff !== 'undefined') await VEStaff.ensureStaff();
+            
+            // Set min dates to prevent past date selection
+            const today = ymd(new Date());
+            const startInput = document.getElementById('startDate');
+            const endInput = document.getElementById('endDate');
+            
+            startInput.setAttribute('min', today);
+            endInput.setAttribute('min', today);
+            
+            startInput.addEventListener('change', function () {
+                endInput.setAttribute('min', this.value);
+                if(endInput.value && endInput.value < this.value) {
+                    endInput.value = this.value;
+                }
+            });
+
+            form.addEventListener('submit', submitLeave);
+            await loadLeaves();
+        })();
+    </script>
+</body>
+</html>

@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Mobile Dashboard - Attendance System</title>
+
+    <link rel="stylesheet" href="../styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet" />
+    <link rel="stylesheet" href="./uiShell.css" />
+
+    <style>
+        :root {
+            --brand-primary: var(--maroon-main);
+            --brand-secondary: var(--maroon-deep);
+            --bg-color: var(--bg-cream);
+            --card-bg: #ffffff;
+            --text-dark: #1f2937;
+            --text-muted: #6b7280;
+            --border-color: rgba(45, 8, 13, 0.1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent;}
+        
+        body { 
+            background-color: var(--bg-cream);
+            color: var(--text-dark);
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+        }
+
+        .admin-main {
+            padding-top: 120px;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding-bottom: 60px;
+        }
+
+        /* --- New Dual Hub Design --- */
+        .hub-container {
+            display: flex;
+            gap: 12px;
+            padding: 10px;
+            margin: 0 20px 34px;
+            border-radius: 24px;
+            background: linear-gradient(180deg, #fff8f7 0%, #fff 100%);
+            border: 1px solid rgba(93, 20, 31, 0.08);
+            box-shadow: 0 14px 34px rgba(45, 8, 13, 0.06);
+            overflow-x: auto;
+            scrollbar-width: none;
+        }
+
+        .hub-container::-webkit-scrollbar {
+            display: none;
+        }
+
+        .hub-card {
+            min-width: 210px;
+            padding: 14px 18px;
+            border-radius: 18px;
+            border: 1px solid rgba(45, 8, 13, 0.08);
+            background: #fff;
+            box-shadow: inset 0 -2px 0 rgba(45, 8, 13, 0.03), 0 4px 12px rgba(45, 8, 13, 0.04);
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex: 1 1 0;
+        }
+
+        .hub-card:hover {
+            transform: translateY(-2px);
+            border-color: rgba(197, 160, 41, 0.45);
+        }
+
+        .hub-card.active {
+            border-color: rgba(197, 160, 41, 0.5);
+            background: linear-gradient(180deg, #fff 0%, #fff7e8 100%);
+            box-shadow: 0 0 0 3px rgba(197, 160, 41, 0.12), 0 8px 18px rgba(45, 8, 13, 0.08);
+        }
+
+        .hub-icon {
+            width: 46px;
+            height: 46px;
+            border-radius: 14px;
+            display: grid;
+            place-items: center;
+            background: rgba(93, 20, 31, 0.07);
+            color: var(--maroon-main);
+            font-size: 1.35rem;
+            flex-shrink: 0;
+        }
+
+        .hub-card.active .hub-icon {
+            background: rgba(197, 160, 41, 0.16);
+            color: #8a6610;
+        }
+
+        .hub-copy {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            min-width: 0;
+        }
+
+        .hub-title {
+            font-size: 1rem;
+            font-weight: 800;
+            color: var(--maroon-deep);
+            line-height: 1.2;
+        }
+
+        .hub-sub {
+            font-size: 0.78rem;
+            color: #7b6f70;
+            font-weight: 600;
+            line-height: 1.35;
+        }
+
+        /* --- Section Panels --- */
+        .hub-panel {
+            display: none;
+            animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .hub-panel.active {
+            display: block;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Stats & Action Tiles */
+        .tool-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+            padding: 0 20px;
+        }
+
+        .tool-card {
+            background: #FFF;
+            border: 1px solid rgba(45, 8, 13, 0.08);
+            border-radius: 20px;
+            padding: 24px;
+            text-decoration: none;
+            color: inherit;
+            transition: 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.02);
+        }
+
+        .tool-card:hover {
+            transform: translateX(10px);
+            border-color: var(--gold-accent);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+        }
+
+        .tool-card .material-symbols-rounded {
+            padding: 12px;
+            background: rgba(45, 8, 13, 0.05);
+            border-radius: 12px;
+            color: var(--maroon-main);
+            font-size: 2rem;
+        }
+        
+        /* Specific Styles for Website Hub in Dark */
+        .hub-panel.website .tool-card .material-symbols-rounded {
+            color: #C5A029;
+            background: rgba(197, 160, 41, 0.1);
+        }
+
+        .tool-info h3 { font-weight: 800; font-size: 1.1rem; margin-bottom: 4px; }
+        .tool-info p { font-size: 0.85rem; color: #6b7280; font-weight: 500;}
+
+        /* Modern Check-ins list */
+        .list-section { padding: 40px 20px; }
+        .list-section h2 { font-family: 'Playfair Display', serif; font-size: 1.8rem; font-weight: 800; margin-bottom: 30px; color: var(--maroon-deep); }
+
+    </style>
+    <link rel="stylesheet" href="./adminShell.css" />
+</head>
+<body>
+    <div id="veHeaderMount"></div>
+
+    <main class="admin-main container">
+        <header class="showroom-title reveal active" style="margin-bottom: 40px;">
+            <p class="hero-subtitle">Executive Control</p>
+            <h1>Master Dashboard</h1>
+            <div class="divider"></div>
+        </header>
+
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 50px;">
+            <div id="current-date" style="font-weight: 700; color: var(--maroon-main); letter-spacing: 1px; font-size: 0.9rem;"></div>
+            <button class="logout-btn" onclick="logout()" style="background: var(--maroon-main); color: #FFF; padding: 12px 28px; border-radius: 999px; font-weight: 800; border: none; cursor: pointer; transition: 0.3s; box-shadow: 0 10px 30px rgba(45, 8, 13, 0.2);">
+                <span class="material-symbols-rounded" style="vertical-align: middle; margin-right: 8px; font-size: 1.1rem;">logout</span>
+                Logout
+            </button>
+        </div>
+
+        <div class="hub-container">
+            <div class="hub-card active" onclick="switchHub('staff', this)">
+                <span class="hub-icon material-symbols-rounded">badge</span>
+                <div class="hub-copy">
+                    <div class="hub-title">Personnel Hub</div>
+                    <div class="hub-sub">Staff, attendance, payroll</div>
+                </div>
+            </div>
+            <div class="hub-card" onclick="switchHub('website', this)">
+                <span class="hub-icon material-symbols-rounded">storefront</span>
+                <div class="hub-copy">
+                    <div class="hub-title">Brand Hub</div>
+                    <div class="hub-sub">Gallery, content, lead flow</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Staff Panel -->
+        <div id="staffHub" class="hub-panel active">
+            <div class="tool-grid" style="margin-bottom: 40px;">
+                <div class="stat-card total" style="background: var(--maroon-deep); color: #FFF; border: none;">
+                    <span class="stat-label" style="color: rgba(255,255,255,0.7);">Total Staff</span>
+                    <span class="stat-num" id="statTotalStaff" style="color: #FFF;">-</span>
+                </div>
+                <div class="stat-card present" style="border-color: rgba(16, 185, 129, 0.2);">
+                    <span class="stat-label">Present Today</span>
+                    <span class="stat-num" id="statPresentToday" style="color: #10b981;">-</span>
+                </div>
+                <div class="stat-card absent" style="border-color: rgba(239, 68, 68, 0.2);">
+                    <span class="stat-label">On Leave</span>
+                    <span class="stat-num" id="statAbsentToday" style="color: #ef4444;">-</span>
+                </div>
+            </div>
+
+            <div class="tool-grid">
+                <a class="tool-card" href="manage-staff.html">
+                    <span class="material-symbols-rounded">group</span>
+                    <div class="tool-info">
+                        <h3>Master Craftsmen</h3>
+                        <p>Manage employee records</p>
+                    </div>
+                </a>
+                <a class="tool-card" href="attendance.html">
+                    <span class="material-symbols-rounded">person_pin_circle</span>
+                    <div class="tool-info">
+                        <h3>Live Attendance</h3>
+                        <p>Real-time location monitoring</p>
+                    </div>
+                </a>
+                <a class="tool-card" href="payroll.html">
+                    <span class="material-symbols-rounded">payments</span>
+                    <div class="tool-info">
+                        <h3>Payroll Engine</h3>
+                        <p>Salary & transaction logs</p>
+                    </div>
+                </a>
+                <a class="tool-card" href="leaves.html">
+                    <span class="material-symbols-rounded">event_busy</span>
+                    <div class="tool-info">
+                        <h3>Leave Requests</h3>
+                        <p>Approve or manage off-days</p>
+                    </div>
+                </a>
+            </div>
+
+            <div class="list-section">
+                <h2>Live Security Feed</h2>
+                <div class="attn-list" id="liveBody">
+                    <!-- Dynamic check-ins -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Website Panel -->
+        <div id="websiteHub" class="hub-panel website">
+            <div class="tool-grid">
+                <a class="tool-card" href="manage-gallery.html">
+                    <span class="material-symbols-rounded">photo_library</span>
+                    <div class="tool-info">
+                        <h3>Gallery Curator</h3>
+                        <p>Manage showcase images</p>
+                    </div>
+                </a>
+                <a class="tool-card" href="manage-customers.html">
+                    <span class="material-symbols-rounded">person_check</span>
+                    <div class="tool-info">
+                        <h3>Customer Base</h3>
+                        <p>Manage registered clients</p>
+                    </div>
+                </a>
+                <a class="tool-card" href="manage-queries.html">
+                    <span class="material-symbols-rounded">chat_bubble</span>
+                    <div class="tool-info">
+                        <h3>Inquiries & Leads</h3>
+                        <p>Customer queries and responses</p>
+                    </div>
+                </a>
+                <a class="tool-card" href="manage-quotations.html">
+                    <span class="material-symbols-rounded">request_quote</span>
+                    <div class="tool-info">
+                        <h3>Quotation Feed</h3>
+                        <p>Pricing requests & estimates</p>
+                    </div>
+                </a>
+                <a class="tool-card" href="manage-feedback.html">
+                    <span class="material-symbols-rounded">star</span>
+                    <div class="tool-info">
+                        <h3>Feedback System</h3>
+                        <p>Reviews & testimonials</p>
+                    </div>
+                </a>
+                <a class="tool-card" href="manage-content.html">
+                    <span class="material-symbols-rounded">edit_note</span>
+                    <div class="tool-info">
+                        <h3>Content Manager</h3>
+                        <p>Update labels & marketing text</p>
+                    </div>
+                </a>
+            </div>
+
+            <div style="margin-top: 60px; padding: 40px; text-align: center; border: 2px dashed rgba(197, 160, 41, 0.2); border-radius: 32px;">
+                <span class="material-symbols-rounded" style="font-size: 4rem; color: var(--gold-accent); margin-bottom: 20px;">query_stats</span>
+                <h2 style="font-family: 'Playfair Display', serif; margin-bottom: 15px;">Website Performance</h2>
+                <p style="color: #6b7280; max-width: 600px; margin: 0 auto; line-height: 1.6;">Your digital showroom is live. Monitor traffic, conversion rates, and hot-mapped customer interests directly from the next-gen analytics suite (Coming Soon).</p>
+            </div>
+        </div>
+
+    <!-- Hidden Sidebar/Nav items replaced by Global Layout -->
+
+    <script src="../app.js"></script>
+    <script src="./adminCommon.js"></script>
+    <script src="./adminShell.js"></script>
+    <script src="./adminShell.js"></script>
+    <script>
+        const quickActionSets = {
+            staff: [
+                { href: 'dashboard.html', icon: 'dashboard', label: 'Home', active: true },
+                { href: 'attendance.html', icon: 'person_pin_circle', label: 'Attendance' },
+                { href: 'payroll.html', icon: 'payments', label: 'Payroll' },
+                { href: 'reports.html', icon: 'assessment', label: 'Reports' }
+            ],
+            website: [
+                { href: 'manage-gallery.html', icon: 'photo_library', label: 'Gallery', active: true },
+                { href: 'manage-customers.html', icon: 'groups', label: 'Customers' },
+                { href: 'manage-queries.html', icon: 'chat_bubble', label: 'Queries' },
+                { href: 'manage-content.html', icon: 'edit_note', label: 'Content' }
+            ]
+        };
+
+        const dateOptions = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+        document.getElementById('current-date').innerText = new Date().toLocaleDateString('en-IN', dateOptions);
+
+        function updateQuickActions(hub) {
+            const links = document.querySelectorAll('.adminQuickActions .adminQuickAction');
+            const items = quickActionSets[hub];
+            if (!links.length || !items) return;
+
+            links.forEach((link, index) => {
+                const item = items[index];
+                if (!item) return;
+                link.href = item.href;
+                link.classList.toggle('active', !!item.active);
+
+                const iconEl = link.querySelector('.material-symbols-rounded');
+                const labelEl = link.querySelectorAll('span')[1];
+                if (iconEl) iconEl.textContent = item.icon;
+                if (labelEl) labelEl.textContent = item.label;
+            });
+        }
+
+        function switchHub(hub, element) {
+            // Cards
+            document.querySelectorAll('.hub-card').forEach(c => c.classList.remove('active'));
+            element.classList.add('active');
+
+            // Panels
+            document.querySelectorAll('.hub-panel').forEach(p => p.classList.remove('active'));
+            document.getElementById(hub + 'Hub').classList.add('active');
+
+            // Bottom quick actions for mobile shell
+            updateQuickActions(hub);
+            try { localStorage.setItem('ve_admin_hub', hub); } catch {}
+        }
+
+        async function logout() {
+            if(!confirm("Are you sure you want to logout?")) return;
+            // Assuming VE.api is defined in app.js
+            try {
+                await VE.api('/api/auth/logout', { method: 'POST' });
+            } catch(e) { console.log(e); }
+            localStorage.removeItem('ve_auth_token');
+            window.location.href = "login.html";
+        }
+
+        function fmtTime(value) {
+            if (!value) return '--:--';
+            const d = new Date(value);
+            return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        }
+
+        // Fixed the template literal syntax bug here
+        function mapsLink(lat, lng) {
+            if (!lat || !lng) return '';
+            const q = `${lat},${lng}`;
+            return `<a class="action-link map" href="http://maps.google.com/?q=${encodeURIComponent(q)}" target="_blank">📍 Map</a>`;
+        }
+
+        function mediaLink(path, label) {
+            if (!path) return '';
+            return `<a class="action-link" href="/${path}" target="_blank">${label}</a>`;
+        }
+
+        // Re-engineered liveRow to match the new Card Design
+        function liveRow(a) {
+            const inSelfie = a.check_in_image_path ? mediaLink(a.check_in_image_path, '📷 In') : '';
+            const outSelfie = a.check_out_image_path ? mediaLink(a.check_out_image_path, '📷 Out') : '';
+            const workImg = a.work_image_path ? mediaLink(a.work_image_path, '📷 Work') : '';
+            const voice = a.voice_record_path ? mediaLink(a.voice_record_path, '🎤 Audio') : '';
+            
+            const workTxt = a.work_description ? String(a.work_description).slice(0, 60) + (String(a.work_description).length > 60 ? '…' : '') : '';
+            
+            const statusBadge = a.check_out_time ? '<span class="status-badge out">Shift Ended</span>' : '<span class="status-badge in">Working</span>';
+            const mapBtn = mapsLink(a.check_in_lat, a.check_in_lng);
+
+            return `
+            <div class="attn-card">
+                <div class="attn-head">
+                    <div class="staff-name">${a.name}</div>
+                    ${statusBadge}
+                </div>
+                
+                <div class="time-row">
+                    <div class="time-block">
+                        <span class="time-label">Check-In</span>
+                        <span class="time-val">${fmtTime(a.check_in_time)}</span>
+                    </div>
+                    <div class="time-block" style="text-align: right;">
+                        <span class="time-label">Check-Out</span>
+                        <span class="time-val ${!a.check_out_time ? 'missing' : ''}">${a.check_out_time ? fmtTime(a.check_out_time) : '-- : --'}</span>
+                    </div>
+                </div>
+
+                <div class="action-row">
+                    ${inSelfie} ${outSelfie} ${mapBtn}
+                </div>
+                
+                ${(workImg || voice) ? `<div class="action-row" style="margin-top: 5px;">${workImg} ${voice}</div>` : ''}
+                
+                ${workTxt ? `<div class="work-report">"${workTxt}"</div>` : ''}
+            </div>`;
+        }
+
+        // Override helpers to avoid broken encoding + ensure media URLs work when opened via Live Server.
+        function getApiBaseForAssets() {
+            try {
+                const base = localStorage.getItem('ve_api_base') || '';
+                return String(base).replace(/\/$/, '');
+            } catch {
+                return '';
+            }
+        }
+
+        function assetUrl(p) {
+            if (!p) return '';
+            const apiBase = getApiBaseForAssets();
+            const norm = String(p).replace(/^\/+/, '');
+            return apiBase ? `${apiBase}/${norm}` : `/${norm}`;
+        }
+
+        function mapsLink(lat, lng) {
+            if (!lat || !lng) return '';
+            const q = `${lat},${lng}`;
+            return `<a class="action-link map" href="http://maps.google.com/?q=${encodeURIComponent(q)}" target="_blank">${String.fromCodePoint(0x1F4CD)} Map</a>`;
+        }
+
+        function mediaLink(path, label) {
+            if (!path) return '';
+            return `<a class="action-link" href="${assetUrl(path)}" target="_blank">${label}</a>`;
+        }
+
+        function liveRow(a) {
+            const inSelfie = a.check_in_image_path ? mediaLink(a.check_in_image_path, `${String.fromCodePoint(0x1F4F7)} In`) : '';
+            const outSelfie = a.check_out_image_path ? mediaLink(a.check_out_image_path, `${String.fromCodePoint(0x1F4F7)} Out`) : '';
+            const workImg = a.work_image_path ? mediaLink(a.work_image_path, `${String.fromCodePoint(0x1F4F7)} Work`) : '';
+            const voice = a.voice_record_path ? mediaLink(a.voice_record_path, `${String.fromCodePoint(0x1F3A4)} Audio`) : '';
+
+            const workTxt = a.work_description ? String(a.work_description).slice(0, 60) + (String(a.work_description).length > 60 ? '…' : '') : '';
+
+            const statusBadge = a.check_out_time ? '<span class="status-badge out">Shift Ended</span>' : '<span class="status-badge in">Working</span>';
+            const mapBtn = mapsLink(a.check_in_lat, a.check_in_lng);
+
+            return `
+            <div class="attn-card">
+                <div class="attn-head">
+                    <div class="staff-name">${a.name}</div>
+                    ${statusBadge}
+                </div>
+
+                <div class="time-row">
+                    <div class="time-block">
+                        <span class="time-label">Check-In</span>
+                        <span class="time-val">${fmtTime(a.check_in_time)}</span>
+                    </div>
+                    <div class="time-block" style="text-align: right;">
+                        <span class="time-label">Check-Out</span>
+                        <span class="time-val ${!a.check_out_time ? 'missing' : ''}">${a.check_out_time ? fmtTime(a.check_out_time) : '-- : --'}</span>
+                    </div>
+                </div>
+
+                <div class="action-row">
+                    ${inSelfie} ${outSelfie} ${mapBtn}
+                </div>
+
+                ${(workImg || voice) ? `<div class="action-row" style="margin-top: 5px;">${workImg} ${voice}</div>` : ''}
+
+                ${workTxt ? `<div class="work-report">"${workTxt}"</div>` : ''}
+            </div>`;
+        }
+
+        async function loadDashboard() {
+            // Ensure VEAdmin and VE exist before calling them (to prevent errors if files are missing)
+            if (typeof VEAdmin !== 'undefined') await VEAdmin.ensureAdmin();
+            if (typeof VE === 'undefined') return;
+
+            const now = new Date();
+            const month = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+            const summary = await VE.api(`/api/admin/summary?month=${encodeURIComponent(month)}`);
+
+            const total = Number(summary.total_staff || 0);
+            const present = Number(summary.present_today || 0);
+            const absent = Math.max(0, total - present);
+            
+            document.getElementById('statTotalStaff').textContent = String(total);
+            document.getElementById('statPresentToday').textContent = String(present);
+            document.getElementById('statAbsentToday').textContent = String(absent);
+
+            const from = summary.date;
+            const out = await VE.api(`/api/admin/attendance?from=${encodeURIComponent(from)}&to=${encodeURIComponent(from)}`);
+            const tbody = document.getElementById('liveBody');
+            
+            const rows = (out.attendance || []).filter((r) => r.check_in_time);
+            
+            if(rows.length > 0) {
+                tbody.innerHTML = rows.map(liveRow).join('');
+            } else {
+                tbody.innerHTML = `<div style="text-align:center; padding: 2rem; color: #9ca3af;">No check-ins yet today.</div>`;
+            }
+        }
+
+        // Add a slight delay to ensure scripts are fully loaded
+        setTimeout(() => {
+            let initialHub = 'staff';
+            try {
+                const savedHub = localStorage.getItem('ve_admin_hub');
+                if (savedHub === 'website' || savedHub === 'staff') initialHub = savedHub;
+            } catch {}
+
+            const initialCard = document.querySelector(`.hub-card[onclick*="'${initialHub}'"]`);
+            if (initialCard) switchHub(initialHub, initialCard);
+            loadDashboard().catch((e) => console.error(e));
+        }, 100);
+
+    </script>
+
+    </main>
+
+    <div id="veFooterMount"></div>
+    <script src="../layout.js"></script>
+</body>
+</html>

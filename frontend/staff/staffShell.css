@@ -1,0 +1,315 @@
+@import url('../styles.css');
+
+:root {
+  --staff-primary: var(--maroon-main);
+  --staff-primary-dark: var(--maroon-deep);
+  --staff-accent: var(--gold-accent);
+  --staff-bg: linear-gradient(180deg, #f8f3ea 0%, #f9f7f2 100%);
+  --staff-panel: rgba(255, 255, 255, 0.96);
+  --staff-border: rgba(93, 20, 31, 0.10);
+  --staff-shadow: 0 18px 44px rgba(45, 8, 13, 0.10);
+}
+
+body {
+  background: var(--staff-bg) !important;
+  color: var(--maroon-deep) !important;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0 0 auto 0;
+  height: 240px;
+  background:
+    radial-gradient(circle at top right, rgba(197, 160, 41, 0.16), transparent 32%),
+    radial-gradient(circle at top left, rgba(93, 20, 31, 0.16), transparent 34%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+body > * {
+  position: relative;
+  z-index: 1;
+}
+
+.app-bar,
+.profile-header {
+  background: linear-gradient(135deg, var(--staff-primary), var(--staff-primary-dark)) !important;
+  box-shadow: 0 14px 34px rgba(45, 8, 13, 0.24) !important;
+}
+
+.card,
+.status-card,
+.action-section,
+.summary-card,
+.history-item,
+.dash-card {
+  background: var(--staff-panel) !important;
+  border: 1px solid var(--staff-border) !important;
+  box-shadow: var(--staff-shadow) !important;
+}
+
+.profile-img,
+.customer-avatar,
+.emp-avatar {
+  box-shadow: 0 10px 24px rgba(45, 8, 13, 0.12);
+}
+
+.btn-submit,
+.btn-main,
+button[type="submit"] {
+  background: linear-gradient(135deg, var(--staff-primary), #7a1b29) !important;
+  box-shadow: 0 14px 30px rgba(45, 8, 13, 0.22) !important;
+}
+
+.btn-record.recording,
+.btn-checkin {
+  background: linear-gradient(135deg, var(--gold-accent), #e1bc48) !important;
+  color: var(--maroon-deep) !important;
+}
+
+.bottom-nav {
+  position: fixed !important;
+  left: 14px !important;
+  right: 14px !important;
+  bottom: 14px !important;
+  width: auto !important;
+  max-width: none !important;
+  transform: none !important;
+  padding: 10px !important;
+  border-radius: 24px !important;
+  border: 1px solid rgba(93, 20, 31, 0.08) !important;
+  background: rgba(255, 255, 255, 0.96) !important;
+  box-shadow: 0 20px 44px rgba(45, 8, 13, 0.14) !important;
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+}
+
+.nav-item {
+  min-width: 52px;
+  color: #7a6768 !important;
+  font-size: 0.64rem !important;
+  font-weight: 800 !important;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+.nav-item .icon {
+  font-size: 1.2rem !important;
+  opacity: 0.8 !important;
+}
+
+.nav-item.active {
+  color: var(--staff-primary) !important;
+}
+
+.nav-item.active .icon {
+  opacity: 1 !important;
+}
+
+.logout-btn {
+  background: rgba(255, 255, 255, 0.18) !important;
+  border-radius: 999px !important;
+  padding: 8px 14px !important;
+}
+
+.section-title,
+.sec-title,
+.profile-name,
+.customer-info h3,
+.staff-name {
+  color: var(--maroon-deep) !important;
+}
+
+input,
+select,
+textarea,
+.month-picker,
+.work-textarea,
+.input-group input,
+.input-group textarea {
+  background: rgba(255, 255, 255, 0.96) !important;
+  border: 1px solid rgba(93, 20, 31, 0.12) !important;
+  color: var(--maroon-deep) !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7);
+}
+
+input:focus,
+select:focus,
+textarea:focus,
+.month-picker:focus,
+.work-textarea:focus,
+.input-group input:focus,
+.input-group textarea:focus {
+  border-color: rgba(197, 160, 41, 0.85) !important;
+  box-shadow: 0 0 0 4px rgba(197, 160, 41, 0.12) !important;
+  background: #fffdf9 !important;
+}
+
+label,
+.input-group label,
+.sum-label,
+.stat-label,
+.info-label,
+.s-label,
+.date-display,
+.sec-desc,
+.note-text,
+.location-text,
+.app-bar-title p,
+.profile-info p,
+.h-times,
+.leave-details .reason {
+  color: #7b6767 !important;
+}
+
+.status-badge,
+.profile-role,
+.s-badge {
+  background: rgba(197, 160, 41, 0.16) !important;
+  color: var(--maroon-deep) !important;
+  border: 1px solid rgba(197, 160, 41, 0.28) !important;
+}
+
+.status-present,
+.status-approved,
+.status-card.active .status-badge {
+  background: rgba(197, 160, 41, 0.18) !important;
+  color: var(--maroon-deep) !important;
+  border-color: rgba(197, 160, 41, 0.3) !important;
+}
+
+.status-absent,
+.status-card.ended .status-badge {
+  background: rgba(93, 20, 31, 0.08) !important;
+  color: #6e5960 !important;
+  border-color: rgba(93, 20, 31, 0.12) !important;
+}
+
+.status-pending,
+.status-working {
+  background: rgba(197, 160, 41, 0.15) !important;
+  color: #8a6310 !important;
+  border-color: rgba(197, 160, 41, 0.28) !important;
+}
+
+.status-rejected,
+.btn-record {
+  background: rgba(128, 18, 36, 0.1) !important;
+  color: #8f1f31 !important;
+  border-color: rgba(128, 18, 36, 0.18) !important;
+  box-shadow: 0 10px 22px rgba(93, 20, 31, 0.1) !important;
+}
+
+.btn-tool,
+.file-upload-box,
+.voice-box,
+.history-item,
+.ledger-item,
+.history-list .history-item,
+.calendar-grid,
+.li-date {
+  background: rgba(255, 255, 255, 0.92) !important;
+  border-color: rgba(93, 20, 31, 0.1) !important;
+}
+
+.icon-box,
+.li-date,
+.dot-today {
+  background: rgba(197, 160, 41, 0.12) !important;
+  color: var(--maroon-main) !important;
+}
+
+.dot-today,
+.cal-day.today {
+  border-color: rgba(197, 160, 41, 0.9) !important;
+}
+
+.calendar-grid .cal-day.present {
+  background: rgba(197, 160, 41, 0.18) !important;
+  color: var(--maroon-deep) !important;
+  border-color: rgba(197, 160, 41, 0.28) !important;
+  box-shadow: none !important;
+}
+
+.calendar-grid .cal-day.absent {
+  background: rgba(93, 20, 31, 0.06) !important;
+  color: #7a6666 !important;
+  border-color: rgba(93, 20, 31, 0.08) !important;
+}
+
+@media (max-width: 768px) {
+  body {
+    padding-bottom: 98px !important;
+    box-shadow: none !important;
+    max-width: none !important;
+  }
+
+  .login-card {
+    max-width: 100% !important;
+    padding: 30px 22px !important;
+    border-radius: 28px !important;
+    background: linear-gradient(180deg, rgba(45, 8, 13, 0.92), rgba(28, 8, 11, 0.92)) !important;
+    box-shadow: 0 26px 60px rgba(45, 8, 13, 0.32) !important;
+  }
+
+  .header {
+    margin-bottom: 28px !important;
+  }
+
+  .logo-ring {
+    width: 68px !important;
+    height: 68px !important;
+    font-size: 1.9rem !important;
+    border-radius: 18px !important;
+    margin-bottom: 18px !important;
+  }
+
+  .profile-header,
+  .app-bar {
+    padding: 18px 16px 52px 16px !important;
+    border-bottom-left-radius: 28px !important;
+    border-bottom-right-radius: 28px !important;
+  }
+
+  .summary-card {
+    margin: -32px 16px 20px 16px !important;
+    padding: 18px 16px !important;
+    border-radius: 22px !important;
+  }
+
+  .section-container,
+  .status-container,
+  .history-container {
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+  }
+
+  .dash-grid {
+    padding: 0 16px 20px 16px !important;
+    gap: 12px !important;
+  }
+
+  .dash-card,
+  .card,
+  .status-card,
+  .action-section,
+  .history-item {
+    border-radius: 20px !important;
+  }
+
+  .bottom-nav {
+    left: 10px !important;
+    right: 10px !important;
+    bottom: 10px !important;
+    gap: 2px;
+  }
+
+  .nav-item {
+    font-size: 0.58rem !important;
+  }
+
+  .nav-item .icon {
+    font-size: 1.12rem !important;
+  }
+}

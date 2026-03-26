@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>My Profile - Staff Portal</title>
+    
+    <link rel="stylesheet" href="./staffShell.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary: #5d141f;
+            --bg: #f8f3ea;
+            --card-bg: #ffffff;
+            --text-dark: #2d080d;
+            --text-gray: #7b6767;
+            --border: rgba(93, 20, 31, 0.10);
+            --success: #c5a029;
+            --danger: #8f1f31;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent;}
+        
+        body { 
+            background-color: var(--bg);
+            color: var(--text-dark);
+            padding-bottom: 90px;
+            max-width: 480px;
+            margin: 0 auto;
+            position: relative;
+            min-height: 100vh;
+            box-shadow: 0 0 20px rgba(0,0,0,0.05);
+        }
+
+        /* --- Top App Bar (Taller for overlap) --- */
+        .app-bar {
+            background: linear-gradient(135deg, var(--primary), #7a1b29);
+            color: white;
+            padding: 20px 20px 60px 20px; /* Extra bottom padding */
+            border-bottom-left-radius: 25px;
+            border-bottom-right-radius: 25px;
+            box-shadow: 0 4px 15px rgba(43, 115, 246, 0.25);
+            display: flex; align-items: flex-start; justify-content: space-between;
+        }
+
+        .back-btn { background: none; border: none; color: white; font-size: 1.5rem; cursor: pointer; display: flex; align-items: center;}
+        .app-bar-title { text-align: center; flex: 1;}
+        .app-bar-title h1 { font-size: 1.2rem; font-weight: 800; margin: 0; line-height: 1.2; }
+        .app-bar-title p { font-size: 0.75rem; opacity: 0.9; margin: 0; font-weight: 500;}
+
+        .logout-btn {
+            background: rgba(255, 255, 255, 0.2); color: white; border: none; padding: 6px 12px;
+            border-radius: 8px; font-size: 0.75rem; font-weight: 700; cursor: pointer; transition: 0.2s;
+        }
+        .logout-btn:active { transform: scale(0.95); background: var(--danger);}
+
+        /* --- Profile Picture Section --- */
+        .profile-picture-container {
+            display: flex; flex-direction: column; align-items: center;
+            margin-top: -50px; /* Overlaps with the header */
+            margin-bottom: 20px; position: relative; z-index: 10;
+        }
+
+        .profile-img {
+            width: 100px; height: 100px; border-radius: 50%;
+            border: 4px solid var(--card-bg); box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+            object-fit: cover; background-color: #e0e7ff;
+        }
+
+        .profile-name { font-size: 1.2rem; font-weight: 800; color: var(--text-dark); margin-top: 10px; line-height: 1.2;}
+        .profile-role { font-size: 0.8rem; color: var(--primary); font-weight: 700; background: #eff6ff; padding: 2px 10px; border-radius: 10px; margin-top: 4px;}
+
+        /* --- Main Content Containers --- */
+        .section-container { padding: 0 20px; display: flex; flex-direction: column; gap: 20px; }
+
+        .card {
+            background: var(--card-bg); padding: 20px; border-radius: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.03); border: 1px solid var(--border);
+        }
+
+        .sec-title { font-size: 0.95rem; font-weight: 800; color: var(--text-dark); margin: 0 0 15px 0; display: flex; align-items: center; gap: 8px;}
+
+        /* Read Only Info Rows */
+        .info-row {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 12px 0; border-bottom: 1px dashed var(--border);
+        }
+        .info-row:last-child { border-bottom: none; padding-bottom: 0;}
+        
+        .info-label { font-size: 0.8rem; color: var(--text-gray); font-weight: 600; }
+        .info-value { font-size: 0.9rem; color: var(--text-dark); font-weight: 700; text-align: right; }
+
+        .note-text { font-size: 0.7rem; color: var(--text-gray); text-align: center; margin-top: 15px; font-weight: 500;}
+
+        /* --- Form Elements --- */
+        .input-group { display: flex; flex-direction: column; gap: 6px; margin-bottom: 15px;}
+        .input-group label { font-size: 0.75rem; font-weight: 700; color: var(--text-gray); text-transform: uppercase; letter-spacing: 0.5px; }
+        .input-group input {
+            width: 100%; padding: 12px 14px; border: 1px solid var(--border); border-radius: 12px;
+            font-size: 0.95rem; background: #f8fafc; color: var(--text-dark); font-weight: 500;
+            transition: 0.3s; outline: none;
+        }
+        .input-group input:focus { border-color: var(--primary); background: white; box-shadow: 0 0 0 3px rgba(43, 115, 246, 0.1); }
+
+        .btn-submit {
+            width: 100%; padding: 14px; background: var(--primary); color: white;
+            border: none; border-radius: 12px; font-size: 0.95rem; font-weight: 800;
+            cursor: pointer; transition: 0.2s; box-shadow: 0 8px 20px rgba(43, 115, 246, 0.25);
+            display: flex; justify-content: center; align-items: center; margin-top: 5px;
+        }
+        .btn-submit:active { transform: scale(0.97); box-shadow: 0 4px 10px rgba(43, 115, 246, 0.15); }
+        .btn-submit:disabled { opacity: 0.7; cursor: not-allowed; transform: none;}
+
+        #status { text-align: center; margin-top: 10px; font-size: 0.8rem; font-weight: 700; min-height: 18px; color: var(--success); }
+
+        /* Spinner for loading state */
+        .spinner {
+            display: none; width: 20px; height: 20px; border: 3px solid rgba(255,255,255,0.3);
+            border-radius: 50%; border-top-color: white; animation: spin 1s ease-in-out infinite; margin: 0 auto;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .btn-submit.loading .btn-text { display: none; }
+        .btn-submit.loading .spinner { display: block; }
+
+        /* --- Bottom Nav --- */
+        .bottom-nav {
+            position: fixed; bottom: 0; left: 0; width: 100%; max-width: 480px;
+            background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+            border-top: 1px solid var(--border); padding: 10px 15px 25px 15px; 
+            display: flex; justify-content: space-around; z-index: 1000; box-shadow: 0 -4px 20px rgba(0,0,0,0.04);
+            left: 50%; transform: translateX(-50%);
+        }
+        .nav-item { display: flex; flex-direction: column; align-items: center; gap: 4px; color: var(--text-gray); text-decoration: none; font-size: 0.7rem; font-weight: 700; }
+        .nav-item .icon { font-size: 1.4rem; opacity: 0.5; transition: 0.3s;}
+        .nav-item.active { color: var(--primary); }
+        .nav-item.active .icon { opacity: 1; transform: translateY(-2px);}
+
+    </style>
+</head>
+<body>
+
+    <div class="app-bar">
+        <button class="back-btn" onclick="window.location.href='dashboard.html'">←</button>
+        <div class="app-bar-title">
+            <h1>My Profile</h1>
+            <p>Account Details</p>
+        </div>
+        <button class="logout-btn" id="logoutBtn">Logout</button>
+    </div>
+
+    <div class="profile-picture-container">
+        <img id="profileImg" src="data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%22100%22%20height%3D%22100%22%20viewBox%3D%220%200%20100%20100%22%3E%3Crect%20width%3D%22100%22%20height%3D%22100%22%20rx%3D%2250%22%20fill%3D%22%23e0e7ff%22/%3E%3C/svg%3E" alt="Profile" class="profile-img">
+        <div class="profile-name" id="displayName">Loading...</div>
+        <div class="profile-role">Staff Member</div>
+    </div>
+
+    <div class="section-container">
+        
+        <div class="card">
+            <h3 class="sec-title">👤 Official Information</h3>
+            
+            <div class="info-row">
+                <span class="info-label">Staff ID</span>
+                <span class="info-value" id="displayId">---</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Mobile Number</span>
+                <span class="info-value" id="displayPhone">---</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Aadhaar Number</span>
+                <span class="info-value" id="displayAadhaar">XXXX-XXXX-XXXX</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Per Day Salary</span>
+                <span class="info-value" style="color: var(--success);" id="displaySalary">₹ 0</span>
+            </div>
+            
+            <p class="note-text">* Contact Admin to update your official details.</p>
+        </div>
+
+        <div class="card">
+            <h3 class="sec-title">🔒 Change Password</h3>
+            <form id="password-form" onsubmit="changePassword(event)">
+                
+                <div class="input-group">
+                    <label>Current Password</label>
+                    <input type="password" id="oldPass" placeholder="••••••••" required>
+                </div>
+                
+                <div class="input-group">
+                    <label>New Password</label>
+                    <input type="password" id="newPass" placeholder="Enter new password" required minlength="6">
+                </div>
+                
+                <div class="input-group">
+                    <label>Confirm New Password</label>
+                    <input type="password" id="confirmPass" placeholder="Re-enter new password" required minlength="6">
+                </div>
+
+                <button type="submit" class="btn-submit" id="submitBtn">
+                    <span class="btn-text">Update Password</span>
+                    <div class="spinner"></div>
+                </button>
+            </form>
+            <div id="status"></div>
+        </div>
+
+    </div>
+
+    <div class="bottom-nav">
+        <a href="dashboard.html" class="nav-item">
+            <span class="icon">📊</span>
+            <span>Home</span>
+        </a>
+        <a href="attendance.html" class="nav-item">
+            <span class="icon">📸</span>
+            <span>Attnd</span>
+        </a>
+        <a href="apply-leave.html" class="nav-item">
+            <span class="icon">🗓️</span>
+            <span>Leaves</span>
+        </a>
+        <a href="myprofile.html" class="nav-item active">
+            <span class="icon">👤</span>
+            <span>Profile</span>
+        </a>
+    </div>
+
+    <script src="../app.js"></script>
+    <script src="./staffCommon.js"></script>
+    <script src="./bottomNav.js"></script>
+    
+    <script>
+        // Utils
+        function initialsFromName(name) {
+            const parts = String(name || 'S').trim().split(/\s+/).filter(Boolean);
+            const initials = (parts[0]?.[0] || 'S') + (parts.length > 1 ? (parts[parts.length - 1]?.[0] || '') : '');
+            return initials.toUpperCase();
+        }
+
+        function avatarSvgDataUri(text) {
+            const safe = String(text || 'S').slice(0, 3).toUpperCase();
+            const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><rect width="100" height="100" rx="50" fill="#f3e5c3"/><text x="50" y="62" text-anchor="middle" font-family="Inter, sans-serif" font-size="32" font-weight="800" fill="#5d141f">${safe}</text></svg>`;
+            return `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`;
+        }
+
+        function getApiBaseForAssets() {
+            try { const base = localStorage.getItem('ve_api_base') || ''; return String(base).replace(/\/$/, ''); } catch { return ''; }
+        }
+
+        // Handle Password Change
+        function changePassword(event) {
+            event.preventDefault(); 
+            
+            const newPass = document.getElementById('newPass').value;
+            const confirmPass = document.getElementById('confirmPass').value;
+            const statusEl = document.getElementById('status');
+            const submitBtn = document.getElementById('submitBtn');
+
+            if (newPass !== confirmPass) {
+                statusEl.style.color = "var(--danger)";
+                statusEl.innerText = "Error: New Passwords do not match!";
+                return;
+            }
+
+            statusEl.innerText = "";
+            submitBtn.disabled = true;
+            submitBtn.classList.add('loading');
+
+            // Simulate API Call delay
+            setTimeout(() => {
+                submitBtn.classList.remove('loading');
+                submitBtn.innerHTML = `<span class="btn-text">Updated ✓</span>`;
+                submitBtn.style.background = "var(--success)";
+                
+                setTimeout(() => {
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = `<span class="btn-text">Update Password</span>`;
+                    submitBtn.style.background = "var(--primary)";
+                    document.getElementById('password-form').reset();
+                }, 2000);
+                
+                // Real app should make a PUT request to update password here
+            }, 1000);
+        }
+
+        // Initialize and Load Real Data
+        (async function init() {
+            if (typeof VEStaff === 'undefined') return;
+            const user = await VEStaff.ensureStaff(); // API call to verify and get user data
+
+            // DOM Elements
+            const nameEl = document.getElementById('displayName');
+            const idEl = document.getElementById('displayId');
+            const phoneEl = document.getElementById('displayPhone');
+            const aadhaarEl = document.getElementById('displayAadhaar');
+            const salaryEl = document.getElementById('displaySalary');
+            const profileImg = document.getElementById('profileImg');
+
+            // Map Data
+            if (nameEl) nameEl.textContent = user?.name || 'Staff Member';
+            if (idEl) idEl.textContent = user?.staff_id || '---';
+            if (phoneEl) phoneEl.textContent = user?.phone || 'Not Provided';
+            if (salaryEl) salaryEl.textContent = `₹ ${Number(user?.salary_per_day || 0).toLocaleString('en-IN')}`;
+            
+            if (aadhaarEl) {
+                const aadhaarLast4 = String(user?.aadhaar_last4 || '').trim();
+                aadhaarEl.textContent = aadhaarLast4 ? `XXXX-XXXX-${aadhaarLast4}` : 'Not Provided';
+            }
+
+            // Map Image
+            const initials = initialsFromName(user?.name);
+            const fallback = avatarSvgDataUri(initials);
+            const normPath = (user?.profile_image_path || '').replace(/^\/+/, '');
+            const photo = normPath
+                ? (typeof VEStaff !== 'undefined' ? VEStaff.assetUrl(normPath) : `/${normPath}`)
+                : '';
+            
+            if (profileImg) {
+                profileImg.src = photo || fallback;
+                profileImg.onerror = function () { this.onerror = null; this.src = fallback; };
+            }
+
+            // Hook the logout button
+            VEStaff.hookLogoutButton({ selector: '#logoutBtn' });
+        })();
+    </script>
+
+</body>
+</html>

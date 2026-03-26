@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Manage Staff - Admin App</title>
+
+    <link rel="stylesheet" href="../styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet" />
+    <link rel="stylesheet" href="./uiShell.css" />
+
+    <style>
+        :root {
+            --primary: #2b73f6; /* Exact Blue */
+            --primary2: #1d4ed8;
+            --bg: #f4f8fc;
+            --card-bg: #ffffff;
+            --text-dark: #1e293b;
+            --text-gray: #64748b;
+            --border: #e2e8f0;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --shadow-sm: 0 2px 10px rgba(15, 23, 42, 0.06);
+            --shadow-md: 0 10px 30px rgba(15, 23, 42, 0.10);
+            --radius: 18px;
+
+            --staff-shell-bg: rgba(255, 255, 255, 0.98);
+            --staff-shell-border: var(--border);
+            --staff-details-bg: #f8fafc;
+            --staff-details-border: #f1f5f9;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent;}
+        
+        body { 
+            background-color: var(--bg-cream);
+            color: var(--text-dark);
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+        }
+
+        .admin-main {
+            padding-top: 100px;
+            max-width: 1320px;
+            margin: 0 auto;
+            padding-bottom: 60px;
+        }
+
+        /* --- Refined Action Bar --- */
+        .action-bar {
+            background: rgba(45, 8, 13, 0.05);
+            backdrop-filter: blur(20px);
+            margin: 0 0 24px 0;
+            padding: 12px 20px;
+            border-radius: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+            border: 1px solid rgba(45, 8, 13, 0.1);
+        }
+
+        /* --- Top App Bar --- */
+        .app-bar {
+            background: linear-gradient(135deg, var(--primary), var(--primary2));
+            color: white;
+            padding: 20px 20px 30px 20px;
+            border-bottom-left-radius: 25px;
+            border-bottom-right-radius: 25px;
+            box-shadow: 0 4px 15px rgba(43, 115, 246, 0.3);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .app-bar-top { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+        .app-bar-title h1 { font-size: 1.3rem; font-weight: 800; margin: 0; line-height: 1.2; }
+        .app-bar-title p { font-size: 0.8rem; opacity: 0.9; margin: 0; font-weight: 500;}
+
+        .logout-btn {
+            background: rgba(255, 255, 255, 0.2); color: white; border: none; padding: 8px 12px;
+            border-radius: 10px; font-size: 0.75rem; font-weight: 700; cursor: pointer; transition: 0.2s;
+        }
+        .logout-btn:active { transform: scale(0.95); background: #ef4444;}
+
+        /* --- Floating Search & Action Bar --- */
+        .action-bar {
+            background: rgba(255, 255, 255, 0.96);
+            margin: -20px 20px 18px 20px;
+            padding: 12px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-md);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            position: relative;
+            z-index: 101;
+            border: 1px solid var(--border);
+        }
+
+        html.ve-dark .action-bar { background: rgba(15, 23, 42, 0.88); }
+
+        .search {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex: 1;
+            padding: 12px;
+            border-radius: 14px;
+            border: 1px solid var(--border);
+            background: #fff;
+            box-shadow: var(--shadow-sm);
+            min-width: 0;
+        }
+        html.ve-dark .search { background: rgba(15, 23, 42, 0.55); }
+
+        .search svg { width: 18px; height: 18px; color: var(--text-gray); flex: 0 0 auto; }
+
+        .search-box {
+            border: none;
+            outline: none;
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            background: transparent;
+            width: 100%;
+            min-width: 0;
+        }
+
+        .clear-btn {
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            color: var(--text-gray);
+            width: 28px;
+            height: 28px;
+            border-radius: 10px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            flex: 0 0 auto;
+        }
+        .clear-btn:active { background: #f1f5f9; }
+        
+        .add-btn {
+            background: var(--primary); color: white; border: none; padding: 10px 15px;
+            border-radius: 10px; font-weight: 700; font-size: 0.85rem; cursor: pointer;
+            box-shadow: 0 2px 8px rgba(43, 115, 246, 0.3); white-space: nowrap;
+        }
+        .add-btn:active { transform: scale(0.95); }
+
+        /* --- Staff Directory List --- */
+        .feed-container { padding: 0 20px; display: flex; flex-direction: column; gap: 15px; }
+
+        .staff-card {
+            background: var(--staff-shell-bg);
+            border-radius: 18px;
+            padding: 16px;
+            box-shadow: 0 16px 40px rgba(15, 23, 42, 0.10);
+            border: 1px solid var(--staff-shell-border);
+            display: flex; flex-direction: column; gap: 12px;
+        }
+
+        .sc-header { display: flex; justify-content: space-between; align-items: flex-start; }
+        .emp-profile { display: flex; align-items: center; gap: 12px; }
+        
+        .emp-avatar {
+            width: 50px; height: 50px; border-radius: 50%; object-fit: cover;
+            border: 2px solid rgba(255, 255, 255, 0.60); background: #eff6ff;
+            display: block;
+        }
+        
+        .emp-info h3 { font-size: 1.05rem; font-weight: 800; margin: 0; color: var(--text-dark); line-height: 1.2;}
+        .emp-info p { font-size: 0.75rem; color: var(--text-gray); margin: 0; font-weight: 600;}
+
+        /* Staff Details Data */
+        .sc-details {
+            background: var(--staff-details-bg); padding: 12px 12px; border-radius: 14px;
+            display: grid; grid-template-columns: 1fr 1fr; gap: 12px; border: 1px solid var(--staff-details-border);
+        }
+        .data-block { display: flex; flex-direction: column; gap: 2px;}
+        .data-label { font-size: 0.65rem; color: var(--text-gray); font-weight: 700; text-transform: uppercase;}
+        .data-val { font-size: 0.85rem; font-weight: 700; color: var(--text-dark);}
+        
+        /* Action Buttons */
+        .action-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 5px; }
+        .btn-act {
+            padding: 10px; border-radius: 10px; font-size: 0.8rem; font-weight: 700;
+            text-align: center; border: none; cursor: pointer; transition: 0.2s;
+        }
+        .btn-act:active { transform: scale(0.95); }
+        .btn-edit { background: #fef3c7; color: #b45309; border: 1px solid #fde68a;}
+        .btn-delete { background: #fee2e2; color: var(--danger); border: 1px solid #fecaca; }
+        html.ve-dark .btn-edit { border-color: rgba(253, 230, 138, 0.55); }
+        html.ve-dark .btn-delete { border-color: rgba(254, 202, 202, 0.55); }
+
+        /* --- Bottom Sheet Modal (Add/Edit Form) --- */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(4px);
+            z-index: 999; display: none; opacity: 0; transition: opacity 0.3s;
+        }
+        .modal-overlay.show { display: block; opacity: 1; }
+
+        .bottom-sheet {
+            position: fixed; bottom: -100%; left: 50%; transform: translateX(-50%);
+            width: 100%; max-width: 480px; background: white;
+            border-top-left-radius: 25px; border-top-right-radius: 25px;
+            padding: 25px 20px; z-index: 1000; transition: bottom 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 -10px 40px rgba(0,0,0,0.1); max-height: 90vh; overflow-y: auto;
+        }
+        .bottom-sheet.show { bottom: 0; }
+
+        .sheet-handle { width: 40px; height: 5px; background: #cbd5e1; border-radius: 10px; margin: 0 auto 20px; }
+        .sheet-title { font-size: 1.2rem; font-weight: 800; color: var(--text-dark); margin-bottom: 20px; text-align: center;}
+
+        /* Form Inputs */
+        .input-group { margin-bottom: 15px; }
+        .input-group label { display: block; font-size: 0.8rem; font-weight: 700; color: var(--text-gray); margin-bottom: 5px; }
+        .input-group input {
+            width: 100%; padding: 12px 15px; border-radius: 12px; border: 1px solid var(--border);
+            font-size: 0.95rem; background: #f8fafc; color: var(--text-dark); outline: none; font-weight: 500;
+        }
+        .input-group input:focus { border-color: var(--primary); background: white; box-shadow: 0 0 0 3px rgba(43, 115, 246, 0.1); }
+        .input-group input[type="file"] { padding: 9px; background: white; font-size: 0.8rem;}
+
+        .btn-submit {
+            width: 100%; padding: 15px; background: var(--primary); color: white;
+            border: none; border-radius: 12px; font-size: 1rem; font-weight: 700;
+            margin-top: 10px; box-shadow: 0 4px 15px rgba(43, 115, 246, 0.3);
+        }
+        .btn-submit:active { transform: scale(0.98); }
+        
+        #status { text-align: center; font-size: 0.85rem; font-weight: 600; margin-top: 10px; }
+
+        /* Bottom nav styled via uiShell.css */
+
+    </style>
+</head>
+<body>
+
+    <div id="veHeaderMount"></div>
+
+    <main class="admin-main container">
+        <header class="showroom-title reveal active" style="margin-bottom: 40px;">
+            <p class="hero-subtitle">Personnel Management</p>
+            <h1>Staff Directory</h1>
+            <div class="divider"></div>
+        </header>
+
+        <div style="display: flex; justify-content: flex-end; margin-bottom: 30px;">
+            <button class="logout-btn" id="logoutBtn" style="background: var(--maroon-main); color: #FFF; padding: 12px 24px; border-radius: 999px; font-weight: 800; border: none; cursor: pointer; transition: 0.3s;">
+                <span class="material-symbols-rounded" style="vertical-align: middle; margin-right: 8px;">logout</span>
+                Logout
+            </button>
+        </div>
+
+    <div class="action-bar reveal active">
+        <div class="search" style="background: #FFF; border: 1px solid rgba(45, 8, 13, 0.1); border-radius: 12px; padding: 0 15px; display: flex; align-items: center; flex: 1;">
+            <span class="material-symbols-rounded" style="color: var(--maroon-main);">search</span>
+            <input type="text" class="search-box" id="searchInput" placeholder="Search master craftsmen..." style="border: none; padding: 15px; background: transparent; width: 100%; font-weight: 600; outline: none;">
+            <button class="clear-btn" id="clearSearchBtn" type="button" style="border: none; background: transparent; cursor: pointer;">
+                <span class="material-symbols-rounded">close</span>
+            </button>
+        </div>
+        <button class="add-btn" id="addStaffBtn" type="button" style="background: var(--gold-accent); color: var(--maroon-deep); padding: 15px 30px; border-radius: 999px; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; border: none; cursor: pointer; transition: 0.3s; box-shadow: 0 10px 30px rgba(197, 160, 41, 0.3);">
+            Register New Staff
+        </button>
+    </div>
+
+    <div class="feed-container" id="staff-feed">
+        <div style="text-align: center; padding: 40px; color: #94a3b8; font-size: 0.9rem; font-weight: 500;">
+            Loading staff data...
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="modalOverlay" onclick="closeModal()"></div>
+    <div class="bottom-sheet" id="bottomSheet">
+        <div class="sheet-handle"></div>
+        <h2 class="sheet-title">Register New Staff</h2>
+        
+        <form id="add-staff-form">
+            <div class="input-group">
+                <label>Full Name</label>
+                <input type="text" id="staffName" required placeholder="e.g. Ramesh Kumar">
+            </div>
+            <div class="input-group" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                <div>
+                    <label>Username</label>
+                    <input type="text" id="staffUsername" required placeholder="e.g. ramesh">
+                </div>
+                <div>
+                    <label>Password</label>
+                    <input type="password" id="staffPassword" required placeholder="Set password">
+                </div>
+            </div>
+            <div class="input-group">
+                <label>Mobile Number (optional)</label>
+                <input type="tel" id="staffPhone" pattern="[0-9]{10}" placeholder="10-digit number">
+            </div>
+            <div class="input-group">
+                <label>Aadhaar Number (optional)</label>
+                <input type="tel" id="staffAadhaar" inputmode="numeric" pattern="[0-9]{12}" placeholder="12-digit Aadhaar">
+            </div>
+            <div class="input-group">
+                <label>Per Day Salary (₹)</label>
+                <input type="number" id="staffSalary" required placeholder="e.g. 500" min="0" step="1">
+            </div>
+            <div class="input-group">
+                <label>Profile Photo</label>
+                <input type="file" id="staffImage" accept="image/*">
+            </div>
+            
+            <div id="status"></div>
+            <button type="submit" class="btn-submit">Save & Create Account</button>
+        </form>
+    </div>
+
+    </main>
+
+    <div id="veFooterMount"></div>
+    <script src="../layout.js"></script>
+        <!-- <a href="dashboard.html" class="nav-item">
+            <span class="icon">📊</span>
+            <span>Home</span>
+        </a>
+        <a href="manage-staff.html" class="nav-item active">
+            <span class="icon">👥</span>
+            <span>Staff</span>
+        </a>
+        <a href="attendance.html" class="nav-item">
+            <span class="icon">📍</span>
+            <span>Attnd</span>
+        </a>
+        <a href="leaves.html" class="nav-item">
+            <span class="icon">🗓️</span>
+            <span>Leaves</span>
+        </a>
+    -->
+
+    <script src="../app.js"></script>
+    <script src="./adminCommon.js"></script>
+    <script src="./adminShell.js"></script>
+    <script src="./bottomNav.js"></script>
+    
+    <script>
+        const statusEl = document.getElementById('status');
+        const feedBody = document.getElementById('staff-feed');
+        const modalOverlay = document.getElementById('modalOverlay');
+        const bottomSheet = document.getElementById('bottomSheet');
+        const addStaffBtn = document.getElementById('addStaffBtn');
+        const searchInput = document.getElementById('searchInput');
+        const clearSearchBtn = document.getElementById('clearSearchBtn');
+        let adminUser = null;
+        let knownUsernames = new Set();
+        let globalStaffData = []; // Store data for search filtering
+
+        // Logout (shared helper if available)
+        try { if (window.VEAdmin?.hookLogoutButton) VEAdmin.hookLogoutButton({ selector: '#logoutBtn' }); } catch(e) {}
+        if (!window.VEAdmin?.hookLogoutButton) {
+            document.getElementById('logoutBtn').addEventListener('click', () => logout());
+        }
+
+        // Modal Logic
+        function openModal() {
+            modalOverlay.classList.add('show');
+            bottomSheet.classList.add('show');
+            document.body.style.overflow = 'hidden'; // prevent bg scroll
+            statusEl.textContent = '';
+        }
+        function closeModal() {
+            modalOverlay.classList.remove('show');
+            bottomSheet.classList.remove('show');
+            document.body.style.overflow = 'auto';
+            document.getElementById('add-staff-form').reset();
+        }
+
+        // Utils
+        function setStatus(msg, ok = true) {
+            if (!statusEl) return;
+            statusEl.textContent = msg;
+            statusEl.style.color = ok ? '#047857' : '#b91c1c';
+        }
+
+        async function logout() {
+            if(!confirm("Are you sure you want to logout?")) return;
+            try { if(typeof VE !== 'undefined') await VE.api('/api/auth/logout', { method: 'POST' }); } catch(e){}
+            localStorage.removeItem('ve_auth_token');
+            window.location.href = "./login.html";
+        }
+
+        function initials(name) {
+            const parts = String(name || 'VE').trim().split(/\s+/).filter(Boolean);
+            const out = (parts[0]?.[0] || 'V') + (parts.length > 1 ? (parts[parts.length - 1]?.[0] || '') : '');
+            return out.toUpperCase();
+        }
+
+        function getApiBaseForAssets() {
+            try { const base = localStorage.getItem('ve_api_base') || ''; return String(base).replace(/\/$/, ''); } catch { return ''; }
+        }
+
+        function avatarSvgDataUri(text) {
+            const safe = String(text || 'VE').slice(0, 3).toUpperCase();
+            const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" viewBox="0 0 80 80"><rect width="80" height="80" rx="40" fill="#eff6ff"/><text x="40" y="48" text-anchor="middle" font-family="Inter, sans-serif" font-size="28" font-weight="800" fill="#2b73f6">${safe}</text></svg>`;
+            return `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`;
+        }
+
+        // Render Card Function
+        function staffCard(s) {
+            const salary = Number(s.salary_per_day || 0);
+            const init = initials(s.name);
+            const apiBase = getApiBaseForAssets();
+            const normPath = (s.profile_image_path || '').replace(/^\/+/, '');
+            const photo = normPath ? (apiBase ? `${apiBase}/${normPath}` : `/${normPath}`) : '';
+            const fallback = avatarSvgDataUri(init);
+            
+            const aadhaarLast4 = String(s.aadhaar_last4 || '').trim();
+            const aadhaarMask = aadhaarLast4 ? `XXXX-${aadhaarLast4}` : 'N/A';
+            const phoneStr = s.phone || 'N/A';
+
+            return `
+            <div class="staff-card" data-name="${String(s.name).toLowerCase()}" data-id="${s.staff_id}">
+                <div class="sc-header">
+                    <div class="emp-profile">
+                        <img src="${photo || fallback}" onerror="this.onerror=null;this.src='${fallback}'" class="emp-avatar" alt="${s.name}">
+                        <div class="emp-info">
+                            <h3>${s.name}</h3>
+                            <p>ID: ${s.staff_id} | @${s.username}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="sc-details">
+                    <div class="data-block">
+                        <span class="data-label">Mobile</span>
+                        <span class="data-val">${phoneStr}</span>
+                    </div>
+                    <div class="data-block" style="text-align: right;">
+                        <span class="data-label">Salary / Day</span>
+                        <span class="data-val">&#8377; ${salary}</span>
+                    </div>
+                    <div class="data-block">
+                        <span class="data-label">Aadhaar</span>
+                        <span class="data-val">${aadhaarMask}</span>
+                    </div>
+                </div>
+
+                <div class="action-grid">
+                    <button class="btn-act btn-edit" data-edit="${s.staff_id}"><span aria-hidden="true">&#9998;</span> Edit Details</button>
+                    <button class="btn-act btn-delete" data-del="${s.staff_id}"><span aria-hidden="true">&#10006;</span> Remove Staff</button>
+                </div>
+            </div>`;
+        }
+
+        // Search Filter
+        function filterStaff() {
+            const input = String(searchInput.value || '').toLowerCase();
+            const cards = feedBody.getElementsByClassName('staff-card');
+            for(let card of cards) {
+                const name = card.getAttribute('data-name');
+                const id = card.getAttribute('data-id').toLowerCase();
+                card.style.display = (name.includes(input) || id.includes(input)) ? '' : 'none';
+            }
+        }
+
+        // API Interactions
+        async function loadStaff() {
+            feedBody.innerHTML = `<div style="text-align: center; padding: 40px; color:#94a3b8;">Loading data...</div>`;
+            try {
+                const out = await VE.api('/api/admin/staff', { timeoutMs: 10000 });
+                globalStaffData = out.staff || [];
+                knownUsernames = new Set(globalStaffData.map((s) => String(s.username || '').toLowerCase()).filter(Boolean));
+                
+                if(globalStaffData.length > 0) {
+                    feedBody.innerHTML = globalStaffData.map(staffCard).join('');
+                } else {
+                    feedBody.innerHTML = `<div style="text-align:center; padding: 40px; background: rgba(255,255,255,0.96); border-radius: 16px; border: 1px dashed var(--border);"><h3 style="color:var(--text-gray); font-size:1rem; font-weight:900;">No Staff Found</h3><p style="font-size:0.85rem; color:#94a3b8; font-weight:700;">Tap + Add Staff to create one.</p></div>`;
+                }
+                
+                bindCardButtons();
+            } catch (e) {
+                feedBody.innerHTML = `<div style="text-align:center; padding:20px; color:#ef4444;">Failed to load staff.</div>`;
+            }
+        }
+
+        function bindCardButtons() {
+            feedBody.querySelectorAll('button[data-del]').forEach((btn) => {
+                btn.addEventListener('click', async () => {
+                    const id = btn.getAttribute('data-del');
+                    if(!confirm(`Delete staff account ${id}? This cannot be undone.`)) return;
+                    try {
+                        await VE.api(`/api/admin/staff/${id}`, { method: 'DELETE', timeoutMs: 10000 });
+                        await loadStaff();
+                    } catch (e) { alert(e?.message || 'Delete failed'); }
+                });
+            });
+
+            feedBody.querySelectorAll('button[data-edit]').forEach((btn) => {
+                btn.addEventListener('click', async () => {
+                    const id = btn.getAttribute('data-edit');
+                    // In a real app, this would open the modal pre-filled. Keeping prompt for simplicity of your backend logic
+                    const name = prompt('New name (leave blank to keep)');
+                    const phone = prompt('New phone (leave blank to keep)');
+                    const username = prompt('New username (leave blank to keep)');
+                    const salary_per_day = prompt('New salary per day (leave blank to keep)');
+                    
+                    try {
+                        await VE.api(`/api/admin/staff/${id}`, {
+                            method: 'PUT',
+                            timeoutMs: 10000,
+                            headers: { 'content-type': 'application/json' },
+                            body: JSON.stringify({
+                                name: name || undefined,
+                                phone: phone || undefined,
+                                username: username || undefined,
+                                salary_per_day: salary_per_day || undefined
+                            })
+                        });
+                        await loadStaff();
+                    } catch (e) { alert(e?.message || 'Update failed'); }
+                });
+            });
+        }
+
+        async function addStaff(event) {
+            event.preventDefault();
+            try {
+                setStatus('Saving...');
+                const usernameVal = document.getElementById('staffUsername').value.trim();
+                const uname = String(usernameVal).toLowerCase();
+                
+                if (knownUsernames.has(uname)) { setStatus('Username already exists.', false); return; }
+                if (adminUser?.username && String(adminUser.username).toLowerCase() === uname) { setStatus('Admin username taken.', false); return; }
+                
+                const fd = new FormData();
+                fd.append('name', document.getElementById('staffName').value.trim());
+                fd.append('phone', document.getElementById('staffPhone').value.trim() || '');
+                const aadhaarVal = document.getElementById('staffAadhaar').value.trim();
+                
+                if (aadhaarVal) {
+                    const digits = aadhaarVal.replace(/\s+/g, '');
+                    if (!/^\d{12}$/.test(digits)) { setStatus('Aadhaar must be 12 digits', false); return; }
+                    fd.append('aadhaar_number', digits);
+                } else { fd.append('aadhaar_number', ''); }
+                
+                fd.append('username', usernameVal);
+                fd.append('password', document.getElementById('staffPassword').value);
+                fd.append('salary_per_day', String(Number(document.getElementById('staffSalary').value || 0)));
+                
+                const img = document.getElementById('staffImage').files?.[0] || null;
+                if (img) fd.append('profile_photo', img);
+
+                const out = await VE.api('/api/admin/staff', { method: 'POST', body: fd, timeoutMs: 15000 });
+                
+                closeModal();
+                alert(out?.staff_id ? `Success! Login ID: ${out.staff_id}` : 'Staff added successfully.');
+                await loadStaff();
+            } catch (e) {
+                setStatus(e.message || 'Error occurred', false);
+            }
+        }
+
+        (async function init() {
+            try {
+                if(typeof VEAdmin !== 'undefined') adminUser = await VEAdmin.ensureAdmin();
+                document.getElementById('add-staff-form').addEventListener('submit', addStaff);
+                addStaffBtn.addEventListener('click', openModal);
+                searchInput.addEventListener('input', filterStaff);
+                clearSearchBtn.addEventListener('click', () => { searchInput.value = ''; searchInput.focus(); filterStaff(); });
+                await loadStaff();
+            } catch (e) { console.log("Init Error: ", e); }
+        })();
+    </script>
+</body>
+</html>
