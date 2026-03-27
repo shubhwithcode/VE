@@ -317,6 +317,10 @@
                     localStorage.setItem('ve_auth_token', out.token);
                 }
 
+                if (out?.role !== 'admin') {
+                    throw new Error('Admin access only. Please use Staff Portal.');
+                }
+
                 btn.style.background = '#10b981';
                 btn.textContent = 'Success!';
                 

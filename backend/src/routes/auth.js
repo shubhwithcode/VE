@@ -39,9 +39,6 @@ authRouter.post(
       }
 
       if (!user) return res.status(401).json({ error: 'Invalid credentials' });
-      if (user.role !== 'staff') {
-        return res.status(400).json({ error: 'Ye admin account hai. Admin login use karo.' });
-      }
 
       const ok = await verifyPassword(password, user.password_hash);
       if (!ok) return res.status(401).json({ error: 'Invalid credentials' });
