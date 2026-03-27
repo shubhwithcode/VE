@@ -34,11 +34,11 @@ export const config = {
     backendDir
   },
   db: {
-    host: requireEnv('DB_HOST', '127.0.0.1'),
-    user: requireEnv('DB_USER', 'root'),
-    password: process.env.DB_PASSWORD ?? '',
-    database: requireEnv('DB_NAME', 'vishwakarma_enterprises'),
-    port: Number(process.env.DB_PORT ?? 3306)
+    host: process.env.DB_HOST ?? process.env.MYSQLHOST ?? '127.0.0.1',
+    user: process.env.DB_USER ?? process.env.MYSQLUSER ?? 'root',
+    password: process.env.DB_PASSWORD ?? process.env.MYSQLPASSWORD ?? '',
+    database: process.env.DB_NAME ?? process.env.MYSQLDATABASE ?? 'vishwakarma_enterprises',
+    port: Number(process.env.DB_PORT ?? process.env.MYSQLPORT ?? 3306)
   },
   auth: {
     jwtSecret: requireEnv('JWT_SECRET'),
