@@ -3,6 +3,7 @@ import path from 'node:path';
 
 import { config } from './config.js';
 import { pool, query } from './db.js';
+import { hashPassword } from './security/passwords.js';
 
 function shouldAutoInitSchema() {
   const raw = process.env.DB_AUTO_INIT ?? (config.nodeEnv === 'development' ? 'true' : 'false');
@@ -32,6 +33,7 @@ export async function ensureSchemaIfNeeded() {
   }
 
   if (!needsInit) {
+    await ensureStaffPasswordHashColumn();
     await ensureHeroImagesTable();
     await ensureStaffProfilePhotoColumn();
     await ensureStaffAadhaarColumn();
@@ -52,11 +54,50 @@ export async function ensureSchemaIfNeeded() {
 
   // After auto init, also ensure additive tables exist (for upgrades).
   // This is safe to run multiple times.
+  await ensureStaffPasswordHashColumn();
   await ensureHeroImagesTable();
   await ensureStaffProfilePhotoColumn();
   await ensureStaffAadhaarColumn();
   await ensureLeavesTable();
   await ensureWebsiteTables();
+}
+
+async function ensureStaffPasswordHashColumn() {
+  const passwordHashCol = await query(
+    `SELECT COLUMN_NAME
+     FROM INFORMATION_SCHEMA.COLUMNS
+     WHERE TABLE_SCHEMA=:db AND TABLE_NAME='staff' AND COLUMN_NAME='password_hash'
+     LIMIT 1`,
+    { db: config.db.database }
+  );
+  if (passwordHashCol.length > 0) return;
+
+  await pool.query(`ALTER TABLE staff ADD COLUMN password_hash VARCHAR(255) NULL`);
+
+  const legacyPasswordCol = await query(
+    `SELECT COLUMN_NAME
+     FROM INFORMATION_SCHEMA.COLUMNS
+     WHERE TABLE_SCHEMA=:db AND TABLE_NAME='staff' AND COLUMN_NAME='password'
+     LIMIT 1`,
+    { db: config.db.database }
+  );
+  if (legacyPasswordCol.length === 0) return;
+
+  const rows = await query(
+    `SELECT staff_id, password
+     FROM staff
+     WHERE password IS NOT NULL AND password <> '' AND (password_hash IS NULL OR password_hash = '')`,
+    {}
+  );
+
+  for (const row of rows) {
+    const hashed = await hashPassword(String(row.password));
+    // eslint-disable-next-line no-await-in-loop
+    await query('UPDATE staff SET password_hash=:password_hash WHERE staff_id=:staff_id', {
+      staff_id: row.staff_id,
+      password_hash: hashed
+    });
+  }
 }
 
 async function ensureHeroImagesTable() {
