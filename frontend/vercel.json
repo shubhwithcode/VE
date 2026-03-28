@@ -1,0 +1,8 @@
+{
+  "rewrites": [
+    {
+      "source": "/staff/work-detail.html",
+      "destination": "/staff/work.html"
+    }
+  ]
+}
