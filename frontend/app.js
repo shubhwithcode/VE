@@ -7,30 +7,42 @@ function getApiCandidates() {
   const productionApiBase = 'https://ve-production.up.railway.app';
 
   let preferBackend = false;
+  let host = 'localhost';
+  let proto = 'http:';
   try {
     // If opened via a static dev server (e.g. Live Server :5500), prefer the backend API first.
     const port = String(location?.port ?? '');
     if (port && port !== '3000') preferBackend = true;
+    host = typeof location !== 'undefined' ? location.hostname || 'localhost' : 'localhost';
+    proto = typeof location !== 'undefined' ? location.protocol || 'http:' : 'http:';
   } catch {}
 
   // 1) Explicit override (useful when hosting frontend separately).
+  let explicitBase = '';
   try {
-    if (window.VE_API_BASE) candidates.push(String(window.VE_API_BASE).replace(/\/$/, ''));
+    if (window.VE_API_BASE) explicitBase = String(window.VE_API_BASE).replace(/\/$/, '');
   } catch {}
 
   // 2) Stored override.
+  let storedBase = '';
   try {
     const stored = localStorage.getItem('ve_api_base');
-    if (stored) candidates.push(String(stored).replace(/\/$/, ''));
+    if (stored) storedBase = String(stored).replace(/\/$/, '');
   } catch {}
+
+  if (preferBackend) {
+    candidates.push(`${proto}//localhost:3000`);
+    if (host && host !== 'localhost') candidates.push(`${proto}//${host}:3000`);
+  }
+
+  if (explicitBase) candidates.push(explicitBase);
+  if (storedBase) candidates.push(storedBase);
 
   // 3) Same-origin (works when served by backend).
   if (!preferBackend) candidates.push('');
 
   // 4) Common local dev fallbacks (backend default :3000).
   try {
-    const proto = typeof location !== 'undefined' ? location.protocol : 'http:';
-    const host = typeof location !== 'undefined' ? location.hostname : 'localhost';
     if (proto === 'http:' || proto === 'https:') {
       candidates.push(`${proto}//${host}:3000`);
     }
@@ -100,15 +112,25 @@ async function api(path, options = {}) {
         continue;
       }
 
+      if (isApiPath && (res.status === 404 || res.status === 405) && base !== candidates[candidates.length - 1]) {
+        lastErr = new Error(body?.error || res.statusText || 'API error');
+        continue;
+      }
+
       throw new Error(body?.error || res.statusText || 'API error');
     } catch (e) {
       lastErr = e;
-      if (e && e.name === 'AbortError') {
-        // Try next base if request timed out.
-        if (base === '' && isApiPath) continue;
+      const msg = String(e?.message || '');
+      const looksNetworky =
+        e?.name === 'AbortError' ||
+        e?.name === 'TypeError' ||
+        /failed to fetch|networkerror|load failed|fetch/i.test(msg);
+
+      if (isApiPath && looksNetworky && base !== candidates[candidates.length - 1]) {
         continue;
       }
-      // If first attempt (same-origin) failed, try localhost backend next.
+
+      // If first attempt (same-origin) failed, try backend candidates next.
       if (base === '' && isApiPath) continue;
       break;
     }

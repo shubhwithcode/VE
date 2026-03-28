@@ -306,6 +306,7 @@
             btn.textContent = 'Verifying...';
 
             try {
+                localStorage.removeItem('ve_auth_token');
                 const out = await VE.api('/api/auth/login', {
                     method: 'POST',
                     headers: { 'content-type': 'application/json' },
@@ -313,6 +314,7 @@
                 });
 
                 if (out?.role !== 'staff') {
+                   localStorage.removeItem('ve_auth_token');
                    throw new Error('Member access only. Please use Admin Login.');
                 }
 

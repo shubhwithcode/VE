@@ -197,11 +197,12 @@
             const id = card.getAttribute('data-id');
             const status = card.querySelector('.status-select').value;
             const admin_note = card.querySelector('.admin-note').value;
-            await VE.api(`/api/admin/support-tickets/${id}`, {
+            const out = await VE.api(`/api/admin/support-tickets/${id}`, {
                 method: 'PATCH',
                 headers: { 'content-type': 'application/json' },
                 body: JSON.stringify({ status, admin_note })
             });
+            if (!out?.ok) throw new Error('Update failed');
             await loadTickets();
         }
 
@@ -213,6 +214,7 @@
                         btn.disabled = true;
                         btn.textContent = 'Saving...';
                         await saveTicket(card);
+                        alert('Ticket updated successfully.');
                     } catch (e) {
                         alert(e?.message || 'Update failed');
                     } finally {

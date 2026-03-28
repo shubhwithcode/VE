@@ -293,6 +293,14 @@
             return `https://wa.me/${digits}?text=${encodeURIComponent(text)}`;
         }
 
+        function getStoredSupportPhone() {
+            try {
+                return sessionStorage.getItem('ve_support_phone') || '';
+            } catch {
+                return '';
+            }
+        }
+
         function ticketCard(t) {
             const statusClass = `status-${String(t.status).replace(/[^a-z_]/g, '')}`;
             const priorityClass = `priority-${String(t.priority).replace(/[^a-z]/g, '')}`;
@@ -328,7 +336,8 @@
                 }
                 list.innerHTML = tickets.map(ticketCard).join('');
             } catch (e) {
-                list.innerHTML = `<div style="text-align:center; color:#8f1f31; font-size:0.85rem; padding:20px;">Failed to load tickets.</div>`;
+                const msg = String(e?.message || 'Failed to load tickets.');
+                list.innerHTML = `<div style="text-align:center; color:#8f1f31; font-size:0.85rem; padding:20px;">${esc(msg)}</div>`;
             }
         }
 
@@ -377,17 +386,40 @@
         }
 
         (async function init() {
+            const formStatus = document.getElementById('formStatus');
+            const ticketList = document.getElementById('ticketList');
             try {
-                const me = await VE.api('/api/auth/me');
-                currentUser = me?.user || null;
+                if (typeof VEStaff !== 'undefined' && VEStaff.ensureStaff) {
+                    currentUser = await VEStaff.ensureStaff({ redirect: false });
+                } else {
+                    const meUser = await VE.api('/api/auth/me');
+                    currentUser = meUser?.user || null;
+                }
                 if (!currentUser || currentUser.role !== 'staff') throw new Error('Not staff');
-                supportPhone = me?.support?.phone || sessionStorage.getItem('ve_support_phone') || '';
+            } catch (e) {
+                formStatus.textContent = e?.message || 'Unable to verify staff login.';
+                ticketList.innerHTML = `<div style="text-align:center; color:#8f1f31; font-size:0.85rem; padding:20px;">Please login again to view tickets.</div>`;
+                return;
+            }
+
+            try {
+                let me = null;
+                try {
+                    me = await VE.api('/api/auth/me');
+                } catch {
+                    me = null;
+                }
+                supportPhone = me?.support?.phone || getStoredSupportPhone();
                 wireQuickActions();
+            } catch (e) {
+                formStatus.textContent = e?.message || 'Support contact not available.';
+            }
+
+            try {
                 document.getElementById('ticketForm').addEventListener('submit', raiseTicket);
                 await loadTickets();
             } catch (e) {
-                document.getElementById('formStatus').textContent = e?.message || 'Unable to load support details.';
-                document.getElementById('ticketList').innerHTML = `<div style="text-align:center; color:#8f1f31; font-size:0.85rem; padding:20px;">Unable to load tickets.</div>`;
+                ticketList.innerHTML = `<div style="text-align:center; color:#8f1f31; font-size:0.85rem; padding:20px;">${esc(e?.message || 'Unable to load tickets.')}</div>`;
             }
         })();
     </script>

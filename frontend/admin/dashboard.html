@@ -183,6 +183,224 @@
         /* Modern Check-ins list */
         .list-section { padding: 40px 20px; }
         .list-section h2 { font-family: 'Playfair Display', serif; font-size: 1.8rem; font-weight: 800; margin-bottom: 30px; color: var(--maroon-deep); }
+        .attn-list {
+            display: grid;
+            gap: 18px;
+        }
+        .attn-card {
+            background: #fff;
+            border: 1px solid rgba(45, 8, 13, 0.08);
+            border-radius: 28px;
+            box-shadow: 0 18px 45px rgba(45, 8, 13, 0.08);
+            overflow: hidden;
+        }
+        .attn-summary {
+            list-style: none;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 14px;
+            padding: 22px 24px 16px;
+            cursor: pointer;
+        }
+        .attn-summary::-webkit-details-marker {
+            display: none;
+        }
+        .attn-summary-main {
+            min-width: 0;
+        }
+        .attn-summary-meta {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 6px;
+        }
+        .attn-summary-time {
+            font-size: 0.92rem;
+            font-weight: 700;
+            color: #7c6668;
+        }
+        .attn-toggle {
+            width: 34px;
+            height: 34px;
+            display: inline-grid;
+            place-items: center;
+            border-radius: 999px;
+            background: #fbf7f7;
+            color: var(--maroon-main);
+            font-size: 1.15rem;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+        .attn-card[open] .attn-toggle {
+            transform: rotate(180deg);
+        }
+        .attn-body {
+            padding: 0 24px 24px;
+        }
+        .attn-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 18px;
+        }
+        .staff-name {
+            font-size: 1.35rem;
+            font-weight: 800;
+            color: var(--maroon-deep);
+        }
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            border-radius: 999px;
+            padding: 8px 14px;
+            font-size: 0.78rem;
+            font-weight: 800;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+        .status-badge.in {
+            background: rgba(16, 185, 129, 0.12);
+            color: #0f9f6e;
+        }
+        .status-badge.out {
+            background: rgba(245, 158, 11, 0.14);
+            color: #b7791f;
+        }
+        .time-row {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 16px;
+            margin-bottom: 18px;
+        }
+        .time-block {
+            padding: 16px 18px;
+            border-radius: 18px;
+            background: linear-gradient(180deg, #fffaf6 0%, #fff 100%);
+            border: 1px solid rgba(45, 8, 13, 0.06);
+        }
+        .time-label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 0.78rem;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: #8d787a;
+        }
+        .time-val {
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: var(--maroon-deep);
+        }
+        .time-val.missing {
+            color: #b7a3a5;
+        }
+        .action-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 12px;
+        }
+        .action-link {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 38px;
+            padding: 8px 14px;
+            border-radius: 999px;
+            background: #fff7e8;
+            border: 1px solid rgba(197, 160, 41, 0.24);
+            color: #8a6610;
+            text-decoration: none;
+            font-size: 0.92rem;
+            font-weight: 700;
+        }
+        .action-link.map {
+            background: #f6f8ff;
+            border-color: rgba(59, 130, 246, 0.16);
+            color: #3058b5;
+        }
+        .work-report {
+            margin-top: 16px;
+            padding: 16px 18px;
+            border-radius: 18px;
+            background: #fbf7f7;
+            color: #53373b;
+            line-height: 1.6;
+            border: 1px solid rgba(45, 8, 13, 0.06);
+        }
+
+        @media (max-width: 720px) {
+            .attn-card {
+                border-radius: 20px;
+            }
+            .attn-summary {
+                padding: 14px 16px 12px;
+                gap: 10px;
+            }
+            .attn-summary-meta {
+                gap: 8px;
+                margin-top: 4px;
+            }
+            .attn-summary-time {
+                font-size: 0.78rem;
+            }
+            .attn-toggle {
+                width: 28px;
+                height: 28px;
+                font-size: 0.95rem;
+            }
+            .attn-body {
+                padding: 0 16px 16px;
+            }
+            .attn-head {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+            .time-row {
+                grid-template-columns: 1fr;
+                gap: 12px;
+                margin-bottom: 14px;
+            }
+            .staff-name {
+                font-size: 1.05rem;
+            }
+            .time-val {
+                font-size: 0.98rem;
+            }
+            .time-block {
+                padding: 13px 14px;
+                border-radius: 16px;
+            }
+            .time-label {
+                margin-bottom: 6px;
+                font-size: 0.72rem;
+            }
+            .status-badge {
+                padding: 7px 12px;
+                font-size: 0.7rem;
+            }
+            .action-row {
+                gap: 8px;
+                margin-top: 10px;
+            }
+            .action-link {
+                min-height: 34px;
+                padding: 7px 12px;
+                font-size: 0.82rem;
+            }
+            .work-report {
+                margin-top: 12px;
+                padding: 13px 14px;
+                border-radius: 16px;
+                font-size: 0.92rem;
+            }
+        }
 
     </style>
     <link rel="stylesheet" href="./adminShell.css" />
@@ -496,42 +714,59 @@
         }
 
         function liveRow(a) {
-            const inSelfie = a.check_in_image_path ? mediaLink(a.check_in_image_path, `${String.fromCodePoint(0x1F4F7)} In`) : '';
-            const outSelfie = a.check_out_image_path ? mediaLink(a.check_out_image_path, `${String.fromCodePoint(0x1F4F7)} Out`) : '';
-            const workImg = a.work_image_path ? mediaLink(a.work_image_path, `${String.fromCodePoint(0x1F4F7)} Work`) : '';
-            const voice = a.voice_record_path ? mediaLink(a.voice_record_path, `${String.fromCodePoint(0x1F3A4)} Audio`) : '';
+            const inSelfie = a.check_in_image_path ? mediaLink(a.check_in_image_path, 'Check-In Selfie') : '';
+            const outSelfie = a.check_out_image_path ? mediaLink(a.check_out_image_path, 'Check-Out Selfie') : '';
+            const workImg = a.work_image_path ? mediaLink(a.work_image_path, 'Work Photo') : '';
+            const voice = a.voice_record_path ? mediaLink(a.voice_record_path, 'Voice Note') : '';
 
             const workTxt = a.work_description ? String(a.work_description).slice(0, 60) + (String(a.work_description).length > 60 ? '…' : '') : '';
 
             const statusBadge = a.check_out_time ? '<span class="status-badge out">Shift Ended</span>' : '<span class="status-badge in">Working</span>';
             const mapBtn = mapsLink(a.check_in_lat, a.check_in_lng);
+            const summaryTime = `${fmtTime(a.check_in_time)} - ${a.check_out_time ? fmtTime(a.check_out_time) : '--:--'}`;
 
             return `
-            <div class="attn-card">
-                <div class="attn-head">
-                    <div class="staff-name">${a.name}</div>
-                    ${statusBadge}
-                </div>
-
-                <div class="time-row">
-                    <div class="time-block">
-                        <span class="time-label">Check-In</span>
-                        <span class="time-val">${fmtTime(a.check_in_time)}</span>
+            <details class="attn-card">
+                <summary class="attn-summary">
+                    <div class="attn-summary-main">
+                        <div class="staff-name">${a.name}</div>
+                        <div class="attn-summary-meta">
+                            ${statusBadge}
+                            <span class="attn-summary-time">${summaryTime}</span>
+                        </div>
                     </div>
-                    <div class="time-block" style="text-align: right;">
-                        <span class="time-label">Check-Out</span>
-                        <span class="time-val ${!a.check_out_time ? 'missing' : ''}">${a.check_out_time ? fmtTime(a.check_out_time) : '-- : --'}</span>
+                    <span class="attn-toggle">⌄</span>
+                </summary>
+
+                <div class="attn-body">
+                    <div class="time-row">
+                        <div class="time-block">
+                            <span class="time-label">Check-In</span>
+                            <span class="time-val">${fmtTime(a.check_in_time)}</span>
+                        </div>
+                        <div class="time-block" style="text-align: right;">
+                            <span class="time-label">Check-Out</span>
+                            <span class="time-val ${!a.check_out_time ? 'missing' : ''}">${a.check_out_time ? fmtTime(a.check_out_time) : '-- : --'}</span>
+                        </div>
                     </div>
+
+                    <div class="action-row">
+                        ${inSelfie} ${outSelfie} ${mapBtn}
+                    </div>
+
+                    ${(workImg || voice) ? `<div class="action-row" style="margin-top: 5px;">${workImg} ${voice}</div>` : ''}
+
+                    ${workTxt ? `<div class="work-report">"${workTxt}"</div>` : ''}
                 </div>
+            </details>`;
+        }
 
-                <div class="action-row">
-                    ${inSelfie} ${outSelfie} ${mapBtn}
-                </div>
-
-                ${(workImg || voice) ? `<div class="action-row" style="margin-top: 5px;">${workImg} ${voice}</div>` : ''}
-
-                ${workTxt ? `<div class="work-report">"${workTxt}"</div>` : ''}
-            </div>`;
+        function syncLiveFeedCards() {
+            const compact = window.matchMedia('(max-width: 720px)').matches;
+            document.querySelectorAll('.attn-card').forEach((card) => {
+                if (!(card instanceof HTMLDetailsElement)) return;
+                card.open = !compact;
+            });
         }
 
         async function loadDashboard() {
@@ -539,28 +774,44 @@
             if (typeof VEAdmin !== 'undefined') await VEAdmin.ensureAdmin();
             if (typeof VE === 'undefined') return;
 
-            const now = new Date();
-            const month = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
-            const summary = await VE.api(`/api/admin/summary?month=${encodeURIComponent(month)}`);
-
-            const total = Number(summary.total_staff || 0);
-            const present = Number(summary.present_today || 0);
-            const absent = Math.max(0, total - present);
-            
-            document.getElementById('statTotalStaff').textContent = String(total);
-            document.getElementById('statPresentToday').textContent = String(present);
-            document.getElementById('statAbsentToday').textContent = String(absent);
-
-            const from = summary.date;
-            const out = await VE.api(`/api/admin/attendance?from=${encodeURIComponent(from)}&to=${encodeURIComponent(from)}`);
             const tbody = document.getElementById('liveBody');
-            
-            const rows = (out.attendance || []).filter((r) => r.check_in_time);
-            
-            if(rows.length > 0) {
-                tbody.innerHTML = rows.map(liveRow).join('');
-            } else {
-                tbody.innerHTML = `<div style="text-align:center; padding: 2rem; color: #9ca3af;">No check-ins yet today.</div>`;
+            const totalEl = document.getElementById('statTotalStaff');
+            const presentEl = document.getElementById('statPresentToday');
+            const leaveEl = document.getElementById('statAbsentToday');
+            let from = new Date().toISOString().slice(0, 10);
+
+            try {
+                const now = new Date();
+                const month = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+                const summary = await VE.api(`/api/admin/summary?month=${encodeURIComponent(month)}`);
+                const total = Number(summary.total_staff || 0);
+                const present = Number(summary.present_today || 0);
+                const onLeave = Number(summary.on_leave_today || 0);
+
+                totalEl.textContent = String(total);
+                presentEl.textContent = String(present);
+                leaveEl.textContent = String(onLeave);
+                if (summary?.date) from = summary.date;
+            } catch (error) {
+                console.error('Dashboard summary load failed:', error);
+                totalEl.textContent = '0';
+                presentEl.textContent = '0';
+                leaveEl.textContent = '0';
+            }
+
+            try {
+                const out = await VE.api(`/api/admin/attendance?from=${encodeURIComponent(from)}&to=${encodeURIComponent(from)}`);
+                const rows = (out.attendance || []).filter((r) => r.check_in_time);
+
+                if (rows.length > 0) {
+                    tbody.innerHTML = rows.map(liveRow).join('');
+                    syncLiveFeedCards();
+                } else {
+                    tbody.innerHTML = `<div style="text-align:center; padding: 2rem; color: #9ca3af;">No check-ins yet today.</div>`;
+                }
+            } catch (error) {
+                console.error('Live attendance load failed:', error);
+                tbody.innerHTML = `<div style="text-align:center; padding: 2rem; color: #9ca3af;">Unable to load live attendance right now.</div>`;
             }
         }
 
@@ -576,6 +827,7 @@
             if (initialCard) switchHub(initialHub, initialCard);
             loadDashboard().catch((e) => console.error(e));
         }, 100);
+        window.addEventListener('resize', syncLiveFeedCards);
 
     </script>
 

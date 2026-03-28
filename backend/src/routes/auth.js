@@ -49,8 +49,7 @@ export const loginHandler = asyncHandler(async (req, res) => {
       maxAge: config.auth.tokenTtlSeconds * 1000
     });
 
-    const payload = { ok: true, role: user.role };
-    if (config.auth.exposeToken) payload.token = token;
+    const payload = { ok: true, role: user.role, token };
     return res.json(payload);
   }
 
@@ -77,8 +76,7 @@ export const loginHandler = asyncHandler(async (req, res) => {
     maxAge: config.auth.tokenTtlSeconds * 1000
   });
 
-  const payload = { ok: true, role: user.role };
-  if (config.auth.exposeToken) payload.token = token;
+  const payload = { ok: true, role: user.role, token };
   return res.json(payload);
 });
 

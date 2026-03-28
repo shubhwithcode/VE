@@ -1230,10 +1230,23 @@ h3,
   body.admin-shell-page .adminQuickAction.active {
     background: rgba(197, 160, 41, 0.12);
     color: #fff;
+    position: relative;
   }
 
   body.admin-shell-page .adminQuickAction.active span.material-symbols-rounded {
     color: #fff2c7;
+  }
+
+  body.admin-shell-page .adminQuickAction.active::after {
+    content: '';
+    width: 22px;
+    height: 3px;
+    border-radius: 999px;
+    background: #fff2c7;
+    position: absolute;
+    bottom: 8px;
+    left: 50%;
+    transform: translateX(-50%);
   }
   
   .footer { padding-bottom: 140px; }

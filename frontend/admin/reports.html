@@ -97,6 +97,60 @@
             box-shadow: 0 4px 15px rgba(0,0,0,0.03); border: 1px solid var(--border);
             display: flex; flex-direction: column; gap: 15px; overflow: hidden;
         }
+        .report-summary {
+            list-style: none;
+            cursor: pointer;
+        }
+        .report-summary::-webkit-details-marker {
+            display: none;
+        }
+        .report-toggle {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 30px;
+            height: 30px;
+            border-radius: 999px;
+            background: #f8fafc;
+            color: var(--primary);
+            font-size: 1rem;
+            font-weight: 800;
+            flex-shrink: 0;
+            transition: transform 0.2s ease;
+        }
+        .report-card[open] .report-toggle {
+            transform: rotate(180deg);
+        }
+        .report-main {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+        .report-main-item {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            padding: 10px 12px;
+            border-radius: 12px;
+            background: #f8fafc;
+            border: 1px solid #f1f5f9;
+        }
+        .report-main-item span:first-child {
+            font-size: 0.65rem;
+            color: var(--text-gray);
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+        .report-main-item span:last-child {
+            font-size: 0.9rem;
+            color: var(--text-dark);
+            font-weight: 800;
+        }
+        .report-extra {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
 
         .rc-header {
             display: flex; justify-content: space-between; align-items: flex-start;
@@ -143,6 +197,86 @@
             font-size: 0.85rem; color: var(--text-dark); background: white; 
             padding: 10px; border-radius: 8px; font-weight: 500; font-style: italic;
             border: 1px solid var(--border); margin-bottom: 10px;
+        }
+
+        @media (max-width: 480px) {
+            .feed-container {
+                padding: 0 12px;
+                gap: 14px;
+            }
+            .report-card {
+                padding: 12px;
+                border-radius: 14px;
+                gap: 10px;
+            }
+            .rc-header {
+                padding-bottom: 8px;
+                gap: 8px;
+            }
+            .rc-name h3 {
+                font-size: 0.98rem;
+            }
+            .rc-name p {
+                font-size: 0.72rem;
+            }
+            .badge {
+                padding: 4px 8px;
+                font-size: 0.6rem;
+            }
+            .report-toggle {
+                width: 26px;
+                height: 26px;
+                font-size: 0.9rem;
+            }
+            .report-main {
+                gap: 8px;
+            }
+            .report-main-item {
+                padding: 8px 10px;
+                border-radius: 10px;
+            }
+            .report-main-item span:first-child {
+                font-size: 0.58rem;
+            }
+            .report-main-item span:last-child {
+                font-size: 0.82rem;
+            }
+            .rc-block {
+                padding: 10px;
+                border-radius: 10px;
+            }
+            .block-title {
+                font-size: 0.62rem;
+                margin-bottom: 6px;
+            }
+            .block-title span {
+                font-size: 0.9rem;
+            }
+            .data-grid {
+                gap: 8px;
+                margin-bottom: 8px;
+            }
+            .data-item span:first-child {
+                font-size: 0.58rem;
+            }
+            .data-item span:last-child,
+            .map-link {
+                font-size: 0.78rem;
+            }
+            .media-row {
+                gap: 8px;
+                margin-top: 8px;
+                padding-top: 8px;
+            }
+            .thumb {
+                width: 44px;
+                height: 44px;
+                border-radius: 8px;
+            }
+            .work-text {
+                font-size: 0.78rem;
+                padding: 8px;
+            }
         }
 
     </style>
@@ -328,6 +462,94 @@
             </div>`;
         }
 
+        function compactReportCard(a) {
+            const completed = !!a.check_out_time;
+            const badge = completed
+                ? `<span class="badge completed">Completed</span>`
+                : `<span class="badge working">Working</span>`;
+
+            const inPath = a.check_in_image_path ? normalizeUploadPath(a.check_in_image_path, 'checkin') : '';
+            const outPath = a.check_out_image_path ? normalizeUploadPath(a.check_out_image_path, 'checkout') : '';
+            const workPath = a.work_image_path ? normalizeUploadPath(a.work_image_path, 'work') : '';
+            const voicePath = a.voice_record_path ? normalizeUploadPath(a.voice_record_path, 'work') : '';
+
+            const inSelfie = inPath ? `<img src="${assetUrl(inPath)}" class="thumb" onclick="window.open('${assetUrl(inPath)}','_blank')">` : '';
+            const outSelfie = outPath ? `<img src="${assetUrl(outPath)}" class="thumb" onclick="window.open('${assetUrl(outPath)}','_blank')">` : '';
+            const workImg = workPath ? `<img src="${assetUrl(workPath)}" class="thumb" onclick="window.open('${assetUrl(workPath)}','_blank')">` : '';
+            const voice = voicePath ? `<audio class="audio-player" controls src="${assetUrl(voicePath)}"></audio>` : '';
+            const workText = a.work_description
+                ? `<div class="work-text">"${esc(a.work_description)}"</div>`
+                : `<div style="font-size: 0.8rem; color:#94a3b8; font-style:italic;">No written report provided.</div>`;
+
+            const inTime = fmtTime(a.check_in_time);
+            const outTime = completed ? fmtTime(a.check_out_time) : 'Pending';
+
+            return `
+            <details class="report-card">
+                <summary class="report-summary">
+                    <div class="rc-header">
+                        <div class="rc-name">
+                            <h3>${esc(a.name)}</h3>
+                            <p>${fmtDate(a.date)}</p>
+                        </div>
+                        <div style="display:flex; align-items:center; gap:8px;">
+                            ${badge}
+                            <span class="report-toggle">⌄</span>
+                        </div>
+                    </div>
+
+                    <div class="report-main">
+                        <div class="report-main-item">
+                            <span>Check-In</span>
+                            <span>${inTime}</span>
+                        </div>
+                        <div class="report-main-item">
+                            <span>Check-Out</span>
+                            <span>${outTime}</span>
+                        </div>
+                    </div>
+                </summary>
+
+                <div class="report-extra">
+                    <div class="rc-block in">
+                        <div class="block-title"><span>IN</span> Morning Check-In</div>
+                        <div class="data-grid">
+                            <div class="data-item">
+                                <span>Time</span>
+                                <span>${inTime}</span>
+                            </div>
+                            <div class="data-item">
+                                <span>Location</span>
+                                ${a.check_in_lat ? `<a href="${mapHref(a.check_in_lat, a.check_in_lng)}" target="_blank" class="map-link">View Map</a>` : '<span style="color:#94a3b8;">-</span>'}
+                            </div>
+                        </div>
+                        ${inSelfie ? `<div class="media-row">${inSelfie} <span style="font-size: 0.75rem; color:#64748b; font-weight: 600;">Selfie</span></div>` : ''}
+                    </div>
+
+                    <div class="rc-block out">
+                        <div class="block-title"><span>OUT</span> Evening Check-Out</div>
+                        <div class="data-grid">
+                            <div class="data-item">
+                                <span>Time</span>
+                                <span>${completed ? outTime : '<em style="color:#94a3b8; font-weight:500;">Pending</em>'}</span>
+                            </div>
+                            <div class="data-item">
+                                <span>Location</span>
+                                ${a.check_out_lat ? `<a href="${mapHref(a.check_out_lat, a.check_out_lng)}" target="_blank" class="map-link">View Map</a>` : '<span style="color:#94a3b8;">-</span>'}
+                            </div>
+                        </div>
+                        ${outSelfie ? `<div class="media-row">${outSelfie} <span style="font-size: 0.75rem; color:#64748b; font-weight: 600;">Selfie</span></div>` : ''}
+                    </div>
+
+                    <div class="rc-block work">
+                        <div class="block-title"><span>WR</span> Work Report</div>
+                        ${workText}
+                        ${(workImg || voice) ? `<div class="media-row">${workImg} ${voice}</div>` : ''}
+                    </div>
+                </div>
+            </details>`;
+        }
+
         async function loadStaffOptions() {
             try {
                 if (typeof VEAdmin !== 'undefined') await VEAdmin.ensureAdmin();
@@ -357,7 +579,7 @@
                 const rows = out.attendance || [];
                 
                 if(rows.length > 0) {
-                    list.innerHTML = rows.map(reportCard).join('');
+                    list.innerHTML = rows.map(compactReportCard).join('');
                 } else {
                     list.innerHTML = `
                     <div style="text-align:center; padding:40px; background:white; border-radius:16px; border:1px dashed #cbd5e1;">

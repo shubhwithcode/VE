@@ -307,18 +307,20 @@
             btn.textContent = 'Authenticating...';
 
             try {
+                localStorage.removeItem('ve_auth_token');
                 const out = await VE.api('/api/auth/login', {
                     method: 'POST',
                     headers: { 'content-type': 'application/json' },
                     body: JSON.stringify({ username, password })
                 });
 
-                if (out && out.token) {
-                    localStorage.setItem('ve_auth_token', out.token);
+                if (out?.role !== 'admin') {
+                    localStorage.removeItem('ve_auth_token');
+                    throw new Error('Admin access only. Please use Staff Portal.');
                 }
 
-                if (out?.role !== 'admin') {
-                    throw new Error('Admin access only. Please use Staff Portal.');
+                if (out && out.token) {
+                    localStorage.setItem('ve_auth_token', out.token);
                 }
 
                 btn.style.background = '#10b981';

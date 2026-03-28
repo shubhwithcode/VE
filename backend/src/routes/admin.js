@@ -9,6 +9,25 @@ import { config } from '../config.js';
 
 export const adminRouter = express.Router();
 
+async function safeFirstRow(sql, params = {}, fallback = {}) {
+  try {
+    const rows = await query(sql, params);
+    return rows?.[0] ?? fallback;
+  } catch (err) {
+    if (err?.code === 'ER_NO_SUCH_TABLE' || err?.code === 'ER_BAD_FIELD_ERROR') return fallback;
+    throw err;
+  }
+}
+
+async function safeRows(sql, params = {}, fallback = []) {
+  try {
+    return await query(sql, params);
+  } catch (err) {
+    if (err?.code === 'ER_NO_SUCH_TABLE' || err?.code === 'ER_BAD_FIELD_ERROR') return fallback;
+    throw err;
+  }
+}
+
 async function ensureSupportTicketsTableForRoute() {
   try {
     await query('SELECT 1 FROM support_tickets LIMIT 1', {});
@@ -45,6 +64,11 @@ function maybeUploadProfilePhoto(req, res, next) {
   return uploadProfilePhoto.single('profile_photo')(req, res, next);
 }
 
+function legacyStaffWhere(alias = 'staff') {
+  const tableRef = alias ? `${alias}.` : '';
+  return `(${tableRef}role='staff' OR ${tableRef}role IS NULL OR ${tableRef}role='')`;
+}
+
 adminRouter.get(
   '/summary',
   asyncHandler(async (req, res) => {
@@ -59,25 +83,39 @@ adminRouter.get(
     const to = `${parsed.year}-${String(parsed.month).padStart(2, '0')}-31`;
     const today = todayDateString();
 
-    const [staffCountRow] = await query("SELECT COUNT(*) AS total_staff FROM staff WHERE role='staff'", {});
-    const [presentRow] = await query(
-      'SELECT COUNT(*) AS present_today FROM attendance WHERE date=:date AND check_in_time IS NOT NULL',
-      { date: today }
+    const staffCountRow = await safeFirstRow(
+      `SELECT COUNT(*) AS total_staff FROM staff WHERE ${legacyStaffWhere('staff')}`,
+      {},
+      {}
     );
-    const [galleryRow] = await query('SELECT COUNT(*) AS gallery_total FROM gallery', {});
-    const [heroRow] = await query(
+    const presentRow = await safeFirstRow(
+      'SELECT COUNT(*) AS present_today FROM attendance WHERE date=:date AND check_in_time IS NOT NULL',
+      { date: today },
+      {}
+    );
+    const leaveRow = await safeFirstRow(
+      `SELECT COUNT(*) AS on_leave_today
+       FROM leaves
+       WHERE status='approved' AND :today BETWEEN from_date AND to_date`,
+      { today },
+      {}
+    );
+    const galleryRow = await safeFirstRow('SELECT COUNT(*) AS gallery_total FROM gallery', {}, {});
+    const heroRow = await safeFirstRow(
       'SELECT COUNT(*) AS hero_total, SUM(CASE WHEN active=1 THEN 1 ELSE 0 END) AS hero_active FROM hero_images',
+      {},
       {}
     );
 
-    const monthRows = await query(
+    const monthRows = await safeRows(
       `SELECT s.staff_id, s.salary_per_day,
               SUM(CASE WHEN a.check_in_time IS NOT NULL THEN 1 ELSE 0 END) AS present_days
        FROM staff s
        LEFT JOIN attendance a ON a.staff_id=s.staff_id AND a.date BETWEEN :from AND :to
-       WHERE s.role='staff'
+       WHERE ${legacyStaffWhere('s')}
        GROUP BY s.staff_id`,
-      { from, to }
+      { from, to },
+      []
     );
 
     const month_present_days = monthRows.reduce((sum, r) => sum + Number(r.present_days ?? 0), 0);
@@ -91,6 +129,7 @@ adminRouter.get(
       month: monthStr,
       total_staff: Number(staffCountRow?.total_staff ?? 0),
       present_today: Number(presentRow?.present_today ?? 0),
+      on_leave_today: Number(leaveRow?.on_leave_today ?? 0),
       gallery_total: Number(galleryRow?.gallery_total ?? 0),
       hero_total: Number(heroRow?.hero_total ?? 0),
       hero_active: Number(heroRow?.hero_active ?? 0),
@@ -596,20 +635,22 @@ adminRouter.patch(
       return res.status(400).json({ error: 'invalid status' });
     }
 
-    await query(
+    const isResolvedState = statusStr === 'resolved' || statusStr === 'closed';
+    const out = await query(
       `UPDATE support_tickets
        SET status=:status,
            admin_note=:admin_note,
-           resolved_by=CASE WHEN :status IN ('resolved','closed') THEN :resolved_by ELSE NULL END,
-           resolved_at=CASE WHEN :status IN ('resolved','closed') THEN NOW() ELSE NULL END
+           resolved_by=:resolved_by,
+           resolved_at=:resolved_at
        WHERE id=:id`,
       {
         id,
         status: statusStr,
         admin_note: note === '' ? null : note,
-        resolved_by: req.user.staff_id
+        resolved_by: isResolvedState ? req.user.staff_id : null,
+        resolved_at: isResolvedState ? new Date() : null
       }
     );
-    res.json({ ok: true });
+    res.json({ ok: true, affectedRows: Number(out?.affectedRows ?? 0) });
   })
 );

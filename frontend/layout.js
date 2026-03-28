@@ -9,6 +9,36 @@ function pathPrefix() {
   return '';
 }
 
+function normalizePathForMatch(path) {
+  const normalized = String(path || '')
+    .toLowerCase()
+    .replace(/\\/g, '/')
+    .replace(/\/+/g, '/')
+    .replace(/^\.\.\//, '/')
+    .replace(/^\.\//, '/')
+    .replace(/\/index\.html$/, '/')
+    .replace(/\/$/, '');
+
+  const adminIdx = normalized.lastIndexOf('/admin/');
+  if (adminIdx >= 0) return normalized.slice(adminIdx);
+
+  const staffIdx = normalized.lastIndexOf('/staff/');
+  if (staffIdx >= 0) return normalized.slice(staffIdx);
+
+  return normalized;
+}
+
+function isCurrentPath(targetHref) {
+  const current = normalizePathForMatch(window.location.pathname || '');
+  let target = normalizePathForMatch(targetHref || '');
+
+  if (!target.startsWith('/')) {
+    target = normalizePathForMatch(`/admin/${target.replace(/^admin\//, '')}`);
+  }
+
+  return current === target || current.endsWith(target);
+}
+
 function getAdminHubConfig(prefix = '') {
   const lowerPath = String(window.location.pathname || '').toLowerCase();
   let savedHub = '';
@@ -159,7 +189,7 @@ function buildHeader(prefix) {
 
     <nav class="adminQuickActions" aria-label="Admin quick actions">
       ${adminHubConfig.items.map((item) => `
-      <a href="${item.href}" class="adminQuickAction ${lowerPath.includes(String(item.href).replace('..', '/admin').toLowerCase().replace(/\\/g, '/')) ? 'active' : ''}">
+      <a href="${item.href}" class="adminQuickAction ${isCurrentPath(item.href) ? 'active' : ''}">
         <span class="material-symbols-rounded">${item.icon}</span>
         <span>${item.label}</span>
       </a>`).join('')}

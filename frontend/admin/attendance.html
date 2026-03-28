@@ -98,7 +98,35 @@
             font-weight: 800;
         }
 
-        .btn-grid {
+        .attn-summary {
+            list-style: none;
+            cursor: pointer;
+        }
+
+        .attn-summary::-webkit-details-marker {
+            display: none;
+        }
+
+        .attn-extra {
+            margin-top: 12px;
+        }
+
+        .expand-chip {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 34px;
+            padding: 0 12px;
+            border-radius: 999px;
+            border: 1px solid rgba(45, 8, 13, 0.1);
+            background: #fff;
+            color: var(--maroon-main);
+            font-size: 0.78rem;
+            font-weight: 800;
+        }
+
+        .btn-grid,
+        .button-group {
             display: flex;
             flex-wrap: wrap;
             gap: 10px;
@@ -290,30 +318,82 @@
                 height: 40px;
             }
 
-            .attn-card {
-                padding: 18px;
-                border-radius: 22px;
+            .attn-card,
+            .card {
+                width: 100%;
+                max-width: 350px;
+                margin: 0 auto;
+                padding: 14px;
+                border-radius: 18px;
                 box-shadow: 0 18px 38px rgba(45, 8, 13, 0.08);
                 background: rgba(255, 255, 255, 0.94);
             }
 
             .emp-avatar {
-                width: 46px;
-                height: 46px;
-                font-size: 1rem;
+                width: 34px;
+                height: 34px;
+                font-size: 0.82rem;
             }
 
-            .btn-grid {
-                display: grid;
-                grid-template-columns: 1fr 1fr;
+            .emp-profile {
+                gap: 10px !important;
             }
 
-            .action-btn {
-                width: 100%;
-                min-height: 44px;
-                padding: 0 12px;
-                font-size: 0.78rem;
+            .emp-info h3 {
+                font-size: 0.98rem;
+                line-height: 1.2;
+            }
+
+            .emp-info p {
+                font-size: 0.8rem;
+                margin-top: 2px;
+            }
+
+            .badge {
+                padding: 6px 10px !important;
+                font-size: 0.68rem !important;
+                border-radius: 999px !important;
+            }
+
+            .time-box {
+                padding: 10px 12px;
+                border-radius: 12px;
+                gap: 2px;
+            }
+
+            .time-box span:first-child,
+            .meta-row span {
+                font-size: 0.64rem;
+                letter-spacing: 0.8px;
+            }
+
+            .time-box span:last-child,
+            .meta-row strong {
+                font-size: 0.86rem;
+            }
+
+            .btn-grid,
+            .button-group {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 8px;
+            }
+
+            .action-btn,
+            .button-group button {
+                flex: 1 1 45%;
+                min-height: 36px;
+                padding: 0 10px;
+                font-size: 0.72rem;
                 text-align: center;
+            }
+
+            .meta-row {
+                flex-direction: row;
+                align-items: center;
+                justify-content: space-between;
+                gap: 8px;
+                margin-top: 10px;
             }
 
             .toast {
@@ -321,6 +401,97 @@
                 right: 16px;
                 bottom: 90px;
                 text-align: center;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .attn-card,
+            .card {
+                max-width: 95%;
+                padding: 8px;
+                border-radius: 14px;
+            }
+
+            .feed-title h2,
+            h2 {
+                font-size: 16px;
+            }
+
+            .attn-header {
+                flex-direction: row;
+                align-items: flex-start;
+                justify-content: space-between;
+                gap: 8px;
+            }
+
+            .emp-avatar {
+                display: none;
+            }
+
+            .emp-profile {
+                gap: 0 !important;
+            }
+
+            .emp-info h3 {
+                font-size: 0.95rem;
+                margin-bottom: 2px;
+            }
+
+            .emp-info p {
+                font-size: 0.74rem;
+            }
+
+            .attn-times {
+                flex-direction: row;
+                align-items: stretch;
+                gap: 8px;
+            }
+
+            .btn-grid,
+            .button-group {
+                gap: 8px;
+            }
+
+            .action-btn,
+            .button-group button {
+                flex: 1 1 calc(50% - 4px);
+                min-height: 32px;
+                font-size: 11px;
+                padding: 6px 8px;
+                border-radius: 999px;
+            }
+
+            .time-box {
+                width: 100%;
+                min-width: 0;
+                font-size: 14px;
+                padding: 8px 10px;
+                border-radius: 10px;
+            }
+
+            .time-box span:first-child,
+            .meta-row span {
+                font-size: 10px;
+            }
+
+            .time-box span:last-child,
+            .meta-row strong {
+                font-size: 12px;
+            }
+
+            .badge {
+                font-size: 10px !important;
+                padding: 4px 8px !important;
+            }
+
+            .meta-row {
+                margin-top: 8px;
+            }
+
+            .expand-chip {
+                min-height: 30px;
+                font-size: 11px;
+                padding: 0 10px;
             }
         }
     </style>
@@ -514,43 +685,49 @@
       const checkInDate = new Date(a.check_in_time);
       const isLate = (checkInDate.getHours() > 9 || (checkInDate.getHours() === 9 && checkInDate.getMinutes() > 15));
       const dur = fmtDuration(a.check_in_time, a.check_out_time);
-
       return `
-        <div class=\"attn-card ${isLate ? 'is-late' : ''}\">
-          <div class=\"attn-header\">
-            <div class=\"emp-profile\">
-              <div class=\"emp-avatar\">${initial}</div>
-              <div class=\"emp-info\">
-                <h3>${a.name || 'Staff'}</h3>
-                <p>ID: ${a.staff_id || '---'}</p>
+        <details class=\"attn-card card ${isLate ? 'is-late' : ''}\">
+          <summary class=\"attn-summary\">
+            <div class=\"attn-header\">
+              <div class=\"emp-profile\">
+                <div class=\"emp-avatar\">${initial}</div>
+                <div class=\"emp-info\">
+                  <h3>${a.name || 'Staff'}</h3>
+                  <p>ID: ${a.staff_id || '---'}</p>
+                </div>
+              </div>
+              <div style=\"display:flex; gap:8px; align-items:center;\">
+                ${isLate ? `<span class=\"badge late\">Late</span>` : ``}
+                <span class=\"badge ${statusClass}\">${statusText}</span>
               </div>
             </div>
-            <div style=\"display:flex; gap:8px; align-items:center;\">
-              ${isLate ? `<span class=\"badge late\">Late</span>` : ``}
-              <span class=\"badge ${statusClass}\">${statusText}</span>
+
+            <div class=\"attn-times\">
+              <div class=\"time-box\">
+                <span>In Time</span>
+                <span style=\"${isLate ? 'color: var(--danger);' : ''}\">${fmtTime(a.check_in_time)}</span>
+              </div>
+              <div class=\"time-box\" style=\"text-align:right;\">
+                <span>Out Time</span>
+                <span>${a.check_out_time ? fmtTime(a.check_out_time) : '--:--'}</span>
+              </div>
+            </div>
+
+            <div class=\"meta-row\">
+              ${dur ? `<span>Duration</span><strong>${dur}</strong>` : `<span>Details</span><strong>Tap Below</strong>`}
+            </div>
+            <div style=\"margin-top:8px;\"><span class=\"expand-chip\">More Details</span></div>
+          </summary>
+
+          <div class=\"attn-extra\">
+            <div class=\"btn-grid button-group\">
+              ${a.check_in_image_path ? `<a class=\"action-btn\" href=\"/${a.check_in_image_path}\" target=\"_blank\" rel=\"noopener noreferrer\">${cp(0x1f4f8)} In Selfie</a>` : ''}
+              ${mapsLink(a.check_in_lat, a.check_in_lng)}
+              ${a.work_image_path ? `<a class=\"action-btn\" href=\"/${a.work_image_path}\" target=\"_blank\" rel=\"noopener noreferrer\">${cp(0x1f5bc)} Work Photo</a>` : ''}
+              ${a.voice_record_path ? `<a class=\"action-btn\" href=\"/${a.voice_record_path}\" target=\"_blank\" rel=\"noopener noreferrer\">${cp(0x1f3a4)} Audio</a>` : ''}
             </div>
           </div>
-
-          <div class=\"attn-times\">
-            <div class=\"time-box\">
-              <span>In Time</span>
-              <span style=\"${isLate ? 'color: var(--danger);' : ''}\">${fmtTime(a.check_in_time)}</span>
-            </div>
-            <div class=\"time-box\" style=\"text-align:right;\">
-              <span>Out Time</span>
-              <span>${a.check_out_time ? fmtTime(a.check_out_time) : '--:--'}</span>
-            </div>
-          </div>
-
-          <div class=\"btn-grid\">
-            ${a.check_in_image_path ? `<a class=\"action-btn\" href=\"/${a.check_in_image_path}\" target=\"_blank\" rel=\"noopener noreferrer\">${cp(0x1f4f8)} In Selfie</a>` : ''}
-            ${mapsLink(a.check_in_lat, a.check_in_lng)}
-            ${a.work_image_path ? `<a class=\"action-btn\" href=\"/${a.work_image_path}\" target=\"_blank\" rel=\"noopener noreferrer\">${cp(0x1f5bc)} Work Photo</a>` : ''}
-            ${a.voice_record_path ? `<a class=\"action-btn\" href=\"/${a.voice_record_path}\" target=\"_blank\" rel=\"noopener noreferrer\">${cp(0x1f3a4)} Audio</a>` : ''}
-          </div>
-
-          ${dur ? `<div class=\"meta-row\"><span>Duration</span><strong>${dur}</strong></div>` : ``}
-        </div>`;
+        </details>`;
     }
 
     function renderSkeleton(count=3){
