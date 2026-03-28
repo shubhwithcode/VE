@@ -69,6 +69,26 @@ CREATE TABLE IF NOT EXISTS leaves (
   CONSTRAINT fk_leaves_reviewed_by FOREIGN KEY (reviewed_by) REFERENCES staff(staff_id) ON DELETE SET NULL
 );
 
+CREATE TABLE IF NOT EXISTS support_tickets (
+  id BIGINT NOT NULL AUTO_INCREMENT,
+  staff_id INT NOT NULL,
+  subject VARCHAR(160) NOT NULL,
+  category ENUM('attendance','salary','login','profile','other') NOT NULL DEFAULT 'other',
+  priority ENUM('low','medium','high') NOT NULL DEFAULT 'medium',
+  description TEXT NOT NULL,
+  status ENUM('open','in_progress','resolved','closed') NOT NULL DEFAULT 'open',
+  admin_note TEXT NULL,
+  resolved_by INT NULL,
+  resolved_at DATETIME NULL,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (id),
+  KEY idx_support_tickets_staff (staff_id, created_at),
+  KEY idx_support_tickets_status (status, created_at),
+  CONSTRAINT fk_support_tickets_staff FOREIGN KEY (staff_id) REFERENCES staff(staff_id) ON DELETE CASCADE,
+  CONSTRAINT fk_support_tickets_resolved_by FOREIGN KEY (resolved_by) REFERENCES staff(staff_id) ON DELETE SET NULL
+);
+
 CREATE TABLE IF NOT EXISTS gallery (
   id BIGINT NOT NULL AUTO_INCREMENT,
   category VARCHAR(80) NOT NULL,

@@ -520,3 +520,65 @@ adminRouter.put(
     res.json({ ok: true });
   })
 );
+
+adminRouter.get(
+  '/support-tickets',
+  asyncHandler(async (req, res) => {
+    const { status } = req.query ?? {};
+    const statusStr = status ? String(status) : 'all';
+    const params = {};
+    const where = [];
+
+    if (statusStr !== 'all') {
+      if (!['open', 'in_progress', 'resolved', 'closed'].includes(statusStr)) {
+        return res.status(400).json({ error: 'invalid status' });
+      }
+      where.push('t.status=:status');
+      params.status = statusStr;
+    }
+
+    const whereSql = where.length ? `WHERE ${where.join(' AND ')}` : '';
+    const rows = await query(
+      `SELECT t.id, t.staff_id, s.name, s.username, s.phone, t.subject, t.category, t.priority, t.description,
+              t.status, t.admin_note, t.resolved_by, t.resolved_at, t.created_at, t.updated_at
+       FROM support_tickets t
+       JOIN staff s ON s.staff_id=t.staff_id
+       ${whereSql}
+       ORDER BY FIELD(t.status, 'open','in_progress','resolved','closed'), t.created_at DESC, t.id DESC`,
+      params
+    );
+    res.json({ tickets: rows });
+  })
+);
+
+adminRouter.patch(
+  '/support-tickets/:id',
+  asyncHandler(async (req, res) => {
+    const id = Number(req.params.id);
+    if (!id) return res.status(400).json({ error: 'invalid id' });
+
+    const { status, admin_note } = req.body ?? {};
+    const statusStr = String(status ?? '').trim();
+    const note = admin_note === undefined ? null : String(admin_note ?? '').trim();
+
+    if (!['open', 'in_progress', 'resolved', 'closed'].includes(statusStr)) {
+      return res.status(400).json({ error: 'invalid status' });
+    }
+
+    await query(
+      `UPDATE support_tickets
+       SET status=:status,
+           admin_note=:admin_note,
+           resolved_by=CASE WHEN :status IN ('resolved','closed') THEN :resolved_by ELSE NULL END,
+           resolved_at=CASE WHEN :status IN ('resolved','closed') THEN NOW() ELSE NULL END
+       WHERE id=:id`,
+      {
+        id,
+        status: statusStr,
+        admin_note: note === '' ? null : note,
+        resolved_by: req.user.staff_id
+      }
+    );
+    res.json({ ok: true });
+  })
+);

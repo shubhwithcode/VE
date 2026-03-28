@@ -315,14 +315,12 @@
             // Map Image
             const initials = initialsFromName(user?.name);
             const fallback = avatarSvgDataUri(initials);
-            const normPath = (user?.profile_image_path || '').replace(/^\/+/, '');
-            const photo = normPath
-                ? (typeof VEStaff !== 'undefined' ? VEStaff.assetUrl(normPath) : `/${normPath}`)
-                : '';
-            
             if (profileImg) {
-                profileImg.src = photo || fallback;
-                profileImg.onerror = function () { this.onerror = null; this.src = fallback; };
+                if (user?.profile_image_path && typeof VEStaff !== 'undefined' && VEStaff.setImageWithFallback) {
+                    VEStaff.setImageWithFallback(profileImg, user.profile_image_path, fallback);
+                } else {
+                    profileImg.src = fallback;
+                }
             }
 
             // Hook the logout button

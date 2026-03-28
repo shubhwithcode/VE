@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Support - Staff Portal</title>
+    <title>Support Tickets - Staff Portal</title>
 
     <link rel="stylesheet" href="./staffShell.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -20,17 +20,16 @@
             --border: rgba(93, 20, 31, 0.10);
             --success: #c5a029;
             --danger: #8f1f31;
+            --warning: #b7791f;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
-
         body {
             background-color: var(--bg);
             color: var(--text-dark);
             padding-bottom: 90px;
             max-width: 480px;
             margin: 0 auto;
-            position: relative;
             min-height: 100vh;
             box-shadow: 0 0 20px rgba(0,0,0,0.05);
         }
@@ -50,12 +49,11 @@
             gap: 15px;
         }
 
-        .back-btn { background: none; border: none; color: white; font-size: 1.5rem; cursor: pointer; display: flex; align-items: center; }
-        .app-bar-title h1 { font-size: 1.2rem; font-weight: 800; margin: 0; line-height: 1.2; }
+        .back-btn { background: none; border: none; color: white; font-size: 1.5rem; cursor: pointer; }
+        .app-bar-title h1 { font-size: 1.2rem; font-weight: 800; margin: 0; }
         .app-bar-title p { font-size: 0.75rem; opacity: 0.9; margin: 0; font-weight: 500; }
 
         .section-container { padding: 20px; display: flex; flex-direction: column; gap: 18px; }
-
         .card {
             background: var(--card-bg);
             padding: 20px;
@@ -64,12 +62,7 @@
             border: 1px solid var(--border);
         }
 
-        .hero-card {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
+        .hero-card { display: flex; flex-direction: column; gap: 10px; }
         .hero-badge {
             width: 52px;
             height: 52px;
@@ -85,7 +78,46 @@
         .hero-card h2 { font-size: 1.25rem; font-weight: 800; }
         .hero-card p { font-size: 0.9rem; color: var(--text-gray); line-height: 1.5; }
 
-        .contact-grid {
+        .sec-title { font-size: 1.05rem; font-weight: 800; margin-bottom: 14px; }
+
+        .input-group { display: flex; flex-direction: column; gap: 6px; margin-bottom: 14px; }
+        .input-group label { font-size: 0.75rem; font-weight: 700; color: var(--text-gray); text-transform: uppercase; letter-spacing: 0.4px; }
+        .input-group input, .input-group select, .input-group textarea {
+            width: 100%;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 12px 14px;
+            background: #f8fafc;
+            color: var(--text-dark);
+            outline: none;
+            font-size: 0.92rem;
+            font-weight: 500;
+        }
+        .input-group textarea { min-height: 110px; resize: vertical; line-height: 1.45; }
+
+        .grid-two { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+        .btn-primary {
+            width: 100%;
+            border: none;
+            background: var(--primary);
+            color: white;
+            border-radius: 14px;
+            padding: 14px;
+            font-weight: 800;
+            font-size: 0.95rem;
+        }
+
+        .helper {
+            text-align: center;
+            min-height: 18px;
+            margin-top: 10px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--success);
+        }
+
+        .quick-actions {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 12px;
@@ -101,47 +133,48 @@
             display: flex;
             flex-direction: column;
             gap: 6px;
-            min-height: 110px;
-            justify-content: center;
         }
-
         .action-btn strong { font-size: 0.95rem; font-weight: 800; }
         .action-btn span { font-size: 0.78rem; color: var(--text-gray); line-height: 1.4; }
-        .action-btn.call { background: #fff8ef; }
-        .action-btn.wa { background: #f2fbf4; }
 
-        .detail-row {
+        .ticket-list { display: flex; flex-direction: column; gap: 12px; }
+        .ticket-card {
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 15px;
+            background: #fffdfa;
             display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 12px;
-            padding: 12px 0;
-            border-bottom: 1px dashed var(--border);
+            flex-direction: column;
+            gap: 10px;
         }
-
-        .detail-row:last-child { border-bottom: none; }
-        .detail-label { font-size: 0.78rem; font-weight: 700; color: var(--text-gray); text-transform: uppercase; }
-        .detail-value { font-size: 0.95rem; font-weight: 700; text-align: right; }
-
-        .copy-btn {
-            border: none;
-            background: var(--primary);
-            color: white;
+        .ticket-head { display: flex; justify-content: space-between; gap: 10px; align-items: flex-start; }
+        .ticket-subject { font-size: 0.95rem; font-weight: 800; line-height: 1.35; }
+        .ticket-meta { font-size: 0.76rem; color: var(--text-gray); font-weight: 600; }
+        .ticket-desc { font-size: 0.86rem; color: var(--text-dark); line-height: 1.5; }
+        .ticket-note {
+            background: #f8fafc;
+            border: 1px solid var(--border);
             border-radius: 12px;
-            padding: 12px 14px;
-            font-weight: 800;
-            width: 100%;
-            margin-top: 14px;
+            padding: 10px 12px;
+            font-size: 0.82rem;
+            line-height: 1.45;
         }
 
-        .status {
-            text-align: center;
-            font-size: 0.82rem;
-            font-weight: 700;
-            min-height: 18px;
-            color: var(--success);
-            margin-top: 12px;
+        .badge {
+            border-radius: 999px;
+            padding: 5px 10px;
+            font-size: 0.68rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            white-space: nowrap;
         }
+        .status-open { background: #fef3c7; color: #92400e; }
+        .status-in_progress { background: #e0e7ff; color: #4338ca; }
+        .status-resolved { background: #dcfce7; color: #166534; }
+        .status-closed { background: #e5e7eb; color: #374151; }
+        .priority-high { color: var(--danger); }
+        .priority-medium { color: var(--warning); }
+        .priority-low { color: var(--success); }
     </style>
 </head>
 <body>
@@ -149,56 +182,108 @@
         <button class="back-btn" onclick="window.location.href='dashboard.html'">←</button>
         <div class="app-bar-title">
             <h1>Support</h1>
-            <p>Get help from admin</p>
+            <p>Raise and track your tickets</p>
         </div>
     </div>
 
     <div class="section-container">
         <div class="card hero-card">
-            <div class="hero-badge">💬</div>
-            <h2>Need help with attendance, salary, or login?</h2>
-            <p>Use the buttons below to contact admin directly. If the number is not configured, ask admin to update support contact in backend settings.</p>
+            <div class="hero-badge">🎫</div>
+            <h2>Raise a support ticket</h2>
+            <p>Share issues related to attendance, salary, login, profile, or anything else. Admin can review and update your ticket status.</p>
         </div>
 
-        <div class="contact-grid">
-            <a id="callBtn" class="action-btn call" href="#">
+        <div class="card">
+            <h3 class="sec-title">New Ticket</h3>
+            <form id="ticketForm">
+                <div class="input-group">
+                    <label>Subject</label>
+                    <input id="subject" type="text" maxlength="160" placeholder="Example: Salary for March not updated" required>
+                </div>
+                <div class="grid-two">
+                    <div class="input-group">
+                        <label>Category</label>
+                        <select id="category">
+                            <option value="attendance">Attendance</option>
+                            <option value="salary">Salary</option>
+                            <option value="login">Login</option>
+                            <option value="profile">Profile</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label>Priority</label>
+                        <select id="priority">
+                            <option value="medium">Medium</option>
+                            <option value="high">High</option>
+                            <option value="low">Low</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="input-group">
+                    <label>Description</label>
+                    <textarea id="description" maxlength="2000" placeholder="Explain your problem clearly so admin can help faster." required></textarea>
+                </div>
+                <button class="btn-primary" type="submit">Raise Ticket</button>
+                <div id="formStatus" class="helper"></div>
+            </form>
+        </div>
+
+        <div class="quick-actions">
+            <a id="callBtn" class="action-btn" href="#">
                 <strong>Call Admin</strong>
-                <span>Quick support for urgent issues</span>
+                <span>For urgent matters that need immediate help</span>
             </a>
-            <a id="waBtn" class="action-btn wa" href="#" target="_blank" rel="noreferrer">
+            <a id="waBtn" class="action-btn" href="#" target="_blank" rel="noreferrer">
                 <strong>WhatsApp</strong>
-                <span>Send message with your problem</span>
+                <span>Send a quick message with ticket context</span>
             </a>
         </div>
 
         <div class="card">
-            <div class="detail-row">
-                <span class="detail-label">Support Number</span>
-                <span class="detail-value" id="supportNumber">Loading...</span>
+            <h3 class="sec-title">My Tickets</h3>
+            <div id="ticketList" class="ticket-list">
+                <div style="text-align:center; color:#7b6767; font-size:0.85rem; padding:20px;">Loading tickets...</div>
             </div>
-            <div class="detail-row">
-                <span class="detail-label">Staff Name</span>
-                <span class="detail-value" id="staffName">Loading...</span>
-            </div>
-            <div class="detail-row">
-                <span class="detail-label">Staff ID</span>
-                <span class="detail-value" id="staffId">--</span>
-            </div>
-            <button id="copyBtn" class="copy-btn" type="button">Copy Support Number</button>
-            <div id="status" class="status"></div>
         </div>
     </div>
 
     <script src="../app.js"></script>
     <script src="./staffCommon.js"></script>
     <script>
+        let currentUser = null;
+        let supportPhone = '';
+
         function normalizePhone(phone) {
             return String(phone || '').replace(/[^\d+]/g, '');
         }
 
-        function formatPhone(phone) {
-            const clean = normalizePhone(phone);
-            return clean || 'Not Configured';
+        function fmtDateTime(value) {
+            if (!value) return '-';
+            return new Date(value).toLocaleString('en-IN', {
+                day: '2-digit',
+                month: 'short',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+
+        function esc(s) {
+            return String(s ?? '')
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+        }
+
+        function prettyCategory(value) {
+            return String(value || 'other').replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
+        }
+
+        function prettyStatus(value) {
+            return String(value || 'open').replace(/_/g, ' ');
         }
 
         function whatsappHref(phone, user) {
@@ -208,58 +293,101 @@
             return `https://wa.me/${digits}?text=${encodeURIComponent(text)}`;
         }
 
-        async function copyText(text) {
-            await navigator.clipboard.writeText(text);
+        function ticketCard(t) {
+            const statusClass = `status-${String(t.status).replace(/[^a-z_]/g, '')}`;
+            const priorityClass = `priority-${String(t.priority).replace(/[^a-z]/g, '')}`;
+            return `
+                <div class="ticket-card">
+                    <div class="ticket-head">
+                        <div>
+                            <div class="ticket-subject">${esc(t.subject)}</div>
+                            <div class="ticket-meta">
+                                #${t.id} • ${prettyCategory(t.category)} •
+                                <span class="${priorityClass}">${prettyCategory(t.priority)} priority</span> •
+                                ${fmtDateTime(t.created_at)}
+                            </div>
+                        </div>
+                        <span class="badge ${statusClass}">${esc(prettyStatus(t.status))}</span>
+                    </div>
+                    <div class="ticket-desc">${esc(t.description)}</div>
+                    ${t.admin_note ? `<div class="ticket-note"><strong>Admin Note:</strong><br>${esc(t.admin_note)}</div>` : ''}
+                    ${t.resolved_at ? `<div class="ticket-meta">Last updated: ${fmtDateTime(t.resolved_at)}</div>` : ''}
+                </div>
+            `;
+        }
+
+        async function loadTickets() {
+            const list = document.getElementById('ticketList');
+            list.innerHTML = `<div style="text-align:center; color:#7b6767; font-size:0.85rem; padding:20px;">Loading tickets...</div>`;
+            try {
+                const out = await VE.api('/api/staff/support-tickets');
+                const tickets = out?.tickets || [];
+                if (!tickets.length) {
+                    list.innerHTML = `<div style="text-align:center; color:#7b6767; font-size:0.85rem; padding:20px;">No tickets yet. Raise your first issue above.</div>`;
+                    return;
+                }
+                list.innerHTML = tickets.map(ticketCard).join('');
+            } catch (e) {
+                list.innerHTML = `<div style="text-align:center; color:#8f1f31; font-size:0.85rem; padding:20px;">Failed to load tickets.</div>`;
+            }
+        }
+
+        function wireQuickActions() {
+            const callBtn = document.getElementById('callBtn');
+            const waBtn = document.getElementById('waBtn');
+            const cleanPhone = normalizePhone(supportPhone);
+            if (cleanPhone) {
+                callBtn.href = `tel:${cleanPhone}`;
+                waBtn.href = whatsappHref(cleanPhone, currentUser);
+                return;
+            }
+            callBtn.href = '#';
+            waBtn.href = '#';
+            callBtn.addEventListener('click', (event) => {
+                event.preventDefault();
+                document.getElementById('formStatus').textContent = 'Admin contact is not configured yet.';
+            });
+            waBtn.addEventListener('click', (event) => {
+                event.preventDefault();
+                document.getElementById('formStatus').textContent = 'Admin contact is not configured yet.';
+            });
+        }
+
+        async function raiseTicket(event) {
+            event.preventDefault();
+            const status = document.getElementById('formStatus');
+            status.textContent = 'Submitting...';
+            try {
+                await VE.api('/api/staff/support-tickets', {
+                    method: 'POST',
+                    headers: { 'content-type': 'application/json' },
+                    body: JSON.stringify({
+                        subject: document.getElementById('subject').value.trim(),
+                        category: document.getElementById('category').value,
+                        priority: document.getElementById('priority').value,
+                        description: document.getElementById('description').value.trim()
+                    })
+                });
+                event.target.reset();
+                status.textContent = 'Ticket raised successfully.';
+                await loadTickets();
+            } catch (e) {
+                status.textContent = e?.message || 'Could not raise ticket.';
+            }
         }
 
         (async function init() {
-            const callBtn = document.getElementById('callBtn');
-            const waBtn = document.getElementById('waBtn');
-            const supportNumber = document.getElementById('supportNumber');
-            const staffName = document.getElementById('staffName');
-            const staffId = document.getElementById('staffId');
-            const copyBtn = document.getElementById('copyBtn');
-            const status = document.getElementById('status');
-
             try {
                 const me = await VE.api('/api/auth/me');
-                const user = me?.user || null;
-                if (!user || user.role !== 'staff') throw new Error('Not staff');
-
-                const supportPhone = me?.support?.phone || sessionStorage.getItem('ve_support_phone') || '';
-                const cleanPhone = normalizePhone(supportPhone);
-
-                staffName.textContent = user?.name || 'Staff';
-                staffId.textContent = user?.staff_id || '--';
-                supportNumber.textContent = formatPhone(supportPhone);
-
-                if (cleanPhone) {
-                    callBtn.href = `tel:${cleanPhone}`;
-                    waBtn.href = whatsappHref(cleanPhone, user);
-                    copyBtn.disabled = false;
-                    copyBtn.addEventListener('click', async () => {
-                        try {
-                            await copyText(cleanPhone);
-                            status.textContent = 'Support number copied.';
-                        } catch {
-                            status.textContent = 'Could not copy number.';
-                        }
-                    });
-                } else {
-                    callBtn.href = '#';
-                    waBtn.href = '#';
-                    copyBtn.disabled = true;
-                    callBtn.addEventListener('click', (event) => {
-                        event.preventDefault();
-                        status.textContent = 'Admin contact is not configured yet.';
-                    });
-                    waBtn.addEventListener('click', (event) => {
-                        event.preventDefault();
-                        status.textContent = 'Admin contact is not configured yet.';
-                    });
-                }
+                currentUser = me?.user || null;
+                if (!currentUser || currentUser.role !== 'staff') throw new Error('Not staff');
+                supportPhone = me?.support?.phone || sessionStorage.getItem('ve_support_phone') || '';
+                wireQuickActions();
+                document.getElementById('ticketForm').addEventListener('submit', raiseTicket);
+                await loadTickets();
             } catch (e) {
-                status.textContent = e?.message || 'Unable to load support details.';
+                document.getElementById('formStatus').textContent = e?.message || 'Unable to load support details.';
+                document.getElementById('ticketList').innerHTML = `<div style="text-align:center; color:#8f1f31; font-size:0.85rem; padding:20px;">Unable to load tickets.</div>`;
             }
         })();
     </script>

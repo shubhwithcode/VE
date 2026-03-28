@@ -87,4 +87,50 @@ function assetUrl(p) {
   return apiBase ? `${apiBase}/${norm}` : `/${norm}`;
 }
 
-window.VEStaff = { ensureStaff, initStaffAppBar, hookLogoutButton, getApiBaseForAssets, assetUrl };
+function assetCandidates(p) {
+  const raw = String(p || '').replace(/^\/+/, '');
+  if (!raw) return [];
+  const apiBase = getApiBaseForAssets();
+  const candidates = [];
+
+  const push = (value) => {
+    const url = String(value || '').trim();
+    if (!url || candidates.includes(url)) return;
+    candidates.push(url);
+  };
+
+  push(assetUrl(raw));
+  push(apiBase ? `${apiBase}/${raw}` : `/${raw}`);
+  if (!raw.startsWith('uploads/')) {
+    push(apiBase ? `${apiBase}/uploads/${raw}` : `/uploads/${raw}`);
+  }
+  if (!raw.includes('/')) {
+    push(apiBase ? `${apiBase}/uploads/profiles/${raw}` : `/uploads/profiles/${raw}`);
+  }
+  return candidates;
+}
+
+function setImageWithFallback(imgEl, path, fallback) {
+  if (!imgEl) return;
+  const queue = assetCandidates(path);
+  let index = 0;
+
+  const next = () => {
+    if (index >= queue.length) {
+      imgEl.onerror = null;
+      imgEl.src = fallback;
+      return;
+    }
+    imgEl.src = queue[index++];
+  };
+
+  imgEl.onerror = next;
+  if (queue.length > 0) {
+    next();
+  } else {
+    imgEl.onerror = null;
+    imgEl.src = fallback;
+  }
+}
+
+window.VEStaff = { ensureStaff, initStaffAppBar, hookLogoutButton, getApiBaseForAssets, assetUrl, assetCandidates, setImageWithFallback };

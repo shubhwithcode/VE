@@ -303,3 +303,59 @@ staffRouter.post(
     res.json({ ok: true });
   })
 );
+
+staffRouter.get(
+  '/support-tickets',
+  asyncHandler(async (req, res) => {
+    const staff_id = req.user.staff_id;
+    const rows = await query(
+      `SELECT id, subject, category, priority, description, status, admin_note, resolved_at, created_at, updated_at
+       FROM support_tickets
+       WHERE staff_id=:staff_id
+       ORDER BY created_at DESC, id DESC`,
+      { staff_id }
+    );
+    res.json({ tickets: rows });
+  })
+);
+
+staffRouter.post(
+  '/support-tickets',
+  asyncHandler(async (req, res) => {
+    const staff_id = req.user.staff_id;
+    const { subject, category, priority, description } = req.body ?? {};
+    const subjectStr = String(subject ?? '').trim();
+    const categoryStr = String(category ?? 'other').trim();
+    const priorityStr = String(priority ?? 'medium').trim();
+    const descriptionStr = String(description ?? '').trim();
+
+    if (!subjectStr || !descriptionStr) {
+      return res.status(400).json({ error: 'subject and description required' });
+    }
+    if (subjectStr.length > 160) {
+      return res.status(400).json({ error: 'subject too long (max 160)' });
+    }
+    if (descriptionStr.length > 2000) {
+      return res.status(400).json({ error: 'description too long (max 2000)' });
+    }
+    if (!['attendance', 'salary', 'login', 'profile', 'other'].includes(categoryStr)) {
+      return res.status(400).json({ error: 'invalid category' });
+    }
+    if (!['low', 'medium', 'high'].includes(priorityStr)) {
+      return res.status(400).json({ error: 'invalid priority' });
+    }
+
+    const out = await query(
+      `INSERT INTO support_tickets (staff_id, subject, category, priority, description, status)
+       VALUES (:staff_id,:subject,:category,:priority,:description,'open')`,
+      {
+        staff_id,
+        subject: subjectStr,
+        category: categoryStr,
+        priority: priorityStr,
+        description: descriptionStr
+      }
+    );
+    res.json({ ok: true, id: out?.insertId ?? null });
+  })
+);

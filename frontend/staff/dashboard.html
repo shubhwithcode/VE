@@ -185,11 +185,11 @@
                 <p>Work calendar</p>
             </div>
         </a>
-        <a href="work.html" class="dash-card work">
+        <a href="apply-leave.html" class="dash-card work">
             <div class="icon-box">📋</div>
             <div>
-                <h3>Work Detail</h3>
-                <p>End day report</p>
+                <h3>Leave Request</h3>
+                <p>Apply for leave</p>
             </div>
         </a>
         <a href="support.html" class="dash-card support" id="supportCard">
@@ -329,10 +329,14 @@
                 const profileImg = document.getElementById('profileImg');
                 
                 // Set Profile Image or Fallback
-                if (user?.profile_image_path && typeof VEStaff !== 'undefined') {
+                if (user?.profile_image_path && typeof VEStaff !== 'undefined' && VEStaff.setImageWithFallback) {
+                    VEStaff.setImageWithFallback(profileImg, user.profile_image_path, fallback);
+                } else if (user?.profile_image_path && typeof VEStaff !== 'undefined') {
                     profileImg.src = VEStaff.assetUrl(user.profile_image_path);
-                } else { profileImg.src = fallback; }
-                profileImg.onerror = () => { profileImg.src = fallback; };
+                    profileImg.onerror = () => { profileImg.src = fallback; };
+                } else {
+                    profileImg.src = fallback;
+                }
 
                 // Fetch Monthly Stats
                 const now = new Date();

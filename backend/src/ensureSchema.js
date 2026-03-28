@@ -44,6 +44,7 @@ export async function ensureSchemaIfNeeded() {
     await ensureStaffProfilePhotoColumn();
     await ensureStaffAadhaarColumn();
     await ensureLeavesTable();
+    await ensureSupportTicketsTable();
     await ensureWebsiteTables();
     return;
   }
@@ -71,6 +72,7 @@ export async function ensureSchemaIfNeeded() {
   await ensureStaffProfilePhotoColumn();
   await ensureStaffAadhaarColumn();
   await ensureLeavesTable();
+  await ensureSupportTicketsTable();
   await ensureWebsiteTables();
 }
 
@@ -313,6 +315,35 @@ async function ensureLeavesTable() {
     KEY idx_leaves_status_date (status, created_at),
     CONSTRAINT fk_leaves_staff FOREIGN KEY (staff_id) REFERENCES staff(staff_id) ON DELETE CASCADE,
     CONSTRAINT fk_leaves_reviewed_by FOREIGN KEY (reviewed_by) REFERENCES staff(staff_id) ON DELETE SET NULL
+  )`);
+}
+
+async function ensureSupportTicketsTable() {
+  try {
+    await query('SELECT 1 FROM support_tickets LIMIT 1', {});
+    return;
+  } catch (err) {
+    if (err?.code !== 'ER_NO_SUCH_TABLE') throw err;
+  }
+
+  await pool.query(`CREATE TABLE IF NOT EXISTS support_tickets (
+    id BIGINT NOT NULL AUTO_INCREMENT,
+    staff_id INT NOT NULL,
+    subject VARCHAR(160) NOT NULL,
+    category ENUM('attendance','salary','login','profile','other') NOT NULL DEFAULT 'other',
+    priority ENUM('low','medium','high') NOT NULL DEFAULT 'medium',
+    description TEXT NOT NULL,
+    status ENUM('open','in_progress','resolved','closed') NOT NULL DEFAULT 'open',
+    admin_note TEXT NULL,
+    resolved_by INT NULL,
+    resolved_at DATETIME NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (id),
+    KEY idx_support_tickets_staff (staff_id, created_at),
+    KEY idx_support_tickets_status (status, created_at),
+    CONSTRAINT fk_support_tickets_staff FOREIGN KEY (staff_id) REFERENCES staff(staff_id) ON DELETE CASCADE,
+    CONSTRAINT fk_support_tickets_resolved_by FOREIGN KEY (resolved_by) REFERENCES staff(staff_id) ON DELETE SET NULL
   )`);
 }
 async function ensureWebsiteTables() {
