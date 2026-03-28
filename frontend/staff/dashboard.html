@@ -192,7 +192,7 @@
                 <p>End day report</p>
             </div>
         </a>
-        <a href="#" class="dash-card support" id="supportCard">
+        <a href="support.html" class="dash-card support" id="supportCard">
             <div class="icon-box">💬</div>
             <div>
                 <h3>Support</h3>
@@ -270,16 +270,13 @@
             const supportCard = document.getElementById('supportCard');
             if (!supportCard) return;
             const clean = normalizePhone(phone);
+            supportCard.href = 'support.html';
             if (clean) {
-                supportCard.href = `tel:${clean}`;
                 supportCard.title = `Call ${clean}`;
+                try { sessionStorage.setItem('ve_support_phone', clean); } catch {}
                 return;
             }
-            supportCard.href = '#';
-            supportCard.addEventListener('click', (event) => {
-                event.preventDefault();
-                alert('Admin contact is not configured yet.');
-            });
+            supportCard.title = 'Contact Admin';
         }
 
         // --- 2. Render History List ---

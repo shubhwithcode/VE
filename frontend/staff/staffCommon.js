@@ -76,7 +76,14 @@ function getApiBaseForAssets() {
 function assetUrl(p) {
   if (!p) return '';
   const apiBase = getApiBaseForAssets();
-  const norm = String(p).replace(/^\/+/, '');
+  let norm = String(p).replace(/^\/+/, '');
+  if (!norm.startsWith('uploads/')) {
+    if (norm.startsWith('profiles/') || norm.startsWith('checkin/') || norm.startsWith('checkout/') || norm.startsWith('work/')) {
+      norm = `uploads/${norm}`;
+    } else if (!norm.includes('/')) {
+      norm = `uploads/profiles/${norm}`;
+    }
+  }
   return apiBase ? `${apiBase}/${norm}` : `/${norm}`;
 }
 

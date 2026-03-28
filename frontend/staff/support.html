@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Support - Staff Portal</title>
+
+    <link rel="stylesheet" href="./staffShell.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary: #5d141f;
+            --bg: #f8f3ea;
+            --card-bg: #ffffff;
+            --text-dark: #2d080d;
+            --text-gray: #7b6767;
+            --border: rgba(93, 20, 31, 0.10);
+            --success: #c5a029;
+            --danger: #8f1f31;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text-dark);
+            padding-bottom: 90px;
+            max-width: 480px;
+            margin: 0 auto;
+            position: relative;
+            min-height: 100vh;
+            box-shadow: 0 0 20px rgba(0,0,0,0.05);
+        }
+
+        .app-bar {
+            background: linear-gradient(135deg, var(--primary), #7a1b29);
+            color: white;
+            padding: 20px 20px 35px 20px;
+            border-bottom-left-radius: 25px;
+            border-bottom-right-radius: 25px;
+            box-shadow: 0 4px 15px rgba(43, 115, 246, 0.25);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .back-btn { background: none; border: none; color: white; font-size: 1.5rem; cursor: pointer; display: flex; align-items: center; }
+        .app-bar-title h1 { font-size: 1.2rem; font-weight: 800; margin: 0; line-height: 1.2; }
+        .app-bar-title p { font-size: 0.75rem; opacity: 0.9; margin: 0; font-weight: 500; }
+
+        .section-container { padding: 20px; display: flex; flex-direction: column; gap: 18px; }
+
+        .card {
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+            border: 1px solid var(--border);
+        }
+
+        .hero-card {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .hero-badge {
+            width: 52px;
+            height: 52px;
+            border-radius: 16px;
+            background: #f3ead7;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .hero-card h2 { font-size: 1.25rem; font-weight: 800; }
+        .hero-card p { font-size: 0.9rem; color: var(--text-gray); line-height: 1.5; }
+
+        .contact-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .action-btn {
+            text-decoration: none;
+            border: 1px solid var(--border);
+            background: #fff;
+            color: var(--text-dark);
+            border-radius: 16px;
+            padding: 16px 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            min-height: 110px;
+            justify-content: center;
+        }
+
+        .action-btn strong { font-size: 0.95rem; font-weight: 800; }
+        .action-btn span { font-size: 0.78rem; color: var(--text-gray); line-height: 1.4; }
+        .action-btn.call { background: #fff8ef; }
+        .action-btn.wa { background: #f2fbf4; }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 0;
+            border-bottom: 1px dashed var(--border);
+        }
+
+        .detail-row:last-child { border-bottom: none; }
+        .detail-label { font-size: 0.78rem; font-weight: 700; color: var(--text-gray); text-transform: uppercase; }
+        .detail-value { font-size: 0.95rem; font-weight: 700; text-align: right; }
+
+        .copy-btn {
+            border: none;
+            background: var(--primary);
+            color: white;
+            border-radius: 12px;
+            padding: 12px 14px;
+            font-weight: 800;
+            width: 100%;
+            margin-top: 14px;
+        }
+
+        .status {
+            text-align: center;
+            font-size: 0.82rem;
+            font-weight: 700;
+            min-height: 18px;
+            color: var(--success);
+            margin-top: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-bar">
+        <button class="back-btn" onclick="window.location.href='dashboard.html'">←</button>
+        <div class="app-bar-title">
+            <h1>Support</h1>
+            <p>Get help from admin</p>
+        </div>
+    </div>
+
+    <div class="section-container">
+        <div class="card hero-card">
+            <div class="hero-badge">💬</div>
+            <h2>Need help with attendance, salary, or login?</h2>
+            <p>Use the buttons below to contact admin directly. If the number is not configured, ask admin to update support contact in backend settings.</p>
+        </div>
+
+        <div class="contact-grid">
+            <a id="callBtn" class="action-btn call" href="#">
+                <strong>Call Admin</strong>
+                <span>Quick support for urgent issues</span>
+            </a>
+            <a id="waBtn" class="action-btn wa" href="#" target="_blank" rel="noreferrer">
+                <strong>WhatsApp</strong>
+                <span>Send message with your problem</span>
+            </a>
+        </div>
+
+        <div class="card">
+            <div class="detail-row">
+                <span class="detail-label">Support Number</span>
+                <span class="detail-value" id="supportNumber">Loading...</span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Staff Name</span>
+                <span class="detail-value" id="staffName">Loading...</span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Staff ID</span>
+                <span class="detail-value" id="staffId">--</span>
+            </div>
+            <button id="copyBtn" class="copy-btn" type="button">Copy Support Number</button>
+            <div id="status" class="status"></div>
+        </div>
+    </div>
+
+    <script src="../app.js"></script>
+    <script src="./staffCommon.js"></script>
+    <script>
+        function normalizePhone(phone) {
+            return String(phone || '').replace(/[^\d+]/g, '');
+        }
+
+        function formatPhone(phone) {
+            const clean = normalizePhone(phone);
+            return clean || 'Not Configured';
+        }
+
+        function whatsappHref(phone, user) {
+            const digits = normalizePhone(phone).replace(/^\+/, '');
+            if (!digits) return '#';
+            const text = `Hello Admin, I need help. Staff: ${user?.name || 'Staff'} (ID: ${user?.staff_id || '--'}).`;
+            return `https://wa.me/${digits}?text=${encodeURIComponent(text)}`;
+        }
+
+        async function copyText(text) {
+            await navigator.clipboard.writeText(text);
+        }
+
+        (async function init() {
+            const callBtn = document.getElementById('callBtn');
+            const waBtn = document.getElementById('waBtn');
+            const supportNumber = document.getElementById('supportNumber');
+            const staffName = document.getElementById('staffName');
+            const staffId = document.getElementById('staffId');
+            const copyBtn = document.getElementById('copyBtn');
+            const status = document.getElementById('status');
+
+            try {
+                const me = await VE.api('/api/auth/me');
+                const user = me?.user || null;
+                if (!user || user.role !== 'staff') throw new Error('Not staff');
+
+                const supportPhone = me?.support?.phone || sessionStorage.getItem('ve_support_phone') || '';
+                const cleanPhone = normalizePhone(supportPhone);
+
+                staffName.textContent = user?.name || 'Staff';
+                staffId.textContent = user?.staff_id || '--';
+                supportNumber.textContent = formatPhone(supportPhone);
+
+                if (cleanPhone) {
+                    callBtn.href = `tel:${cleanPhone}`;
+                    waBtn.href = whatsappHref(cleanPhone, user);
+                    copyBtn.disabled = false;
+                    copyBtn.addEventListener('click', async () => {
+                        try {
+                            await copyText(cleanPhone);
+                            status.textContent = 'Support number copied.';
+                        } catch {
+                            status.textContent = 'Could not copy number.';
+                        }
+                    });
+                } else {
+                    callBtn.href = '#';
+                    waBtn.href = '#';
+                    copyBtn.disabled = true;
+                    callBtn.addEventListener('click', (event) => {
+                        event.preventDefault();
+                        status.textContent = 'Admin contact is not configured yet.';
+                    });
+                    waBtn.addEventListener('click', (event) => {
+                        event.preventDefault();
+                        status.textContent = 'Admin contact is not configured yet.';
+                    });
+                }
+            } catch (e) {
+                status.textContent = e?.message || 'Unable to load support details.';
+            }
+        })();
+    </script>
+</body>
+</html>
