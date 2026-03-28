@@ -4,7 +4,7 @@
 
   async function api(path, options = {}) {
     const isApiPath = typeof path === 'string' && path.startsWith('/api/');
-    const candidates = isApiPath ? ['', 'http://localhost:3000'] : [''];
+    const candidates = isApiPath ? ['', 'https://ve-production.up.railway.app', 'http://localhost:3000'] : [''];
     const tokenKey = 've_auth_token';
 
     let lastErr = null;
@@ -67,4 +67,3 @@
   window.VE.setStatus = setStatus;
   window.VE.formatDateTime = formatDateTime;
 })();
-

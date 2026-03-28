@@ -9,7 +9,7 @@ import { config } from './config.js';
 import { ensureUploadsDir } from './uploads.js';
 import { ensureSchemaIfNeeded } from './ensureSchema.js';
 import { ensureAdminIfNeeded } from './ensureAdmin.js';
-import { authRouter } from './routes/auth.js';
+import { authRouter, loginHandler } from './routes/auth.js';
 import { adminRouter } from './routes/admin.js';
 import { staffRouter } from './routes/staff.js';
 import { publicRouter } from './routes/public.js';
@@ -75,6 +75,7 @@ app.get('/health', (req, res) => res.json({ ok: true }));
 
 app.use('/api', publicRouter);
 app.use('/api/auth', authRouter);
+app.post('/api/admin/login', loginHandler);
 app.use('/api/admin', requireAuth, requireRole('admin'), adminRouter);
 app.use('/api/staff', requireAuth, requireRole('staff'), staffRouter);
 

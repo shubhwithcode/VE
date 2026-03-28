@@ -4,6 +4,7 @@ function uniq(list) {
 
 function getApiCandidates() {
   const candidates = [];
+  const productionApiBase = 'https://ve-production.up.railway.app';
 
   let preferBackend = false;
   try {
@@ -35,7 +36,8 @@ function getApiCandidates() {
     }
   } catch {}
 
-  // 5) Absolute fallback.
+  // 5) Absolute fallbacks.
+  candidates.push(productionApiBase);
   candidates.push('http://localhost:3000');
 
   // If we preferred backend first, try same-origin last (some dev servers may proxy /api).

@@ -32,7 +32,7 @@ async function loadGallery() {
 
   let gallery = [];
   let mediaBase = '';
-  const candidates = ['/api/gallery', 'http://localhost:3000/api/gallery'];
+  const candidates = ['/api/gallery', 'https://ve-production.up.railway.app/api/gallery', 'http://localhost:3000/api/gallery'];
 
   VE.setStatus(statusEl, 'Loading gallery...');
   for (const url of candidates) {
@@ -117,7 +117,7 @@ async function loadHeroImages() {
   const heroImg = document.getElementById('heroImage');
   if (!heroImg) return;
 
-  const candidates = ['/api/hero', 'http://localhost:3000/api/hero'];
+  const candidates = ['/api/hero', 'https://ve-production.up.railway.app/api/hero', 'http://localhost:3000/api/hero'];
   let mediaBase = '';
   let hero = [];
   for (const url of candidates) {
