@@ -375,6 +375,27 @@
             return productionApiBase;
         }
 
+        function getAssetBaseCandidates() {
+            const bases = [];
+            try {
+                const stored = localStorage.getItem('ve_api_base') || '';
+                if (stored) bases.push(String(stored).replace(/\/$/, ''));
+            } catch {}
+            try {
+                if (window.VE_API_BASE) bases.push(String(window.VE_API_BASE).replace(/\/$/, ''));
+            } catch {}
+            try {
+                const proto = location.protocol || 'http:';
+                const host = location.hostname || 'localhost';
+                if (proto === 'http:' || proto === 'https:') {
+                    bases.push(`${proto}//localhost:3000`);
+                    bases.push(`${proto}//${host}:3000`);
+                }
+            } catch {}
+            bases.push('https://ve-production.up.railway.app');
+            return [...new Set(bases.filter(Boolean))];
+        }
+
         function normalizeUploadPath(p, kind) {
             const s = String(p || '').replace(/^\/+/, '');
             if (!s) return '';
@@ -393,6 +414,36 @@
             return base ? `${base}/${norm}` : `/${norm}`;
         }
 
+        function assetCandidates(p, kind) {
+            const normalized = normalizeUploadPath(p, kind);
+            if (!normalized) return [];
+            return getAssetBaseCandidates().map((base) => `${base}/${normalized}`);
+        }
+
+        function renderThumb(path, kind, alt) {
+            const candidates = assetCandidates(path, kind);
+            if (!candidates.length) return '';
+            return `<img src="${candidates[0]}" class="thumb report-thumb" alt="${esc(alt)}" data-candidates="${esc(JSON.stringify(candidates))}" onclick="window.open(this.src,'_blank')">`;
+        }
+
+        function hydrateReportMedia() {
+            document.querySelectorAll('.report-thumb').forEach((img) => {
+                if (img.dataset.bound === '1') return;
+                img.dataset.bound = '1';
+                img.addEventListener('error', () => {
+                    let candidates = [];
+                    try {
+                        candidates = JSON.parse(img.dataset.candidates || '[]');
+                    } catch {}
+                    const current = img.getAttribute('src') || '';
+                    const remaining = candidates.filter((url) => url && url !== current);
+                    if (!remaining.length) return;
+                    img.dataset.candidates = JSON.stringify(remaining);
+                    img.src = remaining[0];
+                });
+            });
+        }
+
         function reportCard(a) {
             const completed = !!a.check_out_time;
             const badge = completed 
@@ -405,9 +456,9 @@
             const workPath = a.work_image_path ? normalizeUploadPath(a.work_image_path, 'work') : '';
             const voicePath = a.voice_record_path ? normalizeUploadPath(a.voice_record_path, 'work') : '';
 
-            const inSelfie = inPath ? `<img src="${assetUrl(inPath)}" class="thumb" onclick="window.open('${assetUrl(inPath)}','_blank')">` : '';
-            const outSelfie = outPath ? `<img src="${assetUrl(outPath)}" class="thumb" onclick="window.open('${assetUrl(outPath)}','_blank')">` : '';
-            const workImg = workPath ? `<img src="${assetUrl(workPath)}" class="thumb" onclick="window.open('${assetUrl(workPath)}','_blank')">` : '';
+            const inSelfie = renderThumb(inPath, 'checkin', 'Check-in selfie');
+            const outSelfie = renderThumb(outPath, 'checkout', 'Check-out selfie');
+            const workImg = renderThumb(workPath, 'work', 'Work photo');
             
             const voice = voicePath ? `<audio class="audio-player" controls src="${assetUrl(voicePath)}"></audio>` : '';
             const workText = a.work_description ? `<div class="work-text">"${esc(a.work_description)}"</div>` : `<div style="font-size: 0.8rem; color:#94a3b8; font-style:italic;">No written report provided.</div>`;
@@ -580,6 +631,7 @@
                 
                 if(rows.length > 0) {
                     list.innerHTML = rows.map(compactReportCard).join('');
+                    hydrateReportMedia();
                 } else {
                     list.innerHTML = `
                     <div style="text-align:center; padding:40px; background:white; border-radius:16px; border:1px dashed #cbd5e1;">

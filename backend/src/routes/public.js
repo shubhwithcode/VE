@@ -23,6 +23,44 @@ publicRouter.get(
   })
 );
 publicRouter.post(
+  '/customer/login',
+  asyncHandler(async (req, res) => {
+    const { phone } = req.body ?? {};
+    const phoneStr = String(phone ?? '').trim();
+    if (!phoneStr) return res.status(400).json({ error: 'phone required' });
+
+    const rows = await query('SELECT id, name, email, phone, address, created_at FROM customers WHERE phone=:phone ORDER BY id DESC LIMIT 1', {
+      phone: phoneStr
+    });
+    const customer = rows[0];
+    if (!customer) return res.status(404).json({ error: 'Customer not found' });
+    res.json({ ok: true, customer });
+  })
+);
+
+publicRouter.post(
+  '/customer/register',
+  asyncHandler(async (req, res) => {
+    const { name, phone, email, address } = req.body ?? {};
+    const nameStr = String(name ?? '').trim();
+    const phoneStr = String(phone ?? '').trim();
+    if (!nameStr || !phoneStr) return res.status(400).json({ error: 'name and phone required' });
+
+    const existing = await query('SELECT id FROM customers WHERE phone=:phone ORDER BY id DESC LIMIT 1', { phone: phoneStr });
+    if (existing.length > 0) return res.status(409).json({ error: 'Customer already registered. Use login.' });
+
+    const out = await query('INSERT INTO customers (name, email, phone, address) VALUES (:name,:email,:phone,:address)', {
+      name: nameStr,
+      email: email ?? null,
+      phone: phoneStr,
+      address: address ?? null
+    });
+
+    res.json({ ok: true, id: out?.insertId ?? null });
+  })
+);
+
+publicRouter.post(
   '/queries',
   asyncHandler(async (req, res) => {
     const { name, phone, email, message } = req.body ?? {};

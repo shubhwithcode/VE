@@ -2,6 +2,36 @@ function uniq(list) {
   return [...new Set(list.filter(Boolean))];
 }
 
+function faviconPathPrefix() {
+  const p = String(location?.pathname || '').toLowerCase();
+  if (p.includes('/admin/') || p.includes('/staff/')) return '../';
+  return '';
+}
+
+function ensureBrandFavicon() {
+  try {
+    const href = `${faviconPathPrefix()}assets/ve-logo.png`;
+    let icon = document.querySelector('link[rel="icon"]');
+    if (!icon) {
+      icon = document.createElement('link');
+      icon.setAttribute('rel', 'icon');
+      document.head.appendChild(icon);
+    }
+    icon.setAttribute('type', 'image/png');
+    icon.setAttribute('href', href);
+
+    let apple = document.querySelector('link[rel="apple-touch-icon"]');
+    if (!apple) {
+      apple = document.createElement('link');
+      apple.setAttribute('rel', 'apple-touch-icon');
+      document.head.appendChild(apple);
+    }
+    apple.setAttribute('href', href);
+  } catch {}
+}
+
+ensureBrandFavicon();
+
 function getApiCandidates() {
   const candidates = [];
   const productionApiBase = 'https://ve-production.up.railway.app';

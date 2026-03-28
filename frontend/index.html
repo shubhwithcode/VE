@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Vishwakarma Premium Furniture | Modern Luxury</title>
+  <title>Vishwakarma Enterprises | Modern Luxury</title>
   <meta name="description" content="Premium craftsmanship and modern luxury furniture. Discover our exclusive collection of timeless wooden masterpieces.">
   
   <link rel="stylesheet" href="styles.css" />
@@ -15,9 +15,11 @@
     <div class="launchGlow launchGlowLeft"></div>
     <div class="launchGlow launchGlowRight"></div>
     <div class="launchPanel">
-      <div class="launchBadge">VE</div>
+      <div class="launchBadge">
+        <img src="assets/ve-logo.png" alt="Vishwakarma Enterprises logo" class="launchBadgeImg">
+      </div>
       <p class="launchEyebrow">Luxury Interior Experience</p>
-      <h1 class="launchTitle">Vishwakarma Premium Furniture</h1>
+      <h1 class="launchTitle">Vishwakarma Enterprises</h1>
       <p class="launchCopy">Crafting a cinematic showroom before opening your collection.</p>
       <div class="launchProgress">
         <span class="launchProgressBar"></span>
@@ -304,12 +306,17 @@
       border-radius: 24px;
       display: grid;
       place-items: center;
-      background: linear-gradient(135deg, #f2d172 0%, #c5a029 45%, #8f6a12 100%);
-      color: var(--maroon-deep);
-      font: 900 2rem/1 'Playfair Display', serif;
-      letter-spacing: 2px;
-      box-shadow: 0 18px 42px rgba(197, 160, 41, 0.26);
+      background: #fff;
+      box-shadow: 0 18px 42px rgba(248, 22, 32, 0.18);
+      overflow: hidden;
       animation: launchPulse 2.4s ease-in-out infinite;
+    }
+
+    .launchBadgeImg {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      display: block;
     }
 
     .launchEyebrow {

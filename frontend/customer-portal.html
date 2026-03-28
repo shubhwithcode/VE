@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Customer Portal - Vishwakarma Enterprises</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0">
+  <style>
+    body { background: var(--bg-cream); }
+    .customer-shell {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 150px 20px 150px;
+    }
+    .customer-card {
+      background: #fff;
+      border: 1px solid rgba(17,17,17,0.08);
+      border-radius: 30px;
+      padding: 28px;
+      box-shadow: 0 18px 50px rgba(17,17,17,0.08);
+    }
+    .customer-card h1 {
+      font-family: 'Playfair Display', serif;
+      color: var(--maroon-deep);
+      margin-bottom: 10px;
+    }
+    .customer-meta {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+      margin: 22px 0;
+    }
+    .customer-meta div {
+      padding: 16px;
+      border-radius: 18px;
+      background: #fafafa;
+      border: 1px solid rgba(17,17,17,0.06);
+    }
+    .customer-meta strong {
+      display: block;
+      margin-bottom: 6px;
+      color: var(--maroon-deep);
+    }
+    .customer-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 10px;
+    }
+    .customer-actions a,
+    .customer-actions button {
+      min-height: 48px;
+      padding: 0 20px;
+      border-radius: 999px;
+      text-decoration: none;
+      font-weight: 800;
+    }
+    @media (max-width: 768px) {
+      .customer-shell { padding: 120px 14px 150px; }
+      .customer-card { padding: 22px 16px; border-radius: 22px; }
+      .customer-meta { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div id="veHeaderMount"></div>
+  <main class="customer-shell">
+    <section class="customer-card">
+      <h1>Customer Portal</h1>
+      <p id="customerWelcome" style="color: var(--text-muted);">Welcome back.</p>
+      <div class="customer-meta">
+        <div><strong>Name</strong><span id="cName">-</span></div>
+        <div><strong>Phone</strong><span id="cPhone">-</span></div>
+        <div><strong>Email</strong><span id="cEmail">-</span></div>
+        <div><strong>Address</strong><span id="cAddress">-</span></div>
+      </div>
+      <div class="customer-actions">
+        <a href="gallery.html" style="background: var(--maroon-main); color:#fff;">Browse Collections</a>
+        <a href="index.html#quotationForm" style="background: #fff; color: var(--maroon-main); border:1px solid rgba(17,17,17,0.08);">Request Quotation</a>
+        <button id="customerLogout" type="button">Logout</button>
+      </div>
+    </section>
+  </main>
+  <div id="veFooterMount"></div>
+  <script src="app.js"></script>
+  <script src="layout.js"></script>
+  <script>
+    let profile = {};
+    try {
+      profile = JSON.parse(sessionStorage.getItem('ve_customer_profile') || '{}');
+    } catch {}
+
+    if (!profile || !profile.id) location.href = 'portal.html';
+
+    document.getElementById('customerWelcome').textContent = `Welcome, ${profile.name || 'Customer'}.`;
+    document.getElementById('cName').textContent = profile.name || '-';
+    document.getElementById('cPhone').textContent = profile.phone || '-';
+    document.getElementById('cEmail').textContent = profile.email || '-';
+    document.getElementById('cAddress').textContent = profile.address || '-';
+    document.getElementById('customerLogout').addEventListener('click', () => {
+      sessionStorage.removeItem('ve_customer_profile');
+      location.href = 'portal.html';
+    });
+  </script>
+</body>
+</html>

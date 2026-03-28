@@ -55,17 +55,23 @@
         .logo-ring {
             width: 72px;
             height: 72px;
-            background: var(--gold-accent);
+            background: #fff;
             border-radius: 16px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.8rem;
-            color: var(--maroon-deep);
             margin: 0 auto 24px;
-            box-shadow: 0 10px 30px rgba(197, 160, 41, 0.3);
-            font-weight: 900;
+            box-shadow: 0 10px 30px rgba(248, 22, 32, 0.2);
             transform: rotate(-5deg);
+            overflow: hidden;
+            padding: 0;
+        }
+
+        .logo-ring img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            display: block;
         }
 
         h1 {
@@ -267,7 +273,7 @@
 <body>
     <div class="login-card">
         <div class="header">
-            <div class="logo-ring">V</div>
+            <div class="logo-ring"><img src="../assets/ve-logo.png" alt="Vishwakarma Enterprises logo"></div>
             <h1>Staff Portal</h1>
             <p>Authorized access to attendance, work, and salary tools</p>
         </div>

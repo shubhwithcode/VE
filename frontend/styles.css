@@ -166,17 +166,23 @@ h3,
 .logoBadge {
   width: 44px;
   height: 44px;
-  background: var(--gold-accent);
-  color: var(--maroon-deep);
+  background: #fff;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: 900;
-  font-size: 1.2rem;
   border-radius: 10px;
   transform: rotate(-5deg);
   transition: var(--transition);
   flex-shrink: 0;
+  overflow: hidden;
+  padding: 0;
+}
+
+.logoBadgeImg {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
 }
 
 .logoMain {
@@ -248,10 +254,18 @@ h3,
   transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
   padding: 24px;
   overflow-y: auto; /* Enable Scroll */
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
   scrollbar-width: none; /* Hide for clean look */
 }
 
 .mobileOverlay::-webkit-scrollbar { display: none; }
+
+body.menu-open {
+  overflow: hidden;
+  overscroll-behavior: none;
+  touch-action: none;
+}
 
 .mobileOverlay.active {
   opacity: 1;
@@ -264,6 +278,36 @@ h3,
   justify-content: space-between;
   align-items: center;
   margin-bottom: 60px;
+}
+
+.mobileMenuBrand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.mobileMenuBrandText {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.mobileMenuBrandTitle {
+  color: #fff;
+  font-family: 'Playfair Display', serif;
+  font-size: 1.05rem;
+  font-weight: 800;
+  line-height: 1.05;
+}
+
+.mobileMenuBrandSub {
+  color: var(--gold-accent);
+  font-size: 0.58rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 1.8px;
+  margin-top: 3px;
 }
 
 .mobileMenuContent {
@@ -956,8 +1000,8 @@ h3,
 }
 
 @media (max-width: 768px) {
-  /* Hide specific Desktop Menu Link text */
-  .navLinks, .logoTextContainer { display: none; }
+  /* Hide desktop nav links but keep compact brand text visible */
+  .navLinks { display: none; }
   
   /* --- Ultra-Premium Mobile Overhaul (Total SATISFACTION) --- */
   
@@ -983,12 +1027,48 @@ h3,
     align-items: center;
   }
 
+  .logo {
+    gap: 8px;
+    min-width: 0;
+    flex: 1 1 auto;
+  }
+
+  .logoTextContainer {
+    display: flex !important;
+    flex-direction: column;
+    min-width: 0;
+    flex: 1 1 auto;
+  }
+
+  .logoMain {
+    font-size: 0.8rem;
+    letter-spacing: 0.2px;
+    white-space: normal;
+    overflow: visible;
+    text-overflow: clip;
+    line-height: 1.05;
+  }
+
+  .logoSub {
+    font-size: 0.46rem;
+    letter-spacing: 1.2px;
+    margin-top: 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
   .adminHeader {
     padding: 0 10px;
   }
 
   .adminHeader .logoMain {
-    font-size: 1.1rem;
+    font-size: 0.72rem;
+  }
+
+  .adminHeader .logoSub {
+    font-size: 0.42rem;
+    letter-spacing: 1px;
   }
 
   .adminHeaderChip {
@@ -1001,12 +1081,13 @@ h3,
   
   .navActionsMobile { 
     display: flex !important;
-    gap: 16px; 
+    gap: 10px; 
     align-items: center;
+    flex: 0 0 auto;
     color: var(--gold-accent); /* Ensuring Gold color */
   }
   .navActionsMobile span { 
-    font-size: 1.6rem !important; 
+    font-size: 1.45rem !important; 
     opacity: 1; 
     color: var(--gold-accent); 
     display: inline-block;
@@ -1022,10 +1103,61 @@ h3,
     margin-left: 4px;
     color: var(--gold-accent) !important;
   }
+
+  .mobileToggle .material-symbols-rounded {
+    font-size: 1.45rem !important;
+  }
+
+  .mobileMenuHeader {
+    margin-bottom: 34px;
+  }
+
+  .mobileMenuBrand {
+    gap: 10px;
+  }
+
+  .mobileMenuBrandTitle {
+    font-size: 0.88rem;
+  }
+
+  .mobileMenuBrandSub {
+    font-size: 0.46rem;
+    letter-spacing: 1.2px;
+  }
   /* Modern Responsive Sections */
   section[style*="padding"] { padding: 60px 0 !important; }
   section[style*="padding: 100px 0"] { padding: 48px 0 !important; }
   section[style*="padding: 120px 0"] { padding: 56px 0 !important; }
+
+  .hero {
+    min-height: auto;
+    height: auto;
+    padding: 136px 0 72px;
+  }
+
+  .heroContent {
+    padding: 0 16px 10px;
+  }
+
+  .hero h1 {
+    font-size: clamp(2.7rem, 12vw, 4rem);
+    margin-bottom: 18px;
+  }
+
+  .hero p {
+    font-size: 1rem !important;
+    margin: 0 auto 28px !important;
+    max-width: 92% !important;
+  }
+
+  .hero-btn {
+    padding: 18px 30px;
+    font-size: 0.86rem;
+    letter-spacing: 2px;
+    gap: 10px;
+    position: relative;
+    z-index: 2;
+  }
 
   /* Smooth Content Flow Restore */
   main { padding-top: 90px !important; }
@@ -1096,48 +1228,44 @@ h3,
   .product-price::before { content: ''; } /* Remove divider */
   
   /* Mobile Footer Fix (Zero Overflow) */
-  .footerGrid { 
-    grid-template-columns: 1fr !important; 
-    text-align: center; 
-    gap: 48px; 
-    padding: 0 20px;
+  body.public-site .siteFooter {
+    display: none;
   }
-  .footerBrand { max-width: 100%; align-items: center; display: flex; flex-direction: column; }
-  .footerBrand p { margin: 0 auto 24px; }
-  .footerBottom { 
-    flex-direction: column; 
-    gap: 20px; 
-    text-align: center; 
-    padding-bottom: 40px;
+
+  body.public-site .footerGrid { 
+    display: none;
+  }
+  body.public-site .footerBottom { 
+    display: none;
   }
 
   .adminFooter {
-    padding: 42px 0 22px;
+    padding: 18px 0 8px;
   }
 
   .adminFooterGrid {
     grid-template-columns: 1fr;
-    gap: 12px;
+    gap: 8px;
   }
 
   .adminFooterBrand,
   .adminFooterBlock {
-    padding: 16px 14px;
-    border-radius: 18px;
+    padding: 10px;
+    border-radius: 14px;
   }
 
   .adminFooterBrand h2 {
-    font-size: 1.1rem;
-    margin-bottom: 6px;
+    font-size: 0.92rem;
+    margin-bottom: 2px;
   }
 
   .adminFooterBottom {
     flex-direction: column;
     text-align: center;
-    gap: 8px;
-    padding-top: 14px;
-    padding-bottom: 74px;
-    font-size: 0.72rem;
+    gap: 4px;
+    padding-top: 8px;
+    padding-bottom: 54px;
+    font-size: 0.62rem;
   }
 
   .adminFooterLabel,
@@ -1145,7 +1273,7 @@ h3,
   .adminFooterBrand p,
   .adminFooterNote,
   .adminFooterLinks {
-    font-size: 0.78rem;
+    font-size: 0.66rem;
   }
 
   body.admin-shell-page .admin-main {
@@ -1252,41 +1380,70 @@ h3,
   .footer { padding-bottom: 140px; }
 
   /* Zero-Bulk Bottom Navigation (INSIDE 768px) */
-  .mobileBottomNav {
-    display: flex; /* Overriding base display hidden */
+  body.public-site .mobileBottomNav {
+    display: flex !important; /* Overriding base display hidden */
     position: fixed;
-    bottom: 16px;
-    left: 10%;
-    width: 80%;
-    background: rgba(255, 255, 255, 0.98);
-    backdrop-filter: blur(20px);
-    border: 1px solid rgba(0,0,0,0.05);
-    border-radius: 100px;
-    padding: 10px 20px;
-    z-index: 1000;
-    justify-content: space-around;
+    bottom: calc(env(safe-area-inset-bottom, 0px) + 18px);
+    left: 50%;
+    transform: translateX(-50%);
+    width: auto;
+    min-width: 260px;
+    max-width: calc(100vw - 56px);
+    background: rgba(255, 255, 255, 0.96);
+    backdrop-filter: blur(18px);
+    border: 1px solid rgba(17,17,17,0.06);
+    border-radius: 22px;
+    padding: 8px 10px;
+    z-index: 2500;
+    justify-content: center;
     align-items: center;
-    box-shadow: 0 15px 40px rgba(0,0,0,0.12);
+    box-shadow: 0 18px 34px rgba(5,5,5,0.18);
+    gap: 10px;
+    pointer-events: auto;
   }
 
-  .mobileNavItem {
+  body.public-site {
+    padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 96px);
+  }
+
+  body.public-site .mobileNavItem {
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: center;
     gap: 2px;
-    color: #888;
+    color: rgba(17,17,17,0.48);
     text-decoration: none;
-    font-size: 0.55rem;
+    font-size: 0;
     font-weight: 800;
-    text-transform: uppercase;
+    text-transform: none;
     transition: var(--transition);
+    min-width: 52px;
+    min-height: 52px;
+    padding: 0 12px;
+    border-radius: 16px;
+    flex: 1 1 0;
+    position: relative;
   }
 
-  .mobileNavItem span { font-size: 1.4rem; color: #888; transition: var(--transition); }
-  .mobileNavItem.active, .mobileNavItem:hover { color: var(--maroon-main); }
-  .mobileNavItem.active span, .mobileNavItem:hover span {
-    color: var(--maroon-main);
-    transform: scale(1.1);
+  body.public-site .mobileNavItem div {
+    display: none;
+  }
+
+  body.public-site .mobileNavItem span {
+    font-size: 1.05rem;
+    color: rgba(17,17,17,0.5);
+    transition: var(--transition);
+  }
+  body.public-site .mobileNavItem.active, body.public-site .mobileNavItem:hover {
+    color: #fff;
+    background: linear-gradient(135deg, #f81620 0%, #050505 100%);
+    box-shadow: 0 10px 20px rgba(248, 22, 32, 0.18);
+    transform: translateY(-10px);
+  }
+  body.public-site .mobileNavItem.active span, body.public-site .mobileNavItem:hover span {
+    color: #fff;
+    transform: scale(1.08);
   }
 
   /* Horizontal Filter Scroll Restored (INSIDE 768px) */
