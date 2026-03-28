@@ -33,6 +33,8 @@ export async function ensureSchemaIfNeeded() {
   }
 
   if (!needsInit) {
+    await ensureStaffRoleColumn();
+    await ensureStaffSalaryColumn();
     await ensureStaffPasswordHashColumn();
     await ensureHeroImagesTable();
     await ensureStaffProfilePhotoColumn();
@@ -54,12 +56,38 @@ export async function ensureSchemaIfNeeded() {
 
   // After auto init, also ensure additive tables exist (for upgrades).
   // This is safe to run multiple times.
+  await ensureStaffRoleColumn();
+  await ensureStaffSalaryColumn();
   await ensureStaffPasswordHashColumn();
   await ensureHeroImagesTable();
   await ensureStaffProfilePhotoColumn();
   await ensureStaffAadhaarColumn();
   await ensureLeavesTable();
   await ensureWebsiteTables();
+}
+
+async function ensureStaffRoleColumn() {
+  const rows = await query(
+    `SELECT COLUMN_NAME
+     FROM INFORMATION_SCHEMA.COLUMNS
+     WHERE TABLE_SCHEMA=:db AND TABLE_NAME='staff' AND COLUMN_NAME='role'
+     LIMIT 1`,
+    { db: config.db.database }
+  );
+  if (rows.length > 0) return;
+  await pool.query(`ALTER TABLE staff ADD COLUMN role ENUM('admin','staff') NOT NULL DEFAULT 'staff'`);
+}
+
+async function ensureStaffSalaryColumn() {
+  const rows = await query(
+    `SELECT COLUMN_NAME
+     FROM INFORMATION_SCHEMA.COLUMNS
+     WHERE TABLE_SCHEMA=:db AND TABLE_NAME='staff' AND COLUMN_NAME='salary_per_day'
+     LIMIT 1`,
+    { db: config.db.database }
+  );
+  if (rows.length > 0) return;
+  await pool.query(`ALTER TABLE staff ADD COLUMN salary_per_day INT NOT NULL DEFAULT 0`);
 }
 
 async function ensureStaffPasswordHashColumn() {
