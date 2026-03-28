@@ -1,7 +1,7 @@
 import express from 'express';
 import path from 'node:path';
 import { asyncHandler } from '../middleware/asyncHandler.js';
-import { query } from '../db.js';
+import { pool, query } from '../db.js';
 import { todayDateString } from '../utils/dates.js';
 import { uploadCheckIn, uploadCheckOut, uploadWorkDetail } from '../uploads.js';
 import { config } from '../config.js';
@@ -144,6 +144,35 @@ async function saveCheckOut({ staff_id, date, check_out_time, lat, lng, img }) {
        check_out_time=COALESCE(check_out_time, VALUES(check_out_time))`,
     { staff_id, date, check_out_time }
   );
+}
+
+async function ensureSupportTicketsTableForRoute() {
+  try {
+    await query('SELECT 1 FROM support_tickets LIMIT 1', {});
+    return;
+  } catch (err) {
+    if (err?.code !== 'ER_NO_SUCH_TABLE') throw err;
+  }
+
+  await pool.query(`CREATE TABLE IF NOT EXISTS support_tickets (
+    id BIGINT NOT NULL AUTO_INCREMENT,
+    staff_id INT NOT NULL,
+    subject VARCHAR(160) NOT NULL,
+    category ENUM('attendance','salary','login','profile','other') NOT NULL DEFAULT 'other',
+    priority ENUM('low','medium','high') NOT NULL DEFAULT 'medium',
+    description TEXT NOT NULL,
+    status ENUM('open','in_progress','resolved','closed') NOT NULL DEFAULT 'open',
+    admin_note TEXT NULL,
+    resolved_by INT NULL,
+    resolved_at DATETIME NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (id),
+    KEY idx_support_tickets_staff (staff_id, created_at),
+    KEY idx_support_tickets_status (status, created_at),
+    CONSTRAINT fk_support_tickets_staff FOREIGN KEY (staff_id) REFERENCES staff(staff_id) ON DELETE CASCADE,
+    CONSTRAINT fk_support_tickets_resolved_by FOREIGN KEY (resolved_by) REFERENCES staff(staff_id) ON DELETE SET NULL
+  )`);
 }
 
 staffRouter.get(
@@ -308,6 +337,7 @@ staffRouter.get(
   '/support-tickets',
   asyncHandler(async (req, res) => {
     const staff_id = req.user.staff_id;
+    await ensureSupportTicketsTableForRoute();
     const rows = await query(
       `SELECT id, subject, category, priority, description, status, admin_note, resolved_at, created_at, updated_at
        FROM support_tickets
@@ -323,6 +353,7 @@ staffRouter.post(
   '/support-tickets',
   asyncHandler(async (req, res) => {
     const staff_id = req.user.staff_id;
+    await ensureSupportTicketsTableForRoute();
     const { subject, category, priority, description } = req.body ?? {};
     const subjectStr = String(subject ?? '').trim();
     const categoryStr = String(category ?? 'other').trim();

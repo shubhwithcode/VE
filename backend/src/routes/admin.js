@@ -1,13 +1,42 @@
 import express from 'express';
 import path from 'node:path';
 import { asyncHandler } from '../middleware/asyncHandler.js';
-import { query } from '../db.js';
+import { pool, query } from '../db.js';
 import { hashPassword } from '../security/passwords.js';
 import { parseMonth, todayDateString } from '../utils/dates.js';
 import { uploadGallery, uploadHero, uploadProfilePhoto } from '../uploads.js';
 import { config } from '../config.js';
 
 export const adminRouter = express.Router();
+
+async function ensureSupportTicketsTableForRoute() {
+  try {
+    await query('SELECT 1 FROM support_tickets LIMIT 1', {});
+    return;
+  } catch (err) {
+    if (err?.code !== 'ER_NO_SUCH_TABLE') throw err;
+  }
+
+  await pool.query(`CREATE TABLE IF NOT EXISTS support_tickets (
+    id BIGINT NOT NULL AUTO_INCREMENT,
+    staff_id INT NOT NULL,
+    subject VARCHAR(160) NOT NULL,
+    category ENUM('attendance','salary','login','profile','other') NOT NULL DEFAULT 'other',
+    priority ENUM('low','medium','high') NOT NULL DEFAULT 'medium',
+    description TEXT NOT NULL,
+    status ENUM('open','in_progress','resolved','closed') NOT NULL DEFAULT 'open',
+    admin_note TEXT NULL,
+    resolved_by INT NULL,
+    resolved_at DATETIME NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (id),
+    KEY idx_support_tickets_staff (staff_id, created_at),
+    KEY idx_support_tickets_status (status, created_at),
+    CONSTRAINT fk_support_tickets_staff FOREIGN KEY (staff_id) REFERENCES staff(staff_id) ON DELETE CASCADE,
+    CONSTRAINT fk_support_tickets_resolved_by FOREIGN KEY (resolved_by) REFERENCES staff(staff_id) ON DELETE SET NULL
+  )`);
+}
 
 function maybeUploadProfilePhoto(req, res, next) {
   // Multer must only run for multipart/form-data; otherwise it throws.
@@ -524,6 +553,7 @@ adminRouter.put(
 adminRouter.get(
   '/support-tickets',
   asyncHandler(async (req, res) => {
+    await ensureSupportTicketsTableForRoute();
     const { status } = req.query ?? {};
     const statusStr = status ? String(status) : 'all';
     const params = {};
@@ -554,6 +584,7 @@ adminRouter.get(
 adminRouter.patch(
   '/support-tickets/:id',
   asyncHandler(async (req, res) => {
+    await ensureSupportTicketsTableForRoute();
     const id = Number(req.params.id);
     if (!id) return res.status(400).json({ error: 'invalid id' });
 
