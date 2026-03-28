@@ -399,7 +399,15 @@
         }
 
         function getApiBaseForAssets() {
-            try { const base = localStorage.getItem('ve_api_base') || ''; return String(base).replace(/\/$/, ''); } catch { return ''; }
+            const productionApiBase = 'https://ve-production.up.railway.app';
+            try {
+                const base = localStorage.getItem('ve_api_base') || '';
+                if (base) return String(base).replace(/\/$/, '');
+            } catch {}
+            try {
+                if (window.VE_API_BASE) return String(window.VE_API_BASE).replace(/\/$/, '');
+            } catch {}
+            return productionApiBase;
         }
 
         function avatarSvgDataUri(text) {

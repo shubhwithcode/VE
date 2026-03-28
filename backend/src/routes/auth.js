@@ -93,6 +93,11 @@ authRouter.get(
   '/me',
   requireAuth,
   asyncHandler(async (req, res) => {
-    res.json({ user: req.user });
+    res.json({
+      user: req.user,
+      support: {
+        phone: config.auth.adminBootstrap.phone ?? null
+      }
+    });
   })
 );

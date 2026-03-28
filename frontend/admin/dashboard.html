@@ -459,12 +459,15 @@
 
         // Override helpers to avoid broken encoding + ensure media URLs work when opened via Live Server.
         function getApiBaseForAssets() {
+            const productionApiBase = 'https://ve-production.up.railway.app';
             try {
                 const base = localStorage.getItem('ve_api_base') || '';
-                return String(base).replace(/\/$/, '');
-            } catch {
-                return '';
-            }
+                if (base) return String(base).replace(/\/$/, '');
+            } catch {}
+            try {
+                if (window.VE_API_BASE) return String(window.VE_API_BASE).replace(/\/$/, '');
+            } catch {}
+            return productionApiBase;
         }
 
         function assetUrl(p) {

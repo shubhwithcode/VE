@@ -57,12 +57,20 @@ function hookLogoutButton({ selector = '#logoutBtn' } = {}) {
 }
 
 function getApiBaseForAssets() {
+  const productionApiBase = 'https://ve-production.up.railway.app';
   try {
     const base = localStorage.getItem('ve_api_base') || '';
-    return String(base).replace(/\/$/, '');
+    if (base) return String(base).replace(/\/$/, '');
   } catch {
-    return '';
+    // ignore storage issues
   }
+  try {
+    const explicit = window.VE_API_BASE;
+    if (explicit) return String(explicit).replace(/\/$/, '');
+  } catch {
+    // ignore window access issues
+  }
+  return productionApiBase;
 }
 
 function assetUrl(p) {

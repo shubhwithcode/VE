@@ -185,14 +185,14 @@
                 <p>Work calendar</p>
             </div>
         </a>
-        <a href="work-detail.html" class="dash-card work">
+        <a href="work.html" class="dash-card work">
             <div class="icon-box">📋</div>
             <div>
                 <h3>Work Detail</h3>
                 <p>End day report</p>
             </div>
         </a>
-        <a href="#" class="dash-card support">
+        <a href="#" class="dash-card support" id="supportCard">
             <div class="icon-box">💬</div>
             <div>
                 <h3>Support</h3>
@@ -262,6 +262,26 @@
             return d.toLocaleDateString('en-IN', { weekday: 'short', day: '2-digit', month: 'short' });
         }
 
+        function normalizePhone(phone) {
+            return String(phone || '').replace(/[^\d+]/g, '');
+        }
+
+        function wireSupportCard(phone) {
+            const supportCard = document.getElementById('supportCard');
+            if (!supportCard) return;
+            const clean = normalizePhone(phone);
+            if (clean) {
+                supportCard.href = `tel:${clean}`;
+                supportCard.title = `Call ${clean}`;
+                return;
+            }
+            supportCard.href = '#';
+            supportCard.addEventListener('click', (event) => {
+                event.preventDefault();
+                alert('Admin contact is not configured yet.');
+            });
+        }
+
         // --- 2. Render History List ---
         function renderHistory(rows) {
             const card = document.getElementById('historyCard');
@@ -297,7 +317,10 @@
         (async function init() {
             try {
                 if (typeof VEStaff === 'undefined') throw new Error('System files missing');
-                const user = await VEStaff.ensureStaff(); // Verify login
+                const me = await VE.api('/api/auth/me');
+                const user = me?.user || null;
+                if (!user || user.role !== 'staff') throw new Error('Not staff');
+                wireSupportCard(me?.support?.phone);
 
                 // Update Profile Info
                 document.getElementById('staffName').textContent = user?.name || 'Worker';
