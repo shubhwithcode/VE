@@ -20,6 +20,132 @@ function dayDiffInclusive(fromYmd, toYmd) {
   return days;
 }
 
+async function getTodayWorkDetail(staff_id, date) {
+  try {
+    const [workDetail] = await query('SELECT * FROM work_detail WHERE staff_id=:staff_id AND date=:date', {
+      staff_id,
+      date
+    });
+    return workDetail ?? null;
+  } catch (err) {
+    if (err?.code === 'ER_NO_SUCH_TABLE' || err?.code === 'ER_BAD_FIELD_ERROR') return null;
+    throw err;
+  }
+}
+
+async function getAttendanceForMonth(staff_id, from, to) {
+  try {
+    return await query(
+      `SELECT a.*, wd.work_description, wd.work_image_path, wd.voice_record_path
+       FROM attendance a
+       LEFT JOIN work_detail wd ON wd.staff_id=a.staff_id AND wd.date=a.date
+       WHERE a.staff_id=:staff_id AND a.date BETWEEN :from AND :to
+       ORDER BY a.date DESC`,
+      { staff_id, from, to }
+    );
+  } catch (err) {
+    if (err?.code !== 'ER_NO_SUCH_TABLE' && err?.code !== 'ER_BAD_FIELD_ERROR') throw err;
+  }
+
+  try {
+    return await query(
+      `SELECT a.*, wd.work_description
+       FROM attendance a
+       LEFT JOIN work_detail wd ON wd.staff_id=a.staff_id AND wd.date=a.date
+       WHERE a.staff_id=:staff_id AND a.date BETWEEN :from AND :to
+       ORDER BY a.date DESC`,
+      { staff_id, from, to }
+    );
+  } catch (err) {
+    if (err?.code !== 'ER_NO_SUCH_TABLE' && err?.code !== 'ER_BAD_FIELD_ERROR') throw err;
+  }
+
+  return query(
+    `SELECT a.*
+     FROM attendance a
+     WHERE a.staff_id=:staff_id AND a.date BETWEEN :from AND :to
+     ORDER BY a.date DESC`,
+    { staff_id, from, to }
+  );
+}
+
+async function saveCheckIn({ staff_id, date, check_in_time, lat, lng, img }) {
+  try {
+    await query(
+      `INSERT INTO attendance (staff_id, date, check_in_time, check_in_lat, check_in_lng, check_in_image_path)
+       VALUES (:staff_id,:date,:check_in_time,:lat,:lng,:img)
+       ON DUPLICATE KEY UPDATE
+         check_in_time=COALESCE(check_in_time, VALUES(check_in_time)),
+         check_in_lat=COALESCE(check_in_lat, VALUES(check_in_lat)),
+         check_in_lng=COALESCE(check_in_lng, VALUES(check_in_lng)),
+         check_in_image_path=COALESCE(check_in_image_path, VALUES(check_in_image_path))`,
+      { staff_id, date, check_in_time, lat, lng, img }
+    );
+    return;
+  } catch (err) {
+    if (err?.code !== 'ER_BAD_FIELD_ERROR') throw err;
+  }
+
+  await query(
+    `INSERT INTO attendance (staff_id, date, check_in_time)
+     VALUES (:staff_id,:date,:check_in_time)
+     ON DUPLICATE KEY UPDATE
+       check_in_time=COALESCE(check_in_time, VALUES(check_in_time))`,
+    { staff_id, date, check_in_time }
+  );
+}
+
+async function saveWorkDetail({ staff_id, date, desc, work_img, voice }) {
+  try {
+    await query(
+      `INSERT INTO work_detail (staff_id, date, work_description, work_image_path, voice_record_path)
+       VALUES (:staff_id,:date,:desc,:work_img,:voice)
+       ON DUPLICATE KEY UPDATE
+         work_description=VALUES(work_description),
+         work_image_path=COALESCE(VALUES(work_image_path), work_image_path),
+         voice_record_path=COALESCE(VALUES(voice_record_path), voice_record_path)`,
+      { staff_id, date, desc, work_img, voice }
+    );
+    return;
+  } catch (err) {
+    if (err?.code !== 'ER_BAD_FIELD_ERROR') throw err;
+  }
+
+  await query(
+    `INSERT INTO work_detail (staff_id, date, work_description)
+     VALUES (:staff_id,:date,:desc)
+     ON DUPLICATE KEY UPDATE
+       work_description=VALUES(work_description)`,
+    { staff_id, date, desc }
+  );
+}
+
+async function saveCheckOut({ staff_id, date, check_out_time, lat, lng, img }) {
+  try {
+    await query(
+      `INSERT INTO attendance (staff_id, date, check_out_time, check_out_lat, check_out_lng, check_out_image_path)
+       VALUES (:staff_id,:date,:check_out_time,:lat,:lng,:img)
+       ON DUPLICATE KEY UPDATE
+         check_out_time=COALESCE(check_out_time, VALUES(check_out_time)),
+         check_out_lat=COALESCE(check_out_lat, VALUES(check_out_lat)),
+         check_out_lng=COALESCE(check_out_lng, VALUES(check_out_lng)),
+         check_out_image_path=COALESCE(check_out_image_path, VALUES(check_out_image_path))`,
+      { staff_id, date, check_out_time, lat, lng, img }
+    );
+    return;
+  } catch (err) {
+    if (err?.code !== 'ER_BAD_FIELD_ERROR') throw err;
+  }
+
+  await query(
+    `INSERT INTO attendance (staff_id, date, check_out_time)
+     VALUES (:staff_id,:date,:check_out_time)
+     ON DUPLICATE KEY UPDATE
+       check_out_time=COALESCE(check_out_time, VALUES(check_out_time))`,
+    { staff_id, date, check_out_time }
+  );
+}
+
 staffRouter.get(
   '/today',
   asyncHandler(async (req, res) => {
@@ -29,10 +155,7 @@ staffRouter.get(
       staff_id,
       date
     });
-    const [workDetail] = await query('SELECT * FROM work_detail WHERE staff_id=:staff_id AND date=:date', {
-      staff_id,
-      date
-    });
+    const workDetail = await getTodayWorkDetail(staff_id, date);
     res.json({ date, attendance: attendance ?? null, workDetail: workDetail ?? null });
   })
 );
@@ -49,23 +172,7 @@ staffRouter.post(
 
     const now = new Date();
     const relPath = path.relative(config.paths.backendDir, req.file.path).replace(/\\/g, '/');
-    await query(
-      `INSERT INTO attendance (staff_id, date, check_in_time, check_in_lat, check_in_lng, check_in_image_path)
-       VALUES (:staff_id,:date,:check_in_time,:lat,:lng,:img)
-       ON DUPLICATE KEY UPDATE
-         check_in_time=COALESCE(check_in_time, VALUES(check_in_time)),
-         check_in_lat=COALESCE(check_in_lat, VALUES(check_in_lat)),
-         check_in_lng=COALESCE(check_in_lng, VALUES(check_in_lng)),
-         check_in_image_path=COALESCE(check_in_image_path, VALUES(check_in_image_path))`,
-      {
-        staff_id,
-        date,
-        check_in_time: now,
-        lat: Number(lat),
-        lng: Number(lng),
-        img: relPath
-      }
-    );
+    await saveCheckIn({ staff_id, date, check_in_time: now, lat: Number(lat), lng: Number(lng), img: relPath });
     res.json({ ok: true });
   })
 );
@@ -101,21 +208,13 @@ staffRouter.post(
       ? path.relative(config.paths.backendDir, voiceRecord.path).replace(/\\/g, '/')
       : null;
 
-    await query(
-      `INSERT INTO work_detail (staff_id, date, work_description, work_image_path, voice_record_path)
-       VALUES (:staff_id,:date,:desc,:work_img,:voice)
-       ON DUPLICATE KEY UPDATE
-         work_description=VALUES(work_description),
-         work_image_path=COALESCE(VALUES(work_image_path), work_image_path),
-         voice_record_path=COALESCE(VALUES(voice_record_path), voice_record_path)`,
-      {
-        staff_id,
-        date,
-        desc: String(work_description),
-        work_img: workImagePath,
-        voice: voiceRecordPath
-      }
-    );
+    await saveWorkDetail({
+      staff_id,
+      date,
+      desc: String(work_description),
+      work_img: workImagePath,
+      voice: voiceRecordPath
+    });
     res.json({ ok: true });
   })
 );
@@ -145,23 +244,7 @@ staffRouter.post(
 
     const now = new Date();
     const relPath = path.relative(config.paths.backendDir, req.file.path).replace(/\\/g, '/');
-    await query(
-      `INSERT INTO attendance (staff_id, date, check_out_time, check_out_lat, check_out_lng, check_out_image_path)
-       VALUES (:staff_id,:date,:check_out_time,:lat,:lng,:img)
-       ON DUPLICATE KEY UPDATE
-         check_out_time=COALESCE(check_out_time, VALUES(check_out_time)),
-         check_out_lat=COALESCE(check_out_lat, VALUES(check_out_lat)),
-         check_out_lng=COALESCE(check_out_lng, VALUES(check_out_lng)),
-         check_out_image_path=COALESCE(check_out_image_path, VALUES(check_out_image_path))`,
-      {
-        staff_id,
-        date,
-        check_out_time: now,
-        lat: Number(lat),
-        lng: Number(lng),
-        img: relPath
-      }
-    );
+    await saveCheckOut({ staff_id, date, check_out_time: now, lat: Number(lat), lng: Number(lng), img: relPath });
     res.json({ ok: true });
   })
 );
@@ -174,14 +257,7 @@ staffRouter.get(
     const staff_id = req.user.staff_id;
     const from = `${month}-01`;
     const to = `${month}-31`;
-    const rows = await query(
-      `SELECT a.*, wd.work_description, wd.work_image_path, wd.voice_record_path
-       FROM attendance a
-       LEFT JOIN work_detail wd ON wd.staff_id=a.staff_id AND wd.date=a.date
-       WHERE a.staff_id=:staff_id AND a.date BETWEEN :from AND :to
-       ORDER BY a.date DESC`,
-      { staff_id, from, to }
-    );
+    const rows = await getAttendanceForMonth(staff_id, from, to);
     res.json({ month: String(month), attendance: rows });
   })
 );

@@ -36,6 +36,10 @@ export async function ensureSchemaIfNeeded() {
     await ensureStaffRoleColumn();
     await ensureStaffSalaryColumn();
     await ensureStaffPasswordHashColumn();
+    await ensureAttendanceTable();
+    await ensureWorkDetailTable();
+    await ensureAttendanceColumns();
+    await ensureWorkDetailColumns();
     await ensureHeroImagesTable();
     await ensureStaffProfilePhotoColumn();
     await ensureStaffAadhaarColumn();
@@ -59,6 +63,10 @@ export async function ensureSchemaIfNeeded() {
   await ensureStaffRoleColumn();
   await ensureStaffSalaryColumn();
   await ensureStaffPasswordHashColumn();
+  await ensureAttendanceTable();
+  await ensureWorkDetailTable();
+  await ensureAttendanceColumns();
+  await ensureWorkDetailColumns();
   await ensureHeroImagesTable();
   await ensureStaffProfilePhotoColumn();
   await ensureStaffAadhaarColumn();
@@ -125,6 +133,101 @@ async function ensureStaffPasswordHashColumn() {
       staff_id: row.staff_id,
       password_hash: hashed
     });
+  }
+}
+
+async function ensureAttendanceTable() {
+  try {
+    await query('SELECT 1 FROM attendance LIMIT 1', {});
+    return;
+  } catch (err) {
+    if (err?.code !== 'ER_NO_SUCH_TABLE') throw err;
+  }
+
+  await pool.query(`CREATE TABLE IF NOT EXISTS attendance (
+    id BIGINT NOT NULL AUTO_INCREMENT,
+    staff_id INT NOT NULL,
+    date DATE NOT NULL,
+    check_in_time DATETIME NULL,
+    check_out_time DATETIME NULL,
+    check_in_lat DECIMAL(10,7) NULL,
+    check_in_lng DECIMAL(10,7) NULL,
+    check_out_lat DECIMAL(10,7) NULL,
+    check_out_lng DECIMAL(10,7) NULL,
+    check_in_image_path VARCHAR(255) NULL,
+    check_out_image_path VARCHAR(255) NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (id),
+    UNIQUE KEY uq_attendance_staff_date (staff_id, date),
+    CONSTRAINT fk_attendance_staff FOREIGN KEY (staff_id) REFERENCES staff(staff_id) ON DELETE CASCADE
+  )`);
+}
+
+async function ensureWorkDetailTable() {
+  try {
+    await query('SELECT 1 FROM work_detail LIMIT 1', {});
+    return;
+  } catch (err) {
+    if (err?.code !== 'ER_NO_SUCH_TABLE') throw err;
+  }
+
+  await pool.query(`CREATE TABLE IF NOT EXISTS work_detail (
+    id BIGINT NOT NULL AUTO_INCREMENT,
+    staff_id INT NOT NULL,
+    date DATE NOT NULL,
+    work_description TEXT NOT NULL,
+    work_image_path VARCHAR(255) NULL,
+    voice_record_path VARCHAR(255) NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (id),
+    UNIQUE KEY uq_work_detail_staff_date (staff_id, date),
+    CONSTRAINT fk_work_detail_staff FOREIGN KEY (staff_id) REFERENCES staff(staff_id) ON DELETE CASCADE
+  )`);
+}
+
+async function ensureAttendanceColumns() {
+  const requiredColumns = [
+    { name: 'check_in_lat', sql: 'ALTER TABLE attendance ADD COLUMN check_in_lat DECIMAL(10,7) NULL' },
+    { name: 'check_in_lng', sql: 'ALTER TABLE attendance ADD COLUMN check_in_lng DECIMAL(10,7) NULL' },
+    { name: 'check_out_lat', sql: 'ALTER TABLE attendance ADD COLUMN check_out_lat DECIMAL(10,7) NULL' },
+    { name: 'check_out_lng', sql: 'ALTER TABLE attendance ADD COLUMN check_out_lng DECIMAL(10,7) NULL' },
+    { name: 'check_in_image_path', sql: 'ALTER TABLE attendance ADD COLUMN check_in_image_path VARCHAR(255) NULL' },
+    { name: 'check_out_image_path', sql: 'ALTER TABLE attendance ADD COLUMN check_out_image_path VARCHAR(255) NULL' }
+  ];
+
+  for (const column of requiredColumns) {
+    const rows = await query(
+      `SELECT COLUMN_NAME
+       FROM INFORMATION_SCHEMA.COLUMNS
+       WHERE TABLE_SCHEMA=:db AND TABLE_NAME='attendance' AND COLUMN_NAME=:column
+       LIMIT 1`,
+      { db: config.db.database, column: column.name }
+    );
+    if (rows.length > 0) continue;
+    // eslint-disable-next-line no-await-in-loop
+    await pool.query(column.sql);
+  }
+}
+
+async function ensureWorkDetailColumns() {
+  const requiredColumns = [
+    { name: 'work_image_path', sql: 'ALTER TABLE work_detail ADD COLUMN work_image_path VARCHAR(255) NULL' },
+    { name: 'voice_record_path', sql: 'ALTER TABLE work_detail ADD COLUMN voice_record_path VARCHAR(255) NULL' }
+  ];
+
+  for (const column of requiredColumns) {
+    const rows = await query(
+      `SELECT COLUMN_NAME
+       FROM INFORMATION_SCHEMA.COLUMNS
+       WHERE TABLE_SCHEMA=:db AND TABLE_NAME='work_detail' AND COLUMN_NAME=:column
+       LIMIT 1`,
+      { db: config.db.database, column: column.name }
+    );
+    if (rows.length > 0) continue;
+    // eslint-disable-next-line no-await-in-loop
+    await pool.query(column.sql);
   }
 }
 
