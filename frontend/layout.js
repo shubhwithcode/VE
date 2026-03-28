@@ -274,6 +274,10 @@ function buildHeader(prefix) {
         </a>
       </div>
       <div class="mobileMenuFooter">
+        <a href="${adminHref}" class="mobileMenuAdminCta" onclick="toggleMenu(false)">
+          <span class="material-symbols-rounded">admin_panel_settings</span>
+          <span>Admin Login</span>
+        </a>
         <p>© Vishwakarma Enterprises</p>
         <p style="color: var(--gold-accent); letter-spacing: 2px; font-size: 0.6rem; font-weight: 800;">EST. 1998</p>
       </div>
@@ -463,3 +467,5 @@ function initLayout() {
     }
   });
 })();
+
+

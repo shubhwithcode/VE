@@ -356,6 +356,7 @@ async function ensureWebsiteTables() {
         email VARCHAR(100) NULL,
         phone VARCHAR(30) NULL,
         address TEXT NULL,
+        password_hash VARCHAR(255) NULL,
         created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
         PRIMARY KEY (id)
       )`
